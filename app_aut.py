@@ -8,10 +8,10 @@ from glob import glob
 
 from tests.fakeData import fakeIdsWithMinis
 from mod.MyDB import MyDB
-from mod.getTemplates import genTemplates
+from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.saveImg import checkImgFolders, saveImg
 
-app = Flask(__name__, template_folder='templates')
+app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
 # secret string for session cooky
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

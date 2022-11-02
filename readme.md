@@ -12,6 +12,7 @@
     - Dom
 - SQL
 - HTML
+- Docker
 
 ## State of Project
 Beginnings
