@@ -61,7 +61,8 @@
 - image / thumbnail sizes from db
 - establish roles
 - check by array: babl types (not necessary due to MySQL constraints)
-- js check required 
+- js check required
+- the application session secret has to be set in MySQL DB by root
 
 ## image processing
 
