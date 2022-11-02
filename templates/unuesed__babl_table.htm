@@ -13,12 +13,12 @@
         <tr>
             {% for label in labels %}<td>{{label}}</td>{% endfor %}
             <td><a href="/babl/{{tp}}/{{id}}" title="edit #{{id}}">{{id}}</a></td>
-        </tr>    
+        </tr>
     {% endfor %}
     <tr>
         {% for lang in langs %}<td></td>{% endfor %}
         <td><a href="/babl/{{tp}}/0" title="new item">*</a></td>
-    </tr>    
+    </tr>
 </tbody>
 </table>
 {% endblock %}

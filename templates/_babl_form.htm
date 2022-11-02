@@ -1,4 +1,4 @@
-<!-- 
+<!--
     inner table for language entry / edit
     content for ajax calls
 -->
@@ -8,13 +8,13 @@
             <tr>
                 <td>{{label}}</td>
                 <td><textarea rows=2 name="{{ilc}}" lang="{{ilc}}" autofocus required>{{value}}</textarea></td>
-            </tr>    
+            </tr>
         {% endfor %}
         {% for ilc, label, value in rows[1:] %}
             <tr>
                 <td>{{label}}</td>
                 <td><textarea rows=2 name="{{ilc}}" lang="{{ilc}}">{{value}}</textarea></td>
-            </tr>    
+            </tr>
         {% endfor %}
     </table>
     <input type="hidden" name="tp" value="{{tp}}">

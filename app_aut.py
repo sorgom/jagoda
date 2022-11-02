@@ -80,7 +80,7 @@ def bablFormRows(id:int):
 
 @app.route('/')
 def index():
-    return checkLogin() or renderBase('aut_index.htm', title='Overview')
+    return checkLogin() or renderBase('aut_base.htm', title='Overview')
 
 @app.route('/login', methods=BOTH)
 def login():

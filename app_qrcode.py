@@ -1,34 +1,20 @@
-from flask import Flask, request, redirect, url_for, render_template
-from PIL import Image
-import qrcode
-import base64
-import binascii
-import io
+from flask import Flask, render_template
+from mod.QRCode64 import QRCode64
 
 app = Flask(__name__, template_folder='templates')
 
+QRC = QRCode64()
+SITE = 'https://jagoda.org'
 
 @app.route('/')
 def index():
-    return render_template('aut_index.htm')
+    return render_template('aut_base.htm')
 
 
 @app.route('/qr/<int:id>')
 def qr(id):
-    qr = qrcode.QRCode(
-        version=3,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=6,
-        border=2,
-    )
-    qr.add_data(f'https://jagoda.org/item/{id}')
-    # qr.add_data(f'http://sorgo.de')
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    bios = io.BytesIO()
-    img.save(bios, format='PNG')
-    c64 = base64.b64encode(bios.getvalue()).decode('ascii')
-    return render_template('aut_qrcode.htm', id=id, b64=c64)
+    url = f'{SITE}/item/{id}'
+    return render_template('aut_qrcode.htm', id=id, b64=QRC.ascii(url))
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=8000, debug=False)
+    app.run(host="localhost", port=8001, debug=False)

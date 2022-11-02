@@ -3,7 +3,7 @@
 from glob import glob
 import re
 from os import path
-from utilz import cleanTxt
+from utilz import cleanFile
 
 TEMPLATES_FOLDER = 'templates'
 
@@ -29,7 +29,7 @@ def genTemplates(basehtm:str='aut_base.htm'):
 def cleanTemplates():
     pattern = '*.htm'
     for file in glob(path.join(TEMPLATES_FOLDER, pattern)):
-        print('file:', file)
+        cleanFile(file)
 
 if __name__ == '__main__':
     genTemplates()

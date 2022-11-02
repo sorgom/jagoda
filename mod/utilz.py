@@ -14,13 +14,15 @@ def cleanTxt(txt:str):
     return RX_LN.sub('', txt.strip()) + '\n'
 
 def cleanFile(filename:str):
-    with open(filename, 'rw') as fh:
+    with open(filename, 'r') as fh:
         cont = fh.read()
-        fh.write(cleanTxt(cont))
         fh.close()
+        with open(filename, 'w') as fh:
+            fh.write(cleanTxt(cont))
+            fh.close()
 
 if __name__ == '__main__':
-    names = ['Zardoz', 'Wumpel', 'lola', 'Rumpel', 'FileDate']
+    names = ['Zardoz', 'Wumpel',' Wumpel', 'lola', 'Rumpel', 'FileDate']
     
     print(grep('^.*date', names, re.I))
 

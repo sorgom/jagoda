@@ -3,6 +3,44 @@
 - dimensions
 - standard containers / boxes
 
+## Considerations
+### all ids are unique
+  - everything can be identified by ID
+  - only one sequenz
+  - only one table elment
+### element types:
+- physical types
+  - have dimensions
+  - can be made pictures of
+  - can be searched for by ID / QRCode
+  - can be assigned to abstract types
+  - can be put into a container
+  - e.g.:
+    - art pieces
+    - containers
+  - a fit into another can be applied  
+- abstract types: grouping
+  - e.g.:
+    - series
+    - grouping for presentation
+    - exhibitions?
+### attributes
+#### art pieces
+  - title
+  - image(s)
+  - owner
+  - author
+  - price
+  - dimensions
+  - amount
+    - can be splittet to different locations
+  - origin location
+  - current location
+  - assignments to abstract types
+    - if part of a series
+      - same title, but different number within series
+        - image of each individual required?
+
 # TODO
 ## css
 - input validity:

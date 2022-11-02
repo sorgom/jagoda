@@ -1,4 +1,4 @@
-<!-- 
+<!--
     inner table for language listings / edit
     can be content for rendering or ajax calls
 -->
@@ -14,11 +14,11 @@
             <tr>
                 {% for label in labels %}<td>{{label}}</td>{% endfor %}
                 <td><a onclick="popup('/_bablform/{{id}}');" title="edit #{{id}}"> </a></td>
-            </tr>    
+            </tr>
         {% endfor %}
         <tr>
             {% for lang in langs %}<td></td>{% endfor %}
             <td><a onclick="popup('/_newbablform/{{tp}}');" title="new item">*</a></td>
-        </tr>    
+        </tr>
     </tbody>
 </table>
