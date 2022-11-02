@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jagoda - Ajax Form</title>
+    <link rel="stylesheet" href="/static/aut_site.css">
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" >
+    <script src="/static/test_modal.js"></script> 
+</head>
+<body>
+    <div id="menu">
+        <div class="menu">
+            <div id="usr">
+                <h3>Author</h3>
+                <ul>
+                    <li>Login: test</li>
+                    <li><a href="/logout">Logout</a></li>
+                    <li><a href="/pwd">Change Password</a></li>
+                    <li><a href="/">Top</a></li>
+                </ul>
+            </div>
+            <div id="tasks">
+                <h3>Edit</h3>
+                <ul>
+                    <li><a href="/caps">Captions</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="clr"></div>
+    </div>
+    <div id="content">
+        <h2>Website Captions #7</h2>
+    <form id="form1">
+        <table class="lel">
+            
+                <tr>
+                    <td>English</td>
+                    <td><textarea rows=2 name="en" lang="en" autofocus required>Search</textarea></td>
+                </tr>    
+            
+            
+                <tr>
+                    <td>Deutsch</td>
+                    <td><textarea rows=2 name="de" lang="de">Suche</textarea></td>
+                </tr>    
+            
+                <tr>
+                    <td>Français</td>
+                    <td><textarea rows=2 name="fr" lang="fr"></textarea></td>
+                </tr>    
+            
+                <tr>
+                    <td>Hrvatski</td>
+                    <td><textarea rows=2 name="hr" lang="hr"></textarea></td>
+                </tr>    
+            
+        </table>
+    </form>
+        <div class="buttons">
+            <button onclick="ajaxForm('form1');">Apply</button>
+        </div>
+    </div>
+</body>
+</html>

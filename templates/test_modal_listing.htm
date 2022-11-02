@@ -1,0 +1,5 @@
+<div class="listing">
+    {% for item in listing %}
+    <a onclick="{{action}}({{item[0]}});"><p><img src="{{item[1]}}"></p><p>{{item[0]}}</p></a>
+    {% endfor %}
+</div>

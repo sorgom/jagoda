@@ -1,0 +1,22 @@
+# Use root/example as user/password credentials
+# to start run:> docker-compose -f docker_MySQL_Adminer.yml up -d
+
+version: '3.1'
+
+services:
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rr
+    ports:
+      - 3306:3306
+
+

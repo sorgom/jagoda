@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modal - Test</title>
+    <link rel="stylesheet" href="/static/aut_site.css">
+    <link rel="stylesheet" href="/static/test_modal.css">
+    <script src="/static/test_modal.js"></script>
+ </head>
+<body>
+    <div id="modal" class="modal">
+        <div class="buttons"><button onclick="closeModal('modal');">Close</button></div>
+        <div class="mod_content" id="mod_content"></div>
+    </div>
+    <div id="cover"></div>
+    <div class="menu">
+        <div id="usr">
+            <h3>Author</h3>
+            <ul>
+                <li>Login: {{ session['usr'] }}</li>
+                <li><a href="/logout">Logout</a></li>
+                <li><a href="/pwd">Change Password</a></li>
+                <li><a href="/">Top</a></li>
+            </ul>
+        </div>
+        <div id="tasks">
+            <h3>Edit</h3>
+            <ul>
+                <li><a href="/caps">Captions</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="clr"></div>
+    <div class="buttons">
+        <button onclick="loadDemo();">Show</button>
+    </div>
+    <div id="content">
+        <h2>{{title}} {{"#%d" % id if id}}</h2>
+    {% block content %} {% endblock %}
+    </div>
+    <div class="buttons">
+        <button onclick="loadDemo();">Show</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+@import "aut_common.css";
+
+form.login {
+    width: 50%;
+    margin: auto;
+    margin-top: 10%;
+    padding: 5%;
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+
+form > div {
+    display: table;
+}
+
+form p {
+    display: table-row;
+}
+
+form p * {
+    display: table-cell;
+    border: 1px solid black;
+    padding: 0.2em;
+}
+
+form p label {
+    background-color: aqua;
+}
+
+button {
+    margin-top: 2em;
+}

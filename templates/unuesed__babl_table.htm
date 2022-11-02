@@ -1,0 +1,24 @@
+{% extends 'aut_base.htm' %}
+
+{% block content %}
+<table class="ltb">
+    <thead>
+        <tr>
+            {% for lang in langs %}<td>{{lang[1]}}</td>{% endfor %}
+            <td>edit</td>
+        </tr>
+    </thead>
+    <tbody>
+    {% for id, labels in rows %}
+        <tr>
+            {% for label in labels %}<td>{{label}}</td>{% endfor %}
+            <td><a href="/babl/{{tp}}/{{id}}" title="edit #{{id}}">{{id}}</a></td>
+        </tr>    
+    {% endfor %}
+    <tr>
+        {% for lang in langs %}<td></td>{% endfor %}
+        <td><a href="/babl/{{tp}}/0" title="new item">*</a></td>
+    </tr>    
+</tbody>
+</table>
+{% endblock %}
