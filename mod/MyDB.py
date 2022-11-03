@@ -28,7 +28,7 @@ class MyDB(MySQL):
     def nextSeq(self, label:str):
         return int(self.getOne("SELECT nextSeq('%s');" % label, True))
 
-    def nextBablId(self):
+    def nextLangId(self):
         return self.nextSeq('BABL')
 
     def md5(self, val:str):
@@ -55,35 +55,31 @@ class MyDB(MySQL):
         return self.get('CALL getLangTable();')
 
     # list of [tp, label]
-    def getBablTpTable(self):
-        return self.get('CALL getBablTpTable();')
+    def getLangTpTable(self):
+        return self.get('CALL getLangTpTable();')
 
-    # label of given babl type
-    def getBablTpLabel(self, tp:str):
-        return self.getOne(f'CALL getBablTpLabel("{tp}");')
+    # label of given language type
+    def getLangTpLabel(self, tp:str):
+        return self.getOne(f'CALL getLangTpLabel("{tp}");')
 
-    # label of given babl type
-    def getBablTpLabel(self, tp:str):
-        return self.getOne(f'CALL getBablTpLabel("{tp}");')
-
-    # type of babl entry by id
-    def getBablTp(self, id:int):
-        return self.getOne(f'CALL getBablTp({id})')
+    # type of language entry by id
+    def getLangTp(self, id:int):
+        return self.getOne(f'CALL getLangTp({id})')
 
     # list of [id, ilc, label]
-    def getBablTable(self, tp:str):
-        return self.get(f'CALL getBablTable("{tp}");')
+    def getLangTable(self, tp:str):
+        return self.get(f'CALL getLangTable("{tp}");')
 
     # list of [ilc, label]
-    def getBabl(self, id:int):
-        return self.get(f'CALL getBabl({id});')
+    def getLang(self, id:int):
+        return self.get(f'CALL getLang({id});')
 
-    def getNextBablId(self):
+    def getNextLangId(self):
         return self.nextSeq('BABL')
 
-    def newBabl(self, id:int, tp:str):
-        self.call(f'CALL newBabl({id}, "{tp}")')
+    def newLang(self, id:int, tp:str):
+        self.call(f'CALL newLang({id}, "{tp}")')
 
-    def setBabl(self, id:int, ilc:str, label:str):
-        self.call("CALL setBabl(%d, '%s', '%s');" % (id, ilc, self.mask(label)))
+    def setLang(self, id:int, ilc:str, label:str):
+        self.call("CALL setLang(%d, '%s', '%s');" % (id, ilc, self.mask(label)))
 

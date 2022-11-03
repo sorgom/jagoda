@@ -22,35 +22,32 @@ CREATE TABLE LANG (
     UNIQUE(ORD)
 );
 
--- type of language element
--- T title
--- C caption
--- W what ist is
--- M make / techniqe of artpiece
-DROP TABLE IF EXISTS BABL_TYPE;
-CREATE TABLE BABL_TYPE (
-    TP CHAR(2) NOT NULL,
+-- possible type of language item
+DROP TABLE IF EXISTS LANG_ITEM_TYPE;
+CREATE TABLE LANG_ITEM_TYPE (
+    TPC CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
-    PRIMARY KEY (TP)
+    PRIMARY KEY (TPC)
 );
 
--- language elements type assignment
-DROP TABLE IF EXISTS BABL_ITEM;
-CREATE TABLE BABL_ITEM (
+-- language item of a type
+DROP TABLE IF EXISTS LANG_ITEM;
+CREATE TABLE LANG_ITEM (
     ID INT NOT NULL AUTO_INCREMENT,
-    TP CHAR(2) NOT NULL,
+    TPC CHAR(2) NOT NULL,
     PRIMARY KEY (ID),
-    FOREIGN KEY (TP) REFERENCES BABL_TYPE(TP) ON DELETE CASCADE
+    FOREIGN KEY (TPC) REFERENCES LANG_ITEM_TYPE(TPC) ON DELETE CASCADE
 );
 
--- all language dependent elements
-DROP TABLE IF EXISTS BABL_ELEM;
-CREATE TABLE BABL_ELEM (
+-- language dependent element
+-- language item for all languages
+DROP TABLE IF EXISTS LANG_ITEM_ELEM;
+CREATE TABLE LANG_ITEM_ELEM (
     ID INT NOT NULL,
     ILC CHAR(2) NOT NULL DEFAULT 'en',
     LABEL VARCHAR(128) NOT NULL DEFAULT '',
     PRIMARY KEY (ID, ILC),
-    FOREIGN KEY (ID) REFERENCES BABL_ITEM(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ID) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
 );
 
@@ -68,7 +65,7 @@ CREATE TABLE OBJECT (
     DIM3 INT NOT NULL DEFAULT 0,
     LOC INT NOT NULL,
     PRIMARY KEY (ID), 
-    FOREIGN KEY (TITLE) REFERENCES BABL_ITEM(ID) ON DELETE CASCADE
+    FOREIGN KEY (TITLE) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
 
 -- Article / Artifact
@@ -83,8 +80,8 @@ CREATE TABLE ARTICLE (
     PUB TINYINT(1) DEFAULT 0,
     PRIMARY KEY (ID),
     FOREIGN KEY (ID)    REFERENCES OBJECT(ID)    ON DELETE CASCADE,
-    FOREIGN KEY (WHAT)  REFERENCES BABL_ITEM(ID) ON DELETE CASCADE,
-    FOREIGN KEY (TITLE) REFERENCES BABL_ITEM(ID) ON DELETE CASCADE
+    FOREIGN KEY (WHAT)  REFERENCES LANG_ITEM(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TITLE) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
 
 -- ============================================================
@@ -146,65 +143,65 @@ BEGIN
 END :)  
 DELIMITER ;
 
--- Retrieve language element types
-DROP PROCEDURE IF EXISTS getBablTpTable;
+-- retrieve language element types
+DROP PROCEDURE IF EXISTS getLangTpTable;
 DELIMITER :)  
-CREATE PROCEDURE getBablTpTable()  
+CREATE PROCEDURE getLangTpTable()
 BEGIN
-    SELECT * FROM BABL_TYPE;
+    SELECT * FROM LANG_ITEM_TYPE;
 END :)  
 DELIMITER ;
 
 -- retrieve language element type label
-DROP PROCEDURE IF EXISTS getBablTpLabel;
+DROP PROCEDURE IF EXISTS getLangTpLabel;
 DELIMITER :)  
-CREATE PROCEDURE getBablTpLabel(pTP CHAR(2))  
+CREATE PROCEDURE getLangTpLabel(pTP CHAR(2))  
 BEGIN
-    SELECT LABEL FROM BABL_TYPE WHERE TP = pTP LIMIT 1;
+    SELECT LABEL FROM LANG_ITEM_TYPE WHERE TPC = pTP LIMIT 1;
 END :)  
 DELIMITER ;
 
--- retrieve type of a babl entry
-DROP PROCEDURE IF EXISTS getBablTp;
+-- retrieve type of a language entry
+DROP PROCEDURE IF EXISTS getLangTp;
 DELIMITER :)  
-CREATE PROCEDURE getBablTp(pID INT)  
+CREATE PROCEDURE getLangTp(pID INT)  
 BEGIN
-    SELECT TP FROM BABL_ITEM WHERE ID = pID LIMIT 1;
+    SELECT TPC FROM LANG_ITEM WHERE ID = pID LIMIT 1;
 END :)  
 DELIMITER ;
 
--- create new babl item
-DROP PROCEDURE IF EXISTS newBabl; 
+-- create new language item
+DROP PROCEDURE IF EXISTS newLang; 
 DELIMITER :)  
-CREATE PROCEDURE newBabl(pID INT, pTP CHAR(2))  
+CREATE PROCEDURE newLang(pID INT, pTP CHAR(2))  
 BEGIN
-    INSERT INTO BABL_ITEM VALUES (pID, pTP);
+    INSERT INTO LANG_ITEM VALUES (pID, pTP);
 END :)  
 DELIMITER ;
 
 -- retrieve all language elements of a type 
-DROP PROCEDURE IF EXISTS getBablTable;
+DROP PROCEDURE IF EXISTS getLangTable;
 DELIMITER :)  
-CREATE PROCEDURE getBablTable(pTP CHAR(2))  
+CREATE PROCEDURE getLangTable(pTP CHAR(2))  
 BEGIN
     SELECT B.ID, B.ILC, B.LABEL 
-    FROM BABL_ELEM as B
-        INNER JOIN BABL_ITEM as T
+    FROM LANG_ITEM_ELEM as B
+        INNER JOIN LANG_ITEM as T
         ON B.ID = T.ID 
         INNER JOIN LANG as L 
         ON B.ILC = L.ILC
-    WHERE T.TP = pTP
+    WHERE T.TPC = pTP
     ORDER BY B.ID, L.ORD;
 END :)  
 DELIMITER ;
 
 -- retrieve language element by ID
-DROP PROCEDURE IF EXISTS getBabl; 
+DROP PROCEDURE IF EXISTS getLang; 
 DELIMITER :)  
-CREATE PROCEDURE getBabl(pID INT)  
+CREATE PROCEDURE getLang(pID INT)  
 BEGIN
     SELECT L.ILC, B.LABEL
-    FROM BABL_ELEM as B INNER JOIN LANG as L 
+    FROM LANG_ITEM_ELEM as B INNER JOIN LANG as L 
     ON B.ILC = L.ILC 
     WHERE B.ID = pID
     ORDER BY L.ORD;
@@ -213,18 +210,18 @@ DELIMITER ;
 
 
 -- set language element
--- CALL setBabl(<id>, <ilc>, <label>);
-DROP PROCEDURE IF EXISTS setBabl;
+-- CALL setLang(<id>, <ilc>, <label>);
+DROP PROCEDURE IF EXISTS setLang;
 DELIMITER :)  
-CREATE PROCEDURE setBabl(
+CREATE PROCEDURE setLang(
     pID INT, 
     pILC CHAR(2), 
     pLABEL VARCHAR(128)) 
 BEGIN
     IF pLABEL = '' THEN
-        DELETE FROM BABL_ELEM WHERE ID = pID AND ILC = pILC;
+        DELETE FROM LANG_ITEM_ELEM WHERE ID = pID AND ILC = pILC;
     ELSE
-        REPLACE INTO BABL_ELEM() VALUES (pID, pILC, pLABEL);
+        REPLACE INTO LANG_ITEM_ELEM() VALUES (pID, pILC, pLABEL);
     END IF;
 END :)  
 DELIMITER ;
@@ -292,8 +289,8 @@ BEGIN
     SELECT max(ID) FROM OBJECT INTO @num;
     INSERT INTO SEQ VALUES ('OBJECT', IFNULL(@num, 0));
 
-    -- BABL_ITEM.ID
-    SELECT max(ID) FROM BABL_ITEM INTO @num;
+    -- LANG_ITEM.ID
+    SELECT max(ID) FROM LANG_ITEM INTO @num;
     INSERT INTO SEQ VALUES ('BABL', IFNULL(@num, 0));
 
     -- IMG.ID
@@ -353,7 +350,7 @@ INSERT INTO LANG VALUES
 -- C caption
 -- W what ist is
 -- M make / techniqe of artpiece
-INSERT INTO BABL_TYPE(TP, LABEL) VALUES
+INSERT INTO LANG_ITEM_TYPE(TPC, LABEL) VALUES
     ('ST', 'Standard Titles'),
     ('CA', 'Website Captions'),
     ('TP', 'Element Types'),
@@ -361,7 +358,7 @@ INSERT INTO BABL_TYPE(TP, LABEL) VALUES
 ;
 
 -- Captions
-INSERT INTO BABL_ITEM VALUES
+INSERT INTO LANG_ITEM VALUES
     (1, 'CA'),
     (2, 'CA'),
     (3, 'CA'),
@@ -372,7 +369,7 @@ INSERT INTO BABL_ITEM VALUES
     (8, 'CA')
 ;
 
-INSERT INTO BABL_ELEM(ID, LABEL) VALUES
+INSERT INTO LANG_ITEM_ELEM(ID, LABEL) VALUES
     (1, 'Year'),
     (2, 'Exhibitions'),
     (3, 'Location'),
@@ -383,7 +380,7 @@ INSERT INTO BABL_ELEM(ID, LABEL) VALUES
     (8, 'Technique')
 ;
 
-INSERT INTO BABL_ITEM VALUES
+INSERT INTO LANG_ITEM VALUES
     (20, 'CA'),
     (21, 'CA'),
     (22, 'CA'),
@@ -392,7 +389,7 @@ INSERT INTO BABL_ITEM VALUES
     (25, 'CA')
 ;
 
-INSERT INTO BABL_ELEM VALUES
+INSERT INTO LANG_ITEM_ELEM VALUES
     (20, 'en', 'File'),
     (20, 'fr', 'Fiche'),
     (20, 'de', 'Datei'),
@@ -404,7 +401,7 @@ INSERT INTO BABL_ELEM VALUES
 ;
 
 -- Make
-INSERT INTO BABL_ITEM VALUES
+INSERT INTO LANG_ITEM VALUES
     (31, 'TQ'),
     (32, 'TQ'),
     (33, 'TQ'),
@@ -414,7 +411,7 @@ INSERT INTO BABL_ITEM VALUES
     (37, 'TQ')
 ;
 
-INSERT INTO BABL_ELEM(ID, LABEL) VALUES
+INSERT INTO LANG_ITEM_ELEM(ID, LABEL) VALUES
     (31, 'Book'),
     (32, 'Print'),
     (33, 'Skulpture'),
@@ -448,8 +445,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON jagoda.* TO 'aut'@'%';
 GRANT EXECUTE ON FUNCTION  jagoda.nextSeq TO 'aut'@'%';
 GRANT EXECUTE ON FUNCTION  jagoda.autId   TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.setPass TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.newBabl TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.setBabl TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.newLang TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.setLang TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.initSeq TO 'aut'@'%';
 
 -- TODO: user type: viewer with login
@@ -461,11 +458,11 @@ GRANT SELECT ON jagoda.* TO 'web'@'%';
 
 -- Everybody
 GRANT EXECUTE ON PROCEDURE jagoda.getLangTable   TO 'aut'@'%', 'web'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getBablTpTable TO 'aut'@'%', 'web'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getBablTpLabel TO 'aut'@'%', 'web'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getBablTp      TO 'aut'@'%', 'web'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getBablTable   TO 'aut'@'%', 'web'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getBabl        TO 'aut'@'%', 'web'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getLangTpTable TO 'aut'@'%', 'web'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getLangTpLabel TO 'aut'@'%', 'web'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getLangTp      TO 'aut'@'%', 'web'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getLangTable   TO 'aut'@'%', 'web'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getLang        TO 'aut'@'%', 'web'@'%';
 
 -- ============================================================
 -- Last Steps
