@@ -58,7 +58,6 @@ function submitPopup(route)
     console.log('processPopup: ' + route);
 
     var form = document.getElementById('popup_form');
-    // TODO: more precise
     if (form.querySelector(':invalid'))
     {
         console.log('no content!');
@@ -81,4 +80,28 @@ function submitPopup(route)
     xhr.open('POST', route, true);
     xhr.send(data);
     return false;
+}
+
+function uploadFiles(inp, route)
+{
+    console.log('uploadFiles: ' + route);
+    let xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function()
+    {
+        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
+        {
+            console.log('ajax return');
+        }
+    };
+
+    let fd  = new FormData();
+    let num =  inp.files.length;
+    for (let n = 0; n < num; ++n)
+    {
+        fd.append('files', inp.files[n])
+    }
+    var data = new FormData(form);
+    xhr.open('POST', route, true);
+    xhr.send(data);
 }

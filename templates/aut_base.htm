@@ -5,7 +5,6 @@
     <title>Authors Side - {{title}}</title>
     <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" >
     <link rel="stylesheet" href="/static/aut_site.css">
-    <script src="/static/aut_site.js"></script>
     {% block head %} {% endblock %}
 </head>
 <body>
@@ -49,5 +48,10 @@
             {% block content %} {% endblock %}
         </div>
     </div>
+    <!-- Why put JS at end of body:  
+        it gives the HTML time to load before any of the JavaScript loads, 
+        which can prevent errors, and speed up website response time.
+    -->
+    <script src="/static/aut_site.js"></script>
 </body>
 </html>

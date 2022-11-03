@@ -6,10 +6,10 @@ from glob import glob
 SOURCE_FILE_KEY = 41728
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff'}
-FOLDER_MINI  = 'static/img/mini'
-FOLDER_FULL  = 'static/img/full'
-FOLDER_ORIG  = 'static/img/orig'
-FOLDER_UPLOAD = 'static/img/upload'
+FOLDER_BASE  = 'static/img/'
+FOLDER_MINI  = path.join(FOLDER_BASE, 'mini')
+FOLDER_FULL  = path.join(FOLDER_BASE, 'full')
+FOLDER_ORIG  = path.join(FOLDER_BASE, 'orig')
 
 # TODO: make configureable
 SIZE_MINI = 160, 120
@@ -20,6 +20,15 @@ EXT_OUT = 'jpg'
 
 def _imgName(id:int, ext:str=EXT_OUT):
     return "%06d.%s" % (id, ext)
+
+def _pathMini(id:int):
+    return path.join(FOLDER_MINI, _imgName(id))
+
+def _pathFull(id:int):
+    return path.join(FOLDER_FULL, _imgName(id))
+
+def _pathSaveOrig(id:int, ext:str):
+    return path.join(FOLDER_ORIG, _imgName(id, ext))  
 
 def _ext(filename:str):
     return filename.rsplit('.', 1)[1] if '.' in filename else None
@@ -37,48 +46,54 @@ def _corrExif(val):
 def _getExif(img, srcFileName:str):
     exif = img.getexif()
     if exif:
+        print('exif:', type(exif))
         for k, v in exif.items():
             v = _corrExif(v)
             if not v:
                 del exif[k]
             else: 
                 exif[k] = v
-        exif[SOURCE_FILE_KEY] = srcFileName
-        return exif
-    return None
-
-def _saveImg(img, folder, name, size, quality=80, exif=None):
-    img2 = img.copy()
-    img2.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
-    if exif:
-        print('exif', type(exif))
-        img2.save(path.join(folder, name), quality=quality, exif=exif)
     else:
-        img2.save(path.join(folder, name), quality=quality)
+        exif = Image.Exif()
+    exif[SOURCE_FILE_KEY] = srcFileName
+    return exif
 
-def saveImg(file, id):
+def _saveImg(img, fpath, size, quality, exif):
+    img.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
+    img.save(fpath, quality=quality, exif=exif)
+
+def saveImg(file, id) -> str:
     ext = _ext(file.filename)
     if ext and _allowedImgExt(ext):
-        with Image.open(file) as img:
+        with Image.open(file) as img1:
             print('processing: ', file.filename)
             print(dir(file))
-            # img.save(path.join(FOLDER_ORIG, _imgName(id, ext)))
-            file.save(path.join(FOLDER_ORIG, _imgName(id, ext)))
-            name = _imgName(id)
-            exif = _getExif(img, file.filename)
-            _saveImg(img, FOLDER_FULL, name, SIZE_FULL, QUALY_FULL, exif)
-            _saveImg(img, FOLDER_MINI, name, SIZE_MINI, QUALY_MINI)
+            file.save(_pathSaveOrig(id, ext))
+            exif = _getExif(img1, file.filename)
+            img2 = img1.copy()
+            _saveImg(img1, _pathFull(id), SIZE_FULL, QUALY_FULL, exif)
+            _saveImg(img2, _pathMini(id), SIZE_MINI, QUALY_MINI, exif)
+            return True
+    return False
 
-def _allJpg(folder):
+def _allImg(folder):
     return glob(path.join(folder, f'*.{EXT_OUT}'))
 
 def allImgMini():
-    return _allJpg(FOLDER_MINI)
+    return _allImg(FOLDER_MINI)
 
 def allImgFull():
-    return _allJpg(FOLDER_FULL)
+    return _allImg(FOLDER_FULL)
+
+def getImgMini(id:int):
+    fp = _pathMini(id)
+    return fp if path.exists(fp) else None
+
+def getImgFull(id:int):
+    fp = _pathFull(id)
+    return fp if path.exists(fp) else None
 
 def checkImgFolders():
-    for folder in [FOLDER_MINI, FOLDER_FULL, FOLDER_ORIG, FOLDER_UPLOAD]:
+    for folder in [FOLDER_MINI, FOLDER_FULL, FOLDER_ORIG]:
         if not path.exists(folder):
             makedirs(folder)

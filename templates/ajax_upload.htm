@@ -1,0 +1,35 @@
+<!DOCTYPE html> 
+<html> 
+ <head> 
+  <title> Ajax JavaScript File Upload Example </title> 
+ </head> 
+ <body>
+  <!-- HTML5 Input Form Elements -->
+  <!-- <input type="file" name="123456" multiple onchange="uploadFiles(this, '/');"/>  -->
+  <input type="file" multiple onchange="uploadFiles(this, '/upload/{{id}}');"/> 
+  <!-- <button id="upload-button" onclick="uploadFile()"> Upload </button> -->
+
+  <!-- Ajax JavaScript File Upload Logic -->
+  <!-- <script>
+  async function uploadFiles(inp)
+  {
+    let fd  = new FormData();
+    let num =  inp.files.length;
+    for (let n = 0; n < num; ++n)
+    {
+        fd.append('files', inp.files[n])
+    }
+    await fetch('/', {
+        method: 'POST', 
+        body: fd
+    }); 
+    alert('The file has been uploaded successfully.');
+  }
+  function wumpel()
+  {
+    // alert('data has changed')
+  }
+  </script> -->
+  <script src="/static/aut_site.js"></script>
+ </body> 
+</html>

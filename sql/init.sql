@@ -5,13 +5,12 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 SET GLOBAL log_bin_trust_function_creators = 1;
 
 -- ============================================================
--- ## TABLES
+-- ### TABLES
 -- ============================================================
-DROP TABLE IF EXISTS CAP;
-DROP TABLE IF EXISTS WHAT;
-DROP TABLE IF EXISTS TITLE;
+-- ## language support
+-- ============================================================
 
--- Language Definitions
+-- language definitions
 -- ILC, ISO Language Codes acc. to 
 -- https://www.w3schools.com/tags/ref_language_codes.asp
 DROP TABLE IF EXISTS LANG;
@@ -28,68 +27,91 @@ CREATE TABLE LANG (
 -- C caption
 -- W what ist is
 -- M make / techniqe of artpiece
-DROP TABLE IF EXISTS BABL_TP;
-CREATE TABLE BABL_TP (
+DROP TABLE IF EXISTS BABL_TYPE;
+CREATE TABLE BABL_TYPE (
     TP CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
     PRIMARY KEY (TP)
 );
 
 -- language elements type assignment
-DROP TABLE IF EXISTS BABL_TPS;
-CREATE TABLE BABL_TPS (
+DROP TABLE IF EXISTS BABL_ITEM;
+CREATE TABLE BABL_ITEM (
     ID INT NOT NULL AUTO_INCREMENT,
     TP CHAR(2) NOT NULL,
     PRIMARY KEY (ID),
-    FOREIGN KEY (TP) REFERENCES BABL_TP(TP) ON DELETE CASCADE
+    FOREIGN KEY (TP) REFERENCES BABL_TYPE(TP) ON DELETE CASCADE
 );
 
 -- all language dependent elements
-DROP TABLE IF EXISTS BABL;
-CREATE TABLE BABL (
+DROP TABLE IF EXISTS BABL_ELEM;
+CREATE TABLE BABL_ELEM (
     ID INT NOT NULL,
     ILC CHAR(2) NOT NULL DEFAULT 'en',
     LABEL VARCHAR(128) NOT NULL DEFAULT '',
     PRIMARY KEY (ID, ILC),
-    FOREIGN KEY (ID) REFERENCES BABL_TPS(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ID) REFERENCES BABL_ITEM(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
 );
 
--- Article / Artifact
-DROP TABLE IF EXISTS ART;
-CREATE TABLE ART (
-    ID INT NOT NULL AUTO_INCREMENT,
-    WHAT INT,
+-- ============================================================
+-- ## content elements
+-- ============================================================
+
+-- physical objects
+DROP TABLE IF EXISTS OBJECT;
+CREATE TABLE OBJECT (
+    ID INT NOT NULL,
     TITLE INT,
-    YEAR INT,
-    CNT INT4 NOT NULL DEFAULT 1,
-    PUB ENUM('Y', 'N') NOT NULL DEFAULT 'N',
-    VAL ENUM('Y', 'N') NOT NULL DEFAULT 'N',
-    PRIMARY KEY (ID),
-    FOREIGN KEY (WHAT)  REFERENCES WHAT(ID)  ON DELETE CASCADE,
-    FOREIGN KEY (TITLE) REFERENCES TITLE(ID) ON DELETE CASCADE
+    DIM1 INT NOT NULL DEFAULT 0,
+    DIM2 INT NOT NULL DEFAULT 0,
+    DIM3 INT NOT NULL DEFAULT 0,
+    LOC INT NOT NULL,
+    PRIMARY KEY (ID), 
+    FOREIGN KEY (TITLE) REFERENCES BABL_ITEM(ID) ON DELETE CASCADE
 );
 
--- Uploaded Images
+-- Article / Artifact
+DROP TABLE IF EXISTS ARTICLE;
+CREATE TABLE ARTICLE (
+    ID INT NOT NULL,
+    TITLE INT,
+    WHAT INT,
+    YEAR INT,
+    CNT INT4 NOT NULL DEFAULT 1,
+    VAL TINYINT(1) DEFAULT 0,
+    PUB TINYINT(1) DEFAULT 0,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID)    REFERENCES OBJECT(ID)    ON DELETE CASCADE,
+    FOREIGN KEY (WHAT)  REFERENCES BABL_ITEM(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TITLE) REFERENCES BABL_ITEM(ID) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- ## images
+-- ============================================================
+
+--  list of existing images
 DROP TABLE IF EXISTS IMG;
 CREATE TABLE IMG (
-    ID INT NOT NULL,
-    SRC CHAR(128) NOT NULL DEFAULT 'NN',
+    ID  INT NOT NULL,
     PRIMARY KEY (ID)
 );
 
--- Article / Artifact Image Assignment
-DROP TABLE IF EXISTS ART_IMG;
-CREATE TABLE ART_IMG (
-    ART INT NOT NULL,
+-- object image assignment
+DROP TABLE IF EXISTS OBJECT_IMG;
+CREATE TABLE OBJECT_IMG (
+    OBJECT INT NOT NULL,
     IMG INT NOT NULL,
     ORD INT NOT NULL DEFAULT 1,
-    PRIMARY KEY (ART, IMG),
-    FOREIGN KEY (ART)  REFERENCES ART(ID) ON DELETE CASCADE,
-    FOREIGN KEY (IMG)  REFERENCES IMG(ID) ON DELETE CASCADE
+    PRIMARY KEY (OBJECT, IMG),
+    FOREIGN KEY (OBJECT) REFERENCES OBJECT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (IMG)    REFERENCES IMG(ID)    ON DELETE CASCADE
 );
 
--- Sequences
+-- ============================================================
+-- ## sequences
+-- ============================================================
 DROP TABLE IF EXISTS SEQ;
 CREATE TABLE SEQ  
 (  
@@ -112,9 +134,10 @@ CREATE TABLE AUT
 -- ============================================================
 -- ## PROCEDURES & FUNCTIONS
 -- ============================================================
+-- language support
+-- ============================================================
 
--- Retrieve Languages
--- CALL getLangTable();
+-- language table
 DROP PROCEDURE IF EXISTS getLangTable;
 DELIMITER :)  
 CREATE PROCEDURE getLangTable()  
@@ -124,54 +147,49 @@ END :)
 DELIMITER ;
 
 -- Retrieve language element types
--- CALL getBablTpTable();
 DROP PROCEDURE IF EXISTS getBablTpTable;
 DELIMITER :)  
 CREATE PROCEDURE getBablTpTable()  
 BEGIN
-    SELECT * FROM BABL_TP;
+    SELECT * FROM BABL_TYPE;
 END :)  
 DELIMITER ;
 
--- Retrieve language element type label
--- CALL getBablTpLabel(<tp>);
+-- retrieve language element type label
 DROP PROCEDURE IF EXISTS getBablTpLabel;
 DELIMITER :)  
 CREATE PROCEDURE getBablTpLabel(pTP CHAR(2))  
 BEGIN
-    SELECT LABEL FROM BABL_TP WHERE TP = pTP LIMIT 1;
+    SELECT LABEL FROM BABL_TYPE WHERE TP = pTP LIMIT 1;
 END :)  
 DELIMITER ;
 
 -- retrieve type of a babl entry
--- CALL getBablTp(<id>);
 DROP PROCEDURE IF EXISTS getBablTp;
 DELIMITER :)  
 CREATE PROCEDURE getBablTp(pID INT)  
 BEGIN
-    SELECT TP FROM BABL_TPS WHERE ID = pID LIMIT 1;
+    SELECT TP FROM BABL_ITEM WHERE ID = pID LIMIT 1;
 END :)  
 DELIMITER ;
 
--- create new babl entry
--- CALL newBabl(<id>, <tp>);
+-- create new babl item
 DROP PROCEDURE IF EXISTS newBabl; 
 DELIMITER :)  
 CREATE PROCEDURE newBabl(pID INT, pTP CHAR(2))  
 BEGIN
-    INSERT INTO BABL_TPS VALUES (pID, pTP);
+    INSERT INTO BABL_ITEM VALUES (pID, pTP);
 END :)  
 DELIMITER ;
 
 -- retrieve all language elements of a type 
--- CALL getBablTable(<tp>);
 DROP PROCEDURE IF EXISTS getBablTable;
 DELIMITER :)  
 CREATE PROCEDURE getBablTable(pTP CHAR(2))  
 BEGIN
     SELECT B.ID, B.ILC, B.LABEL 
-    FROM BABL as B
-        INNER JOIN BABL_TPS as T
+    FROM BABL_ELEM as B
+        INNER JOIN BABL_ITEM as T
         ON B.ID = T.ID 
         INNER JOIN LANG as L 
         ON B.ILC = L.ILC
@@ -181,13 +199,12 @@ END :)
 DELIMITER ;
 
 -- retrieve language element by ID
--- CALL getBabl(<id>);
 DROP PROCEDURE IF EXISTS getBabl; 
 DELIMITER :)  
 CREATE PROCEDURE getBabl(pID INT)  
 BEGIN
     SELECT L.ILC, B.LABEL
-    FROM BABL as B INNER JOIN LANG as L 
+    FROM BABL_ELEM as B INNER JOIN LANG as L 
     ON B.ILC = L.ILC 
     WHERE B.ID = pID
     ORDER BY L.ORD;
@@ -205,26 +222,47 @@ CREATE PROCEDURE setBabl(
     pLABEL VARCHAR(128)) 
 BEGIN
     IF pLABEL = '' THEN
-        DELETE FROM BABL WHERE ID = pID AND ILC = pILC;
+        DELETE FROM BABL_ELEM WHERE ID = pID AND ILC = pILC;
     ELSE
-        REPLACE INTO BABL() VALUES (pID, pILC, pLABEL);
+        REPLACE INTO BABL_ELEM() VALUES (pID, pILC, pLABEL);
     END IF;
 END :)  
+DELIMITER ;
 
--- Reserve an Artifact and Retrieve ID:
--- SELECT getNewArtId();
-DROP FUNCTION IF EXISTS getNewArtId;  
+-- ============================================================
+-- images
+-- ============================================================
+-- create new image element
+DROP PROCEDURE IF EXISTS addImg;
 DELIMITER :)  
-CREATE FUNCTION getNewArtId()  
-RETURNS INT
+CREATE PROCEDURE addImg(pID INT)
 BEGIN
-    INSERT INTO ART() VALUES();
-    RETURN LAST_INSERT_ID();
+    REPLACE INTO IMG(ID) VALUES (pID);
 END :)  
-DELIMITER ; 
+DELIMITER ;
 
--- Retrieve a Sequence Value:
--- SELECT nextSeq(<label>);
+-- create new objet image assignment
+DROP PROCEDURE IF EXISTS addObjectImg;
+DELIMITER :)  
+CREATE PROCEDURE addObjectImg(pOBJECT INT, pIMG INT)
+BEGIN
+    DECLARE vORD INT;
+
+    SELECT max(ORD) FROM OBJECT_IMG
+    WHERE OBJECT = pOBJECT AND IMG = pIMG
+    INTO @vORD;
+
+    SET @vORD = IFNULL(@vORD, -1);
+    SET @vORD = @vORD + 1;
+
+    REPLACE INTO OBJECT_IMG VALUES (pOBJECT, pIMG, @vORD);
+END :)  
+DELIMITER ;
+
+-- ============================================================
+-- sequences
+-- ============================================================
+-- retrieve next sequence value:
 DROP FUNCTION IF EXISTS nextSeq;  
 DELIMITER :)  
 CREATE FUNCTION nextSeq(pLABEL VARCHAR(16))
@@ -232,10 +270,10 @@ RETURNS INT
 BEGIN  
     DECLARE vNUM INT;  
 
-    SELECT NUM FROM SEQ WHERE (UPPER(LABEL) = UPPER(pLABEL)) INTO @vNUM;  
+    SELECT NUM FROM SEQ WHERE (LABEL = pLABEL) INTO @vNUM;  
 
     SET @vNUM = @vNUM + 1;
-    UPDATE SEQ SET NUM = @vNUM WHERE (UPPER(LABEL) = UPPER(pLABEL));
+    UPDATE SEQ SET NUM = @vNUM WHERE (LABEL = pLABEL);
 
     RETURN @vNUM;
 END :)  
@@ -250,12 +288,12 @@ BEGIN
     DECLARE num INT;
     DELETE FROM SEQ; 
 
-    -- ART.ID
-    SELECT max(ID) FROM ART INTO @num;
-    INSERT INTO SEQ VALUES ('ART', IFNULL(@num, 0));
+    -- OBJECT.ID
+    SELECT max(ID) FROM OBJECT INTO @num;
+    INSERT INTO SEQ VALUES ('OBJECT', IFNULL(@num, 0));
 
-    -- BABL.ID
-    SELECT max(ID) FROM BABL_TPS INTO @num;
+    -- BABL_ITEM.ID
+    SELECT max(ID) FROM BABL_ITEM INTO @num;
     INSERT INTO SEQ VALUES ('BABL', IFNULL(@num, 0));
 
     -- IMG.ID
@@ -315,7 +353,7 @@ INSERT INTO LANG VALUES
 -- C caption
 -- W what ist is
 -- M make / techniqe of artpiece
-INSERT INTO BABL_TP(TP, LABEL) VALUES
+INSERT INTO BABL_TYPE(TP, LABEL) VALUES
     ('ST', 'Standard Titles'),
     ('CA', 'Website Captions'),
     ('TP', 'Element Types'),
@@ -323,7 +361,7 @@ INSERT INTO BABL_TP(TP, LABEL) VALUES
 ;
 
 -- Captions
-INSERT INTO BABL_TPS VALUES
+INSERT INTO BABL_ITEM VALUES
     (1, 'CA'),
     (2, 'CA'),
     (3, 'CA'),
@@ -334,7 +372,7 @@ INSERT INTO BABL_TPS VALUES
     (8, 'CA')
 ;
 
-INSERT INTO BABL(ID, LABEL) VALUES
+INSERT INTO BABL_ELEM(ID, LABEL) VALUES
     (1, 'Year'),
     (2, 'Exhibitions'),
     (3, 'Location'),
@@ -345,7 +383,7 @@ INSERT INTO BABL(ID, LABEL) VALUES
     (8, 'Technique')
 ;
 
-INSERT INTO BABL_TPS VALUES
+INSERT INTO BABL_ITEM VALUES
     (20, 'CA'),
     (21, 'CA'),
     (22, 'CA'),
@@ -354,7 +392,7 @@ INSERT INTO BABL_TPS VALUES
     (25, 'CA')
 ;
 
-INSERT INTO BABL VALUES
+INSERT INTO BABL_ELEM VALUES
     (20, 'en', 'File'),
     (20, 'fr', 'Fiche'),
     (20, 'de', 'Datei'),
@@ -366,7 +404,7 @@ INSERT INTO BABL VALUES
 ;
 
 -- Make
-INSERT INTO BABL_TPS VALUES
+INSERT INTO BABL_ITEM VALUES
     (31, 'TQ'),
     (32, 'TQ'),
     (33, 'TQ'),
@@ -376,7 +414,7 @@ INSERT INTO BABL_TPS VALUES
     (37, 'TQ')
 ;
 
-INSERT INTO BABL(ID, LABEL) VALUES
+INSERT INTO BABL_ELEM(ID, LABEL) VALUES
     (31, 'Book'),
     (32, 'Print'),
     (33, 'Skulpture'),
@@ -384,6 +422,11 @@ INSERT INTO BABL(ID, LABEL) VALUES
     (35, 'Screen Print'),
     (36, 'Water Colour'),
     (37, 'Catalogue')
+;
+
+-- our only article
+INSERT INTO ARTICLE(ID) VALUES
+    (4711)
 ;
 
 -- Some Authors
