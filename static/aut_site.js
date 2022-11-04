@@ -92,6 +92,23 @@ function uploadFiles(inp, route)
         if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
         {
             console.log('ajax return');
+            console.log(this.responseText);
+            let r = document.getElementById('result');
+            while (r.firstChild)
+            {
+                r.removeChild(r.firstChild);
+            }
+
+            let data =  JSON.parse(this.responseText)
+            for (let el in data)
+            {
+                console.log(data[el]);
+                let p = document.createElement("p");
+                let i = document.createElement("img");
+                i.src = data[el];
+                p.appendChild(i);
+                r.appendChild(p);
+            }
         }
     };
 
@@ -101,7 +118,6 @@ function uploadFiles(inp, route)
     {
         fd.append('files', inp.files[n])
     }
-    var data = new FormData(form);
     xhr.open('POST', route, true);
-    xhr.send(data);
+    xhr.send(fd);
 }

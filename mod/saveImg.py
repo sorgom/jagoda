@@ -46,7 +46,7 @@ def _corrExif(val):
 def _getExif(img, srcFileName:str):
     exif = img.getexif()
     if exif:
-        print('exif:', type(exif))
+        # print('exif:', type(exif))
         for k, v in exif.items():
             v = _corrExif(v)
             if not v:
@@ -62,12 +62,18 @@ def _saveImg(img, fpath, size, quality, exif):
     img.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
     img.save(fpath, quality=quality, exif=exif)
 
-def saveImg(file, id) -> str:
+def validImageName(filename:str) -> bool:
+    ext = _ext(filename)
+    if ext and ext.lower() in ALLOWED_EXTENSIONS:
+        return True
+    return False
+
+def saveImg(file, id) -> bool:
     ext = _ext(file.filename)
     if ext and _allowedImgExt(ext):
         with Image.open(file) as img1:
-            print('processing: ', file.filename)
-            print(dir(file))
+            # print('processing: ', file.filename)
+            # print(dir(file))
             file.save(_pathSaveOrig(id, ext))
             exif = _getExif(img1, file.filename)
             img2 = img1.copy()

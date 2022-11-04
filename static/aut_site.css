@@ -131,9 +131,21 @@ div.buttons {
     text-align: right;
 }
 
-/* div#menu {
+/*  ===================================================
+    image display
+    ===================================================*/
+div.imgDisplay > p {
+    display: flex;
+    float: left;
+    width: 160px;
+    height: 160px;
+    margin: 0 5px 5px 0;
     background-color: lightgray;
-} */
+    justify-content: center;
+    align-items: center;
+    /* vertical-align: middle;
+    text-align: center; */
+}
 
 div.menu > div {
     float: left;

@@ -3,7 +3,7 @@
 from glob import glob
 import re
 from os import path
-from utilz import cleanFile
+from mod.utilz import cleanFile
 
 TEMPLATES_FOLDER = 'templates'
 

@@ -1,36 +1,47 @@
 from flask import Flask, request, redirect, render_template
+import json
 
-from mod.saveImg import saveImg, checkImgFolders
+from mod.MyDB import MyDB
+from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
+from mod.saveImg import checkImgFolders, validImageName, saveImg, getImgMini
 
-# This doesn't work
-# counter is 0 with every application restart
-IMAGE_NUM = 0
+app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
-app = Flask(__name__, template_folder='templates')
+# secret string for session cooky
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
+app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_USER'] = 'aut'
+app.config['MYSQL_PASSWORD'] = 'aa'
+app.config['MYSQL_DB'] = 'jagoda'
+
+mydb = MyDB(app)
 
 def preStart():
     checkImgFolders()
 
-def nextID():
-    # see init of IMAGE_NUM
-    global IMAGE_NUM
-    IMAGE_NUM += 1
-    return IMAGE_NUM
-
 @app.route('/')
 def index():
-    return render_template('ajax_upload.htm', id=332332)
+    return render_template('ajax_upload.htm', id=4711)
 
 
 @app.route('/upload/<int:id>', methods=['GET', 'POST'])
 def upload_file(id:int):
     if request.method == 'POST':
         print('AJAX POST')
+        res = []
         files = request.files.getlist('files')
         for file in files:
             print(file.filename)
-            #  saveImg(file, nextID()) 
-        return redirect('/')
+            if validImageName(file.filename):
+                imgId = mydb.getNextImgId()
+                print('imgId:', imgId)
+                if saveImg(file, imgId):
+                    res.append(getImgMini(imgId))
+
+        ret = json.dumps(res)
+        print('ret:', ret)
+        return ret
     return render_template('ajax_upload.htm')
 
 if __name__ == '__main__':
