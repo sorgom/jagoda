@@ -301,6 +301,8 @@ CREATE PROCEDURE addObjectImg(pOBJECT INT, pIMG INT)
 BEGIN
     DECLARE vORD INT;
 
+    REPLACE INTO IMG VALUES(pIMG); 
+    
     SELECT max(ORD) FROM OBJECT_IMG
     WHERE OBJECT = pOBJECT AND IMG = pIMG
     INTO @vORD;
@@ -312,7 +314,21 @@ BEGIN
 END :)  
 DELIMITER ;
 
+-- retrieve all images of an object
+DROP PROCEDURE IF EXISTS getObjectImgs;
+DELIMITER :)  
+CREATE PROCEDURE getObjectImgs(pOBJECT INT)
+BEGIN
+    SELECT IMG, ORD FROM OBJECT_IMG
+    WHERE OBJECT = pOBJECT
+    ORDER BY ORD;
+END :)  
+DELIMITER ;
 
+
+-- ============================================================
+-- authors
+-- ============================================================
 -- add / modify an Author
 DROP PROCEDURE IF EXISTS setAut;  
 DELIMITER :)  
@@ -360,10 +376,7 @@ GRANT EXECUTE ON PROCEDURE jagoda.newLangItem   TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.setLangElem   TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.addImg        TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.addObjectImg  TO 'aut'@'%';
-
-
-
-GRANT EXECUTE ON PROCEDURE jagoda.initSeq TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getObjectImgs TO 'aut'@'%';
 
 -- TODO: user type: viewer with login
 

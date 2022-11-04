@@ -6,10 +6,13 @@
   <link rel="stylesheet" href="/static/aut_site.css"> 
  </head> 
  <body>
-  <input type="file" multiple onchange="uploadFiles(this, '/upload/{{id}}');"/> 
-  <h2>Result</h2>
-  <div id="result" class="imgDisplay"></div>
-
+  <h2>Images</h2>
+  <div class="imgOutline">
+    <div id="result" class="imgDisplay"></div>
+    <div class="imgEnd"></div>
+  </div>
+  <label for="upload">Add New Images</label>
+  <input type="file" multiple onchange="uploadFiles(this, '/upload/{{id}}');" accept="image/jpeg" name="upload">
   <script src="/static/aut_site.js"></script>
  </body> 
 </html>

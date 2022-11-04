@@ -92,7 +92,6 @@ function uploadFiles(inp, route)
         if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
         {
             console.log('ajax return');
-            console.log(this.responseText);
             let r = document.getElementById('result');
             while (r.firstChild)
             {
@@ -100,15 +99,18 @@ function uploadFiles(inp, route)
             }
 
             let data =  JSON.parse(this.responseText)
-            for (let el in data)
+            for (let n in data)
             {
-                console.log(data[el]);
-                let p = document.createElement("p");
-                let i = document.createElement("img");
-                i.src = data[el];
-                p.appendChild(i);
-                r.appendChild(p);
+                console.log(data[n]);
+                let e = data[n];
+                let i = document.createElement('img');
+                i.src = e['src'];
+                i.ord = e['ord'];
+                let d = document.createElement('div');
+                d.appendChild(i);
+                r.appendChild(d);
             }
+            inp.value = null;
         }
     };
 

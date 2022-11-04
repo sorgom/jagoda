@@ -65,6 +65,17 @@ class MyDB(MySQL):
     def getNextImgId(self) -> int:
         return self.nextSeq('IMG')
 
+    def addObjectImg(self, objId:int, imgId:int):
+        self.call(f'CALL addObjectImg({objId}, {imgId});')
+
+    def getObjectImgs(self, id:int):
+        return [ 
+            { 'id': id, 'ord': ord } for
+            id, ord in 
+            self.get(f'CALL getObjectImgs({id});')
+        ]
+        
+
     ## subs
 
     def get(self, sql:str, commit=False):

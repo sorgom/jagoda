@@ -24,6 +24,18 @@ def preStart():
 def index():
     return render_template('ajax_upload.htm', id=4711)
 
+@app.route('/_imgs/<int:id>')
+def _objImgs(id:int):
+    res = []
+    imgs = mydb.getObjectImgs(id)
+    for img in imgs:
+        src = getImgMini(img['id'])
+        if src:
+            img['src'] = src
+            res.append(img)
+    ret = json.dumps(res)
+    print('ret:', ret)
+    return ret
 
 @app.route('/upload/<int:id>', methods=['GET', 'POST'])
 def upload_file(id:int):
@@ -35,13 +47,10 @@ def upload_file(id:int):
             print(file.filename)
             if validImageName(file.filename):
                 imgId = mydb.getNextImgId()
-                print('imgId:', imgId)
                 if saveImg(file, imgId):
-                    res.append(getImgMini(imgId))
+                    mydb.addObjectImg(id, imgId)
 
-        ret = json.dumps(res)
-        print('ret:', ret)
-        return ret
+        return _objImgs(id)
     return render_template('ajax_upload.htm')
 
 if __name__ == '__main__':
