@@ -68,7 +68,7 @@ def validImageName(filename:str) -> bool:
         return True
     return False
 
-def saveImg(file, id) -> bool:
+def saveImg(file, id):
     ext = _ext(file.filename)
     if ext and _allowedImgExt(ext):
         with Image.open(file) as img1:
@@ -78,9 +78,10 @@ def saveImg(file, id) -> bool:
             exif = _getExif(img1, file.filename)
             img2 = img1.copy()
             _saveImg(img1, _pathFull(id), SIZE_FULL, QUALY_FULL, exif)
-            _saveImg(img2, _pathMini(id), SIZE_MINI, QUALY_MINI, exif)
-            return True
-    return False
+            miniPath = _pathMini(id)
+            _saveImg(img2, miniPath, SIZE_MINI, QUALY_MINI, exif)
+            return miniPath
+    return None
 
 def _allImg(folder):
     return glob(path.join(folder, f'*.{EXT_OUT}'))

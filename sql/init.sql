@@ -325,6 +325,15 @@ BEGIN
 END :)  
 DELIMITER ;
 
+-- alter object image assignment
+DROP PROCEDURE IF EXISTS setObjectImg;
+DELIMITER :)  
+CREATE PROCEDURE setObjectImg(pOBJECT INT, pIMG INT, pORD INT)
+BEGIN
+    REPLACE INTO OBJECT_IMG VALUES (pOBJECT, pIMG, pORD);
+END :)  
+DELIMITER ;
+
 
 -- ============================================================
 -- authors
@@ -376,6 +385,7 @@ GRANT EXECUTE ON PROCEDURE jagoda.newLangItem   TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.setLangElem   TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.addImg        TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.addObjectImg  TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.setObjectImg  TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.getObjectImgs TO 'aut'@'%';
 
 -- TODO: user type: viewer with login

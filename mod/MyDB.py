@@ -70,11 +70,11 @@ class MyDB(MySQL):
 
     def getObjectImgs(self, id:int):
         return [ 
-            { 'id': id, 'ord': ord } for
-            id, ord in 
-            self.get(f'CALL getObjectImgs({id});')
+            { 'id': id, 'ord': ord } for id, ord in self.get(f'CALL getObjectImgs({id});')
         ]
-        
+    
+    def setObjImg(self, objId:int, imgId:int, ord:int):
+        self.call(f'CALL setObjectImg({objId}, {imgId}, {ord});')
 
     ## subs
 

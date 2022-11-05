@@ -37,21 +37,31 @@ def _objImgs(id:int):
     print('ret:', ret)
     return ret
 
-@app.route('/upload/<int:id>', methods=['GET', 'POST'])
-def upload_file(id:int):
-    if request.method == 'POST':
-        print('AJAX POST')
-        res = []
-        files = request.files.getlist('files')
-        for file in files:
-            print(file.filename)
-            if validImageName(file.filename):
-                imgId = mydb.getNextImgId()
-                if saveImg(file, imgId):
-                    mydb.addObjectImg(id, imgId)
+@app.route('/_addimgs/<int:id>', methods=['POST'])
+def _addImgs(id:int):
+    print('_addimgs')
+    res = []
+    files = request.files.getlist('files')
+    for file in files:
+        print(file.filename)
+        if validImageName(file.filename):
+            imgId = mydb.getNextImgId()
+            src = saveImg(file, imgId)
+            if src:
+                mydb.addObjectImg(id, imgId)
+                res.append({ 'id': imgId, 'src':src })
+    ret = json.dumps(res)
+    print('ret:', ret)
+    return ret
 
-        return _objImgs(id)
-    return render_template('ajax_upload.htm')
+@app.route('/_orderimgs/<int:id>', methods=['POST'])
+def _orderImgs(id:int):
+    print('_orderImgs', id)
+    for imgId, ord in json.loads(request.form.get('json')):
+        print(id, imgId, ord)
+        mydb.setObjImg(id, imgId, ord)
+    return 'done.'
+
 
 if __name__ == '__main__':
     preStart()

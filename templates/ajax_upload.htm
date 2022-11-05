@@ -5,14 +5,14 @@
   <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" >
   <link rel="stylesheet" href="/static/aut_site.css"> 
  </head> 
- <body>
+ <body onload="loadImages('result', {{id}});">
   <h2>Images</h2>
   <div class="imgOutline">
     <div id="result" class="imgDisplay"></div>
     <div class="imgEnd"></div>
   </div>
   <label for="upload">Add New Images</label>
-  <input type="file" multiple onchange="uploadFiles(this, '/upload/{{id}}');" accept="image/jpeg" name="upload">
+  <input type="file" multiple onchange="uploadImages(this, 'result', {{id}});" accept="image/jpeg" name="upload">
   <script src="/static/aut_site.js"></script>
  </body> 
 </html>
