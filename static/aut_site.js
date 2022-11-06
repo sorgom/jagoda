@@ -220,7 +220,7 @@ function addImgEnd(target)
     dr.ondrop = rmImg;
     dr.ondragover = dragOverImg;
     dr.className = 'imgrm';
-    dr.innerHTML = 'DEL';
+    dr.innerHTML = 'REMOVE';
     target.appendChild(dr);
 }
 
@@ -232,11 +232,11 @@ function removeEnd(target)
     nodes.forEach(e => { target.removeChild(e); });
 }
 
-function displayImages(target, json, drop)
+function displayImgs(target, json, drop)
 {
     if (target)
     {
-        debug('displayImages');
+        debug('displayImgs');
         clean(target);
         addImgs(target, json, drop);
     }
@@ -257,20 +257,20 @@ function addImgs(target, json, drop)
     }
 }
 
-function loadImages(trgId, id)
+function loadObjImgs(trgId, id)
 {
-    debug('loadImages: ' + id);
+    debug('loadImgs: ' + id);
     let target = geti(trgId);
     if (target)
     {
         target.objId = id;
-        getAjax('/_imgs/' + id, rt => { displayImages(target, rt, true); });
+        getAjax('/_imgs/' + id, rt => { displayImgs(target, rt, true); });
     }
 }
 
-function uploadImages(inp, trgId, id)
+function uploadImgs(inp, trgId, id)
 {
-    debug('uploadImages: ' + id);
+    debug('uploadImgs: ' + id);
     let target = geti(trgId);
     if (!target) return;
     let objId = target.objId;
@@ -288,19 +288,6 @@ function uploadImages(inp, trgId, id)
     });
 }
 
-// function numImages(target)
-// {
-//     let objID = target.objId;
-//     let n = 0;
-//     if (objID)
-//     {
-//         target.childNodes.forEach(e => {
-//             if (e.imgId) ++n;
-//         })
-//     }
-//     return n;
-// }
-
 function sendImgOrder(target)
 {
     let objID = target.objId;
@@ -314,7 +301,6 @@ function sendImgOrder(target)
             let ord = e.ord;
             if (id && ord != n)
             {
-                debug('imgId: ' + id);
                 chg.push([id, n]);
                 e.ord = n;
             }

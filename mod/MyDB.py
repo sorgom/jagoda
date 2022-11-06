@@ -83,7 +83,9 @@ class MyDB(MySQL):
         self.call(f'CALL rmObjectImg({objId}, {imgId});')
 
     def getUnusedImgs(self):
-        return self.getFirstCol(f'CALL getUnusedImgs();')
+        return [ 
+            { 'id': id, 'ord': -1 } for id in self.getFirstCol(f'CALL getUnusedImgs();')
+        ]
 
     ## subs
 

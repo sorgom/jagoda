@@ -85,6 +85,20 @@ def _rmImg():
     mydb.rmObjectImg(request.form.get('objId'), request.form.get('imgId'))
     return 'done.'
 
+@app.route('/_unusedimgs')
+def _unusedimgs():
+    res = []
+    imgs = mydb.getUnusedImgs()
+    for img in imgs:
+        src = getImgMini(img['id'])
+        if src:
+            img['src'] = src
+            res.append(img)
+    ret = mkJson(res)
+    print('ret:', ret)
+    return ret
+
+
 if __name__ == '__main__':
     preStart()
     app.run(host="localhost", port=8001, debug=True)

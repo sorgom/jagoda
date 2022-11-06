@@ -5,19 +5,19 @@
         <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" >
         <link rel="stylesheet" href="/static/aut_site.css"> 
     </head> 
-    <body onload="loadImages('objectImages', {{id}});">
-        <h1>Object No. {{id}}</h1>
-        <h2>Images of Object</h2>
-        <p class="label">Upload new Images from your PC (klick or drop):</p>
-        <input type="file" multiple onchange="uploadImages(this, 'objectImages', {{id}});" accept="image/jpeg" class="dropZone"/>
-        <p class="label">Re-order Images:</p>
+    <body onload="loadObjImgs('objImgs', {{id}});">
+        <h1>Object no. {{id}}</h1>
+        <h2>Images of object</h2>
+        <p class="label">Upload image files for object from your PC (klick or drag here):</p>
+        <input type="file" multiple onchange="uploadImgs(this, 'objImgs', {{id}});" accept="image/jpeg" class="dropZone"/>
+        <p class="label">Re-order images of object:</p>
         <div class="imgDisplayFrame">
-            <div id="objectImages" class="imgDisplay"></div>
+            <div id="objImgs" class="imgDisplay"></div>
             <div class="imgDisplayEnd"></div>
         </div>
-        <p class="label">Unassigned Images:</p>
+        <p class="label">Unassigned images (drag up to assign):</p>
         <div class="imgDisplayFrame">
-            <div id="freeImages" class="imgDisplay imgDisplayFix"></div>
+            <div id="freeImgs" class="imgDisplay imgDisplayFix"></div>
             <div class="imgDisplayEnd"></div>
         </div>
         <script src="/static/aut_site.js"></script>

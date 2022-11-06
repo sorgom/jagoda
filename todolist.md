@@ -65,6 +65,7 @@
 - the application session secret has to be set in MySQL DB by root
 
 ## image processing
+- limit number of images
 
 # doing
 
