@@ -334,6 +334,38 @@ BEGIN
 END :)  
 DELIMITER ;
 
+-- remove image from object
+DROP PROCEDURE IF EXISTS rmObjectImg;
+DELIMITER :)  
+CREATE PROCEDURE rmObjectImg(pOBJECT INT, pIMG INT)
+BEGIN
+    DELETE FROM OBJECT_IMG WHERE OBJECT = pOBJECT AND IMG = pIMG;
+END :)  
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS getNumObjectImgs;  
+DELIMITER :)  
+CREATE FUNCTION getNumObjectImgs(pOBJECT INT)
+RETURNS INT
+BEGIN  
+    DECLARE vNUM INT;  
+    SELECT count(*) FROM OBJECT_IMG WHERE (OBJECT = pOBJECT) INTO @vNUM;  
+    RETURN @vNUM;
+END :)  
+DELIMITER ;
+
+-- retrieve all unassigned images
+DROP PROCEDURE IF EXISTS getUnusedImgs;
+DELIMITER :)  
+CREATE PROCEDURE getUnusedImgs()
+BEGIN
+    SELECT I.ID FROM IMG AS I
+    LEFT JOIN  OBJECT_IMG AS OI 
+    ON OI.IMG = I.ID
+    WHERE OI.IMG IS NULL
+    ORDER BY I.ID;
+END :)  
+DELIMITER ;
 
 -- ============================================================
 -- authors
@@ -387,6 +419,9 @@ GRANT EXECUTE ON PROCEDURE jagoda.addImg        TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.addObjectImg  TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.setObjectImg  TO 'aut'@'%';
 GRANT EXECUTE ON PROCEDURE jagoda.getObjectImgs TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.rmObjectImg   TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE jagoda.getUnusedImgs TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION  jagoda.getNumObjectImgs TO 'aut'@'%';
 
 -- TODO: user type: viewer with login
 

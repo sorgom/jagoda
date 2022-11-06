@@ -47,6 +47,9 @@ a:visited,a:active,a:link {
 }
 
 /*  ===================================================
+    drag & drop
+    ===================================================*/
+/*  ===================================================
     content
     ===================================================*/
 #content {
@@ -134,15 +137,34 @@ div.buttons {
 /*  ===================================================
     image display
     ===================================================*/
-input[type='file'] {
+/* input[type='file'] {
     color: transparent;
     font-display: none;
     width: 500px;
+} */
+
+.label {
+    margin-bottom: 2px;
 }
 
-div.imgOutline {
+.dropZone{
+    display: block;
+    color: transparent;
+    width: 100%;
+    height: 50px;
+    background-color: lightgray;
+    border: 1px solid black;
+    cursor: pointer;
+    /* background-position: center;
+    background-size: cover; */
+    /* box-sizing: border-box; */
+}
+
+div.imgDisplayFrame {
+    width: 100%;
     border: 1px solid black;
     min-height: 164px;
+    background-color: lightgray;
 }
 
 div.imgDisplay > div {
@@ -150,9 +172,9 @@ div.imgDisplay > div {
     float: left;
     width: 170px;
     height: 170px;
-    /* margin: 0 5px 5px 0; */
     margin: 2px;
-    border: 1px solid lightgray;
+    border: 1px solid;
+    border-color: white darkgray darkgray white;
     /* background-color: lightgray; */
     justify-content: center;
     align-items: center;
@@ -160,8 +182,22 @@ div.imgDisplay > div {
     text-align: center; */
 }
 
-div.imgEnd {
+.imgDisplayFix {
+    max-height: 350px;
+    overflow-Y: auto;
+}
+
+div.imgDisplayEnd {
     clear: both;
+}
+
+/* div.imgDisplay > div.imgrm,
+div.imgDisplay > div.imgend {
+    width: 80px;
+} */
+
+.imgrm {
+    background-color: orange;
 }
 
 

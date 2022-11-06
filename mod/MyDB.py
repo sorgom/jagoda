@@ -72,9 +72,18 @@ class MyDB(MySQL):
         return [ 
             { 'id': id, 'ord': ord } for id, ord in self.get(f'CALL getObjectImgs({id});')
         ]
-    
-    def setObjImg(self, objId:int, imgId:int, ord:int):
+
+    def getNumObjectImgs(self, id:int):
+        return self.getNum(f'SELECT getNumObjectImgs({id});')
+
+    def setObjectImg(self, objId:int, imgId:int, ord:int):
         self.call(f'CALL setObjectImg({objId}, {imgId}, {ord});')
+
+    def rmObjectImg(self, objId:int, imgId:int):
+        self.call(f'CALL rmObjectImg({objId}, {imgId});')
+
+    def getUnusedImgs(self):
+        return self.getFirstCol(f'CALL getUnusedImgs();')
 
     ## subs
 
@@ -94,6 +103,9 @@ class MyDB(MySQL):
     
     def getNum(self, sql:str, *args) -> int:
         return int(self.getOne(sql, *args))
+
+    def getFirstCol(self, sql:str, *args):
+        return [ r[0] for r in self.get(sql, *args) ]
 
     def call(self, sql:str):
         cursor = self.connection.cursor()

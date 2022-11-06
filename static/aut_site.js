@@ -9,6 +9,56 @@ function debug(str)
     console.log(str);
 }
 
+function clean(target)
+{
+    while (target.firstChild)
+    {
+        target.removeChild(target.firstChild);
+    }
+}
+
+function postAjax(fdata, route, func)
+{
+    debug('postAjax: ' + route);
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
+        {
+            debug('postAjax return');
+            func(this.responseText);
+        }
+    };
+    xhr.open('POST', route, true);
+    xhr.send(fdata);
+}
+
+function postJson(data, route, func)
+{
+    const js = JSON.stringify(data);
+    debug('json: ' + js);
+    let fd = new FormData();
+    fd.set('json', js);
+    postAjax(fd, route, func);
+}
+
+function getAjax(route, func)
+{
+    debug('getAjax: ' + route);
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
+        {
+            debug('getAjax return');
+            func(this.responseText);
+        }
+    };
+    xhr.open('GET', route, true);
+    xhr.send();
+}
+
+
 function closePopup()
 {
     debug('closePopup');
@@ -37,18 +87,14 @@ function showPopup()
 function popup(route)
 {
     debug('popup: ' + route);
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function()
-    {
-        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
+    getAjax(route, rt => {
+        let pc = geti('popup_content');
+        let pf = geti('popup_form');
+        if (pc && pf)
         {
-            debug('ajax return');
-            geti('popup_content').innerHTML = this.responseText;
+            pc.innerHTML = rt;
             showPopup()
-            var areas = geti('popup_form').querySelectorAll('textarea');
-            for (var a of areas)
+            for (let a of pf.querySelectorAll('textarea'))
             {
                 if (a.value == '')
                 {
@@ -57,82 +103,95 @@ function popup(route)
                 }
             }
         }
-    };
-
-    xhr.open('GET', route, true);
-    xhr.send();
+    });
 }
 
 function submitPopup(route)
 {
-    debug('processPopup: ' + route);
-
-    var form = geti('popup_form');
+    debug('submitPopup: ' + route);
+    let form = geti('popup_form');
+    if  (!form) return;
     if (form.querySelector(':invalid'))
     {
-        debug('no content!');
-        return false;
+        debug('missing content');
+        return;
     }
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function()
-    {
-        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
-        {
-            debug('ajax return');
-            geti('content').innerHTML = this.responseText;
-            closePopup()
-        }
-    };
-
-    var data = new FormData(form);
-    xhr.open('POST', route, true);
-    xhr.send(data);
-    return false;
+    postAjax(route, new FormData(form), rt => {
+        let ct = geti('content');
+        if (ct) ct.innerHTML = rt;
+        closePopup();
+    });
 }
 
 function dragImg(ev)
 {
     debug('dragImg');
-    ev.dataTransfer.setData('text', ev.target.parentNode.id);
+    ev.dataTransfer.setData('id',  this.parentNode.id);
+    ev.dataTransfer.setData('par', this.parentNode.parentNode.id);
 }
 
-function dropImg(ev)
+function otherDragSrc(node, ev)
 {
-    debug('dropImg');
+    let parid = ev.dataTransfer.getData('par');
+    return parid !== node.parentNode.id;
+}
+
+function placeImg(ev)
+{
+    debug('placeImg');
     ev.preventDefault();
-    let srcid = ev.dataTransfer.getData('text');
-    let src = geti(srcid);
+    if (otherDragSrc(this, ev)) 
+    {
+        // TODO: handle drag from other selection
+        return;
+    }
+    let src = geti(ev.dataTransfer.getData('id'));
+    if (!src) return;
     debug('src: ' + src);
-    node = ev.target.tagName.toLowerCase() === 'img' ? ev.target.parentNode : ev.target;
-    debug('node: ' + node.tagName);
-    debug('id  : ' + node.imgId);
-    let par = node.parentNode;
-    par.insertBefore(src, node);
+    debug('id  : ' + this.imgId);
+    let par = this.parentNode;
+    par.insertBefore(src, this);
     sendImgOrder(par);
+}
+
+function rmImg(ev)
+{
+    debug('rmImg');
+    ev.preventDefault();
+    if (otherDragSrc(this, ev)) return;
+    let src = geti(ev.dataTransfer.getData('id'));
+    if (!src) return;
+    let par = this.parentNode;
+    let imgId = src.imgId;
+    let objId = par.objId;
+    debug('imgId: ' + imgId);
+    debug('objId: ' + objId);
+    if (imgId && objId && confirm('remove image?'))
+    {
+        let fd = new FormData();
+        fd.set('imgId', imgId);
+        fd.set('objId', objId);
+        postAjax(fd, '/_rmimg', rt => {
+            par.removeChild(src);
+        })
+    }
 }
 
 function dragOverImg(ev)
 {
-    // debug('dragOverImg');
     ev.preventDefault();
 }
 
-function clean(target)
-{
-    while (target.firstChild)
-    {
-        target.removeChild(target.firstChild);
-    }
-}
 
-function addImg(target, e)
+function addImg(target, e, drop)
 {
     let d = document.createElement('div');
-    d.ondrop = dropImg;
-    d.ondragover = dragOverImg;
-    d.id = target.id + '_img_' + e['id'];
+    if (drop)
+    {
+        d.ondrop = placeImg;
+        d.ondragover = dragOverImg;
+    }
+    d.id = target.id + '_' + e['id'];
     d.imgId = e['id'];
     d.ord = e['ord'];
     debug('imgId: ' + d.id);
@@ -146,79 +205,56 @@ function addImg(target, e)
     target.appendChild(d);
 }
 
-function endId(target)
+// put at end position field
+function addImgEnd(target)
 {
-    return target.id + '__END';
-}
+    debug('addImgEnd');
+    let de = document.createElement('div');
+    de.ondrop = placeImg;
+    de.ondragover = dragOverImg;
+    de.className = 'imgend';
+    de.innerHTML = '@END';
+    target.appendChild(de);
 
-function addEnd(target)
-{
-    debug('addEnd');
-    let d = document.createElement('div');
-    d.ondrop = dropImg;
-    d.ondragover = dragOverImg;
-    d.className = 'imgend';
-    d.innerHTML = 'END';
-    d.id = endId(target);
-    target.appendChild(d);
+    let dr = document.createElement('div');
+    dr.ondrop = rmImg;
+    dr.ondragover = dragOverImg;
+    dr.className = 'imgrm';
+    dr.innerHTML = 'DEL';
+    target.appendChild(dr);
 }
 
 function removeEnd(target)
 {
-    end = geti(endId(target));
-    if (end)
+    debug('removeEnd')
+    let nodes = [];
+    target.childNodes.forEach(e => { if (!e.imgId) nodes.push(e); });
+    nodes.forEach(e => { target.removeChild(e); });
+}
+
+function displayImages(target, json, drop)
+{
+    if (target)
     {
-        target.removeChild(geti(endId(target)));
+        debug('displayImages');
+        clean(target);
+        addImgs(target, json, drop);
     }
 }
 
-function displayImages(target, json)
+function addImgs(target, json, drop)
 {
-    debug('displayImages');
-    clean(target);
-    addImgs(target, json);
-}
-
-function addImgs(target, json)
-{
-    debug('addImgs');
-    const data = JSON.parse(json);
-    removeEnd(target);
-    data.forEach(e => { addImg(target, e); });
-    addEnd(target);
-}
-
-
-function postAjax(fdata, route, func)
-{
-    debug('postAjax: ' + route);
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function()
+    if (target)
     {
-        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
-        {
-            debug('postAjax return');
-            func(this.responseText);
-        }
-    };
-    xhr.open('POST', route, true);
-    xhr.send(fdata);
-}
-
-function getAjax(route, func)
-{
-    debug('getAjax: ' + route);
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function()
-    {
-        if (this.readyState == XMLHttpRequest.DONE  && this.status == 200) 
-        {
-            debug('getAjax return');
-            func(this.responseText);
-        }
-    };
-    xhr.open('GET', route, true);
-    xhr.send();
+        debug('addImgs');
+        const ret = JSON.parse(json);
+        const data = ret['data'];
+        const msg  = ret['msg'];
+        removeEnd(target);
+        data.forEach(e => { addImg(target, e, drop); });
+        if (drop) addImgEnd(target);
+        if (msg) alert(msg);
+    }
 }
 
 function loadImages(trgId, id)
@@ -228,29 +264,42 @@ function loadImages(trgId, id)
     if (target)
     {
         target.objId = id;
-        target.loaded = true;
-        getAjax('/_imgs/' + id, rt => { displayImages(target, rt); });
+        getAjax('/_imgs/' + id, rt => { displayImages(target, rt, true); });
     }
 }
 
 function uploadImages(inp, trgId, id)
 {
     debug('uploadImages: ' + id);
+    let target = geti(trgId);
+    if (!target) return;
+    let objId = target.objId;
+    if (!objId) target.objId = id;
+    else if (objId !== id) return;
+
     let fd  = new FormData();
-    let num = inp.files.length;
-    for (let n = 0; n < num; ++n)
+    for (let f of inp.files)
     {
-        fd.append('files', inp.files[n])
+        fd.append('files', f);
     }
+    inp.value = null;
     postAjax(fd, '/_addimgs/' + id, rt => {
-        let target = geti(trgId);
-        if (target)
-        {
-            addImgs(target, rt);
-        }
-        inp.value = null;
+        addImgs(geti(trgId), rt, true);
     });
 }
+
+// function numImages(target)
+// {
+//     let objID = target.objId;
+//     let n = 0;
+//     if (objID)
+//     {
+//         target.childNodes.forEach(e => {
+//             if (e.imgId) ++n;
+//         })
+//     }
+//     return n;
+// }
 
 function sendImgOrder(target)
 {
@@ -261,24 +310,19 @@ function sendImgOrder(target)
         let chg = [];
         let n = 0;
         target.childNodes.forEach(e => {
-            let imgId  = e.imgId;
+            let id  = e.imgId;
             let ord = e.ord;
-            if (imgId && ord != n)
+            if (id && ord != n)
             {
-                debug('imgId: ' + imgId);
-                chg.push([imgId, n]);
+                debug('imgId: ' + id);
+                chg.push([id, n]);
                 e.ord = n;
             }
             ++n; 
         })
         if (chg.length > 0)
         {
-            const js = JSON.stringify(chg);
-            debug('json: ' + js);
-            let fd = new FormData();
-            fd.set('json', js);
-            postAjax(fd, '/_orderimgs/' + objID, rt => {
-            });
+            postJson(chg, '/_orderimgs/' + objID, rt => {});
         }
     }
 }
