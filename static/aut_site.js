@@ -228,20 +228,25 @@ function makeDrop(elem)
     elem.ondragover = dragOverImg;
 }
 
-function addImg(target, e, drop)
+function makeImg(target, e, drop)
 {
     let d = document.createElement('div');
     if (drop) makeDrop(d);
     d.id = target.id + '_' + e['id'];
     d.imgId = e['id'];
     d.ord = e['ord'];
-    debug('imgId: ' + d.id);
+    debug('id: ' + d.id);
     let i = document.createElement('img');
     i.src = e['src'];
     i.draggable = true;
     i.ondragstart = dragImg;
     d.appendChild(i);
-    target.appendChild(d);
+    return d;
+}
+
+function addImg(target, e, drop)
+{
+    target.appendChild(makeImg(target, e, drop));
 }
 
 // put at end position field
@@ -303,6 +308,45 @@ function addImgs(target, json, drop)
     }
 }
 
+function upateImgs(target, json, drop)
+{
+    if (target)
+    {
+        debug('upateImgs');
+        removeEnd(target);
+        const ret = JSON.parse(json);
+        let cns = [];
+        target.childNodes.forEach(cn => { cns.push(cn) });
+        const data = ret['data'];
+        data.forEach(e => {
+            let eId = e['id'];
+            while ((cns.length > 0) && (cns[0].imgId < eId))
+            {
+                target.removeChild(cns.shift());
+            }
+            if (cns.length === 0)
+            {
+                addImg(target, e, drop);
+            }
+            else if (cns[0].imgId === eId)
+            {
+                cns.shift();
+            }
+            else
+            {
+                target.insertBefore(makeImg(target, e, drop), cns[0]);
+            }
+        })
+        cns.forEach(cn => { target.removeChild(cn); });
+        if (drop) 
+        {
+            target.maxNumImgs = ret['max'];
+            addImgEnd(target);
+        }
+        if (ret['warn']) warnLimit(ret['max']);
+    }
+}
+
 function loadObjImgs(trgId, id)
 {
     debug('loadImgs: ' + id);
@@ -343,10 +387,6 @@ function loadUnusedImgs(trgId)
         document.unusedImgsContainer = target;
         reloadUnusedImgs();
     }
-
-    // getAjax('/_unusedimgs', rt => {
-    //     addImgs(target, rt, false);
-    // });
 }
 
 function reloadUnusedImgs()
@@ -355,12 +395,10 @@ function reloadUnusedImgs()
     let target = document.unusedImgsContainer;
     if (target)
     {
-        clean(target);
         getAjax('/_unusedimgs', rt => {
-            addImgs(target, rt, false);
+            upateImgs(target, rt, false);
         });
     }
-
 }
 
 function sendImgOrder(target)
