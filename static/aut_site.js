@@ -136,28 +136,66 @@ function otherDragSrc(node, ev)
     return parid !== node.parentNode.id;
 }
 
+function warnLimit(n)
+{
+    alert('number of images limited to ' + n);
+}
+
+function checkAdd(target, warn)
+{
+    if (target.maxNumImgs)
+    {
+        if (target.currNumImgs)
+        {
+            if (target.currNumImgs >= target.maxNumImgs)
+            {
+                if (warn) warnLimit(target.maxNumImgs);
+                return false;
+            }
+            else
+            {
+                ++target.currNumImgs;
+            }
+        }
+        else target.currNumImgs = 1;
+        console.log('currNumImgs: ' + target.currNumImgs);
+    }
+    return true;
+}
+
+// place image on image / end / rm element
 function placeImg(ev)
 {
     debug('placeImg');
     ev.preventDefault();
-    if (otherDragSrc(this, ev)) 
-    {
-        // TODO: handle drag from other selection
-        return;
-    }
+    ev.stopPropagation();
+    let par = this.parentNode;
+    let oth = otherDragSrc(this, ev);
+    if (oth && !checkAdd(par, true)) return;
     let src = geti(ev.dataTransfer.getData('id'));
     if (!src) return;
+    if (oth) makeDrop(src);
     debug('src: ' + src);
     debug('id  : ' + this.imgId);
-    let par = this.parentNode;
     par.insertBefore(src, this);
     sendImgOrder(par);
+}
+
+// drop into container
+function dropImg(ev)
+{
+    debug('dropImg');
+    if (this.endElem)
+    {
+        this.endElem.ondrop(ev);
+    }
 }
 
 function rmImg(ev)
 {
     debug('rmImg');
     ev.preventDefault();
+    ev.stopPropagation();
     if (otherDragSrc(this, ev)) return;
     let src = geti(ev.dataTransfer.getData('id'));
     if (!src) return;
@@ -166,13 +204,15 @@ function rmImg(ev)
     let objId = par.objId;
     debug('imgId: ' + imgId);
     debug('objId: ' + objId);
-    if (imgId && objId && confirm('remove image?'))
+    if (imgId && objId)
     {
         let fd = new FormData();
         fd.set('imgId', imgId);
         fd.set('objId', objId);
         postAjax(fd, '/_rmimg', rt => {
+            --par.currNumImgs;
             par.removeChild(src);
+            reloadUnusedImgs();
         })
     }
 }
@@ -182,21 +222,20 @@ function dragOverImg(ev)
     ev.preventDefault();
 }
 
+function makeDrop(elem)
+{
+    elem.ondrop = placeImg;
+    elem.ondragover = dragOverImg;
+}
 
 function addImg(target, e, drop)
 {
     let d = document.createElement('div');
-    if (drop)
-    {
-        d.ondrop = placeImg;
-        d.ondragover = dragOverImg;
-    }
+    if (drop) makeDrop(d);
     d.id = target.id + '_' + e['id'];
     d.imgId = e['id'];
     d.ord = e['ord'];
     debug('imgId: ' + d.id);
-    // d.innerHTML = d.imgId;
-
     let i = document.createElement('img');
     i.src = e['src'];
     i.draggable = true;
@@ -215,6 +254,10 @@ function addImgEnd(target)
     de.className = 'imgend';
     de.innerHTML = '@END';
     target.appendChild(de);
+
+    target.endElem = de;
+    target.ondrop = dropImg;
+    target.ondragover = dragOverImg;
 
     let dr = document.createElement('div');
     dr.ondrop = rmImg;
@@ -249,11 +292,14 @@ function addImgs(target, json, drop)
         debug('addImgs');
         const ret = JSON.parse(json);
         const data = ret['data'];
-        const msg  = ret['msg'];
+        const warn = ret['warn'];
+        if (drop) target.maxNumImgs = ret['max'];
         removeEnd(target);
-        data.forEach(e => { addImg(target, e, drop); });
+        data.forEach(e => {
+            if (checkAdd(target, false)) addImg(target, e, drop); 
+        });
         if (drop) addImgEnd(target);
-        if (msg) alert(msg);
+        if (warn) warnLimit(ret['max']);
     }
 }
 
@@ -284,8 +330,37 @@ function uploadImgs(inp, trgId, id)
     }
     inp.value = null;
     postAjax(fd, '/_addimgs/' + id, rt => {
-        addImgs(geti(trgId), rt, true);
+        addImgs(target, rt, true);
     });
+}
+
+function loadUnusedImgs(trgId)
+{
+    debug('loadUnusedImgs: ' + trgId);
+    let target = geti(trgId);
+    if (target)
+    {
+        document.unusedImgsContainer = target;
+        reloadUnusedImgs();
+    }
+
+    // getAjax('/_unusedimgs', rt => {
+    //     addImgs(target, rt, false);
+    // });
+}
+
+function reloadUnusedImgs()
+{
+    debug('reloadUnusedImgs');
+    let target = document.unusedImgsContainer;
+    if (target)
+    {
+        clean(target);
+        getAjax('/_unusedimgs', rt => {
+            addImgs(target, rt, false);
+        });
+    }
+
 }
 
 function sendImgOrder(target)

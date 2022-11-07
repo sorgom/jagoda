@@ -1,3 +1,5 @@
+#!python3
+
 from flask import Flask, request, redirect, render_template
 import json
 
@@ -26,8 +28,9 @@ def preStart():
 def getJson():
     return json.loads(request.form.get('json'))
 
-def mkJson(data, msg:str=''):
-    return json.dumps({ 'data':data, 'msg':msg})
+
+def mkJson(data, warn:bool=False):
+    return json.dumps({ 'data':data, 'warn':warn, 'max':MAX_NUM_IMGES})
 
 @app.route('/')
 def index():
@@ -52,13 +55,13 @@ def _addImgs(id:int):
     print('_addimgs')
     res = []
     num = mydb.getNumObjectImgs(id)
-    msg = ''
+    wrn = False
     print('existing images:', num)
     files = request.files.getlist('files')
     for file in files:
         num += 1
         if num > MAX_NUM_IMGES:
-            msg = f'number of images limited to {MAX_NUM_IMGES}'
+            wrn = True
             break
         print(file.filename)
         if validImageName(file.filename):
@@ -67,7 +70,7 @@ def _addImgs(id:int):
             if src:
                 mydb.addObjectImg(id, imgId)
                 res.append({ 'id': imgId, 'src':src })
-    ret = mkJson(res, msg)
+    ret = mkJson(res, wrn)
     print('ret:', ret)
     return ret
 

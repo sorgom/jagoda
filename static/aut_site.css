@@ -167,6 +167,10 @@ div.imgDisplayFrame {
     background-color: lightgray;
 }
 
+div.imgDisplay {
+    overflow-Y: auto;
+}
+
 div.imgDisplay > div {
     display: flex;
     float: left;
@@ -183,8 +187,7 @@ div.imgDisplay > div {
 }
 
 .imgDisplayFix {
-    max-height: 350px;
-    overflow-Y: auto;
+    height: 360px;
 }
 
 div.imgDisplayEnd {
