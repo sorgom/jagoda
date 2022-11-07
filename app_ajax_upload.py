@@ -29,8 +29,8 @@ def getJson():
     return json.loads(request.form.get('json'))
 
 
-def mkJson(data, warn:bool=False):
-    return json.dumps({ 'data':data, 'warn':warn, 'max':MAX_NUM_IMGES})
+def mkJson(data, withMax:bool=False):
+    return json.dumps({ 'data':data, 'max':MAX_NUM_IMGES if withMax else 0})
 
 @app.route('/')
 def index():
@@ -39,6 +39,7 @@ def index():
 
 @app.route('/_imgs/<int:id>')
 def _objImgs(id:int):
+    print('_objImgs:', id)
     res = []
     imgs = mydb.getObjectImgs(id)
     for img in imgs:
@@ -46,33 +47,20 @@ def _objImgs(id:int):
         if src:
             img['src'] = src
             res.append(img)
-    ret = mkJson(res)
+    ret = mkJson(res, True)
     print('ret:', ret)
     return ret
 
 @app.route('/_addimgs/<int:id>', methods=['POST'])
 def _addImgs(id:int):
-    print('_addimgs')
-    res = []
-    num = mydb.getNumObjectImgs(id)
-    wrn = False
-    print('existing images:', num)
+    print('_addimgs:', id)
     files = request.files.getlist('files')
     for file in files:
-        num += 1
-        if num > MAX_NUM_IMGES:
-            wrn = True
-            break
-        print(file.filename)
-        if validImageName(file.filename):
-            imgId = mydb.getNextImgId()
-            src = saveImg(file, imgId)
-            if src:
-                mydb.addObjectImg(id, imgId)
-                res.append({ 'id': imgId, 'src':src })
-    ret = mkJson(res, wrn)
-    print('ret:', ret)
-    return ret
+        imgId = mydb.getNextImgId()
+        src = saveImg(file, imgId)
+        if src:
+            mydb.addObjectImg(id, imgId)
+    return _objImgs(id)
 
 @app.route('/_orderimgs/<int:id>', methods=['POST'])
 def _orderImgs(id:int):
@@ -97,7 +85,7 @@ def _unusedimgs():
         if src:
             img['src'] = src
             res.append(img)
-    ret = mkJson(res)
+    ret = mkJson(res, False)
     print('ret:', ret)
     return ret
 

@@ -58,7 +58,6 @@ function getAjax(route, func)
     xhr.send();
 }
 
-
 function closePopup()
 {
     debug('closePopup');
@@ -136,33 +135,6 @@ function otherDragSrc(node, ev)
     return parid !== node.parentNode.id;
 }
 
-function warnLimit(n)
-{
-    alert('number of images limited to ' + n);
-}
-
-function checkAdd(target, warn)
-{
-    if (target.maxNumImgs)
-    {
-        if (target.currNumImgs)
-        {
-            if (target.currNumImgs >= target.maxNumImgs)
-            {
-                if (warn) warnLimit(target.maxNumImgs);
-                return false;
-            }
-            else
-            {
-                ++target.currNumImgs;
-            }
-        }
-        else target.currNumImgs = 1;
-        console.log('currNumImgs: ' + target.currNumImgs);
-    }
-    return true;
-}
-
 // place image on image / end / rm element
 function placeImg(ev)
 {
@@ -170,12 +142,12 @@ function placeImg(ev)
     ev.preventDefault();
     ev.stopPropagation();
     let par = this.parentNode;
-    let oth = otherDragSrc(this, ev);
-    if (oth && !checkAdd(par, true)) return;
     let src = geti(ev.dataTransfer.getData('id'));
     if (!src) return;
-    if (oth) makeDrop(src);
-    debug('src: ' + src);
+    if (otherDragSrc(this, ev))
+    {
+        makeDrop(src);
+    } 
     debug('id  : ' + this.imgId);
     par.insertBefore(src, this);
     sendImgOrder(par);
@@ -212,6 +184,7 @@ function rmImg(ev)
         postAjax(fd, '/_rmimg', rt => {
             --par.currNumImgs;
             par.removeChild(src);
+            markExceed(par);
             reloadUnusedImgs();
         })
     }
@@ -244,12 +217,7 @@ function makeImg(target, e, drop)
     return d;
 }
 
-function addImg(target, e, drop)
-{
-    target.appendChild(makeImg(target, e, drop));
-}
-
-// put at end position field
+// put at end position field and element deleter
 function addImgEnd(target)
 {
     debug('addImgEnd');
@@ -280,34 +248,6 @@ function removeEnd(target)
     nodes.forEach(e => { target.removeChild(e); });
 }
 
-function displayImgs(target, json, drop)
-{
-    if (target)
-    {
-        debug('displayImgs');
-        clean(target);
-        addImgs(target, json, drop);
-    }
-}
-
-function addImgs(target, json, drop)
-{
-    if (target)
-    {
-        debug('addImgs');
-        const ret = JSON.parse(json);
-        const data = ret['data'];
-        const warn = ret['warn'];
-        if (drop) target.maxNumImgs = ret['max'];
-        removeEnd(target);
-        data.forEach(e => {
-            if (checkAdd(target, false)) addImg(target, e, drop); 
-        });
-        if (drop) addImgEnd(target);
-        if (warn) warnLimit(ret['max']);
-    }
-}
-
 function upateImgs(target, json, drop)
 {
     if (target)
@@ -326,7 +266,7 @@ function upateImgs(target, json, drop)
             }
             if (cns.length === 0)
             {
-                addImg(target, e, drop);
+                target.appendChild(makeImg(target, e, drop));
             }
             else if (cns[0].imgId === eId)
             {
@@ -338,23 +278,22 @@ function upateImgs(target, json, drop)
             }
         })
         cns.forEach(cn => { target.removeChild(cn); });
-        if (drop) 
-        {
-            target.maxNumImgs = ret['max'];
-            addImgEnd(target);
-        }
-        if (ret['warn']) warnLimit(ret['max']);
+        if (drop) addImgEnd(target);
+        target.maxNumImgs = ret['max'];
+        markExceed(target);
     }
 }
 
 function loadObjImgs(trgId, id)
 {
-    debug('loadImgs: ' + id);
+    debug('loadObjImgs: ' + id);
     let target = geti(trgId);
     if (target)
     {
         target.objId = id;
-        getAjax('/_imgs/' + id, rt => { displayImgs(target, rt, true); });
+        getAjax('/_imgs/' + id, rt => { 
+            upateImgs(target, rt, true);
+        });
     }
 }
 
@@ -374,7 +313,7 @@ function uploadImgs(inp, trgId, id)
     }
     inp.value = null;
     postAjax(fd, '/_addimgs/' + id, rt => {
-        addImgs(target, rt, true);
+        upateImgs(target, rt, true);
     });
 }
 
@@ -401,6 +340,25 @@ function reloadUnusedImgs()
     }
 }
 
+function setExceeded(elem, exceeded)
+{
+    if (exceeded) elem.classList.add('exd');
+    else elem.classList.remove('exd');
+}
+
+function markExceed(target)
+{
+    debug('markExceed');
+    let n = 1;
+    target.childNodes.forEach(e => {
+        if (e.imgId)
+        {
+            setExceeded(e, (target.maxNumImgs && (n > target.maxNumImgs)));
+            ++n; 
+        }
+    })
+}
+
 function sendImgOrder(target)
 {
     let objID = target.objId;
@@ -410,18 +368,19 @@ function sendImgOrder(target)
         let chg = [];
         let n = 0;
         target.childNodes.forEach(e => {
-            let id  = e.imgId;
-            let ord = e.ord;
-            if (id && ord != n)
+            if (e.imgId)
             {
-                chg.push([id, n]);
-                e.ord = n;
+                if (e.ord != n)
+                {
+                    chg.push([e.imgId, n]);
+                    e.ord = n;
+                }
+                ++n; 
             }
-            ++n; 
         })
         if (chg.length > 0)
         {
-            postJson(chg, '/_orderimgs/' + objID, rt => {});
+            postJson(chg, '/_orderimgs/' + objID, rt => { markExceed(target) });
         }
     }
 }
