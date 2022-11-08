@@ -2,17 +2,10 @@
 from ctypes.wintypes import CHAR
 from flask_mysqldb import MySQL
 from hashlib import md5 as libmd5
+from mod.utilz import debug
 
 __mydb__ = None
 
-def setDB(app):
-    global __mydb__
-    if not __mydb__: __mydb__ = MyDB(app)
-    return __mydb__
-
-def db():
-    global __mydb__
-    return __mydb__
 
 class MyDB(MySQL):
 
@@ -50,7 +43,7 @@ class MyDB(MySQL):
 
     # create new language item
     def newLangItem(self, id:int, tpc:str):
-        self.call(f'CALL newLang({id}, "{tpc}")')
+        self.call(f'CALL newLangItem({id}, "{tpc}")')
 
     # list of [id, ilc, label]
     def getLangElemTable(self, tpc:str):
@@ -104,7 +97,7 @@ class MyDB(MySQL):
     ## subs
 
     def get(self, sql:str, commit=False):
-        # print('get sql:', sql)
+        # debug('get sql:', sql)
         cursor = self.connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
@@ -138,3 +131,11 @@ class MyDB(MySQL):
     def mask(self, val:str):
         return val.replace('\\', '\\\\').replace('\'', '\\\'')
 
+def setDB(app):
+    global __mydb__
+    if not __mydb__: __mydb__ = MyDB(app)
+    return __mydb__
+
+def db() -> MyDB:
+    global __mydb__
+    return __mydb__

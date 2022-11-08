@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/static/aut_site.css">
     {% block head %} {% endblock %}
 </head>
-<body>
+    {% block body %} <body> {% endblock %}
     <div id="popup" class="modal">
         <div class="buttons">
             <button onclick="closePopup();">Close</button>
@@ -33,8 +33,8 @@
                 <h3>Multi Language Support</h3>
                 <!-- TODO: generated content: babl editing -->
                 <ul>
-                {% for tpc, label in babls %}
-                    <li><a href="/babl/{{tpc}}">Edit {{label}}</a></li>
+                {% for tpc, label in langItems %}
+                    <li><a href="/lang/{{tpc}}">Edit {{label}}</a></li>
                 {% endfor %}
                 </ul>
             </div>

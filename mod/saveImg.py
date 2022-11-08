@@ -1,9 +1,9 @@
 from PIL import Image, ExifTags, TiffImagePlugin
-from shutil import copyfile
 from os import path, makedirs
 from glob import glob
 from mod.MyDB import db
 from mod.base import *
+from mod.utilz import debug
 
 # TODO: make part of config
 MAX_NUM_IMGES = 8
@@ -51,7 +51,7 @@ def _corrExif(val):
 def _getExif(img, srcFileName:str):
     exif = img.getexif()
     if exif:
-        # print('exif:', type(exif))
+        # debug('exif:', type(exif))
         for k, v in exif.items():
             v = _corrExif(v)
             if not v:
@@ -78,8 +78,8 @@ def saveImg(file, objId=None):
     if ext and _allowedImgExt(ext):
         with Image.open(file) as img1:
             imgId = db().getNextImgId()
-            # print('processing: ', file.filename)
-            # print(dir(file))
+            # debug('processing: ', file.filename)
+            # debug(dir(file))
             file.save(_pathSaveOrig(imgId, ext))
             exif = _getExif(img1, file.filename)
             img2 = img1.copy()

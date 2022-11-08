@@ -1,5 +1,5 @@
 import json
-from flask import request
+from flask import request, render_template
 
 BOTH = ['GET', 'POST']
 GET  = ['GET']
@@ -16,3 +16,4 @@ def rf(field:str):
 
 def post():
     return request.method == 'POST'
+

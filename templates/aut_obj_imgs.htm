@@ -1,0 +1,19 @@
+{% extends 'aut_base.htm' %}
+
+{% block body %} <body onload="loadObjImgs('objImgs', {{objId}});loadUnusedImgs('freeImgs');"> {% endblock %}
+{% block content %}
+    <h1>Object no. {{objId}}</h1>
+    <h2>Images of object</h2>
+    <p class="label">Upload image files for object from your PC (klick or drag here):</p>
+    <input type="file" multiple onchange="uploadImgs(this, 'objImgs', {{objId}});" accept="image/jpeg" class="dropZone"/>
+    <p class="label">Re-order images of object:</p>
+    <div class="imgDisplayFrame">
+        <div id="objImgs" class="imgDisplay objImgs"></div>
+        <div class="imgDisplayEnd"></div>
+    </div>
+    <p class="label">Unassigned images (drag up to assign):</p>
+    <div class="imgDisplayFrame">
+        <div id="freeImgs" class="imgDisplay imgDisplayFix"></div>
+        <div class="imgDisplayEnd"></div>
+    </div>
+{% endblock %}

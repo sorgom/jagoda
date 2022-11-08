@@ -7,6 +7,7 @@ from mod.saveImg import checkImgFolders
 from mod.base import *
 import mod.img
 import mod.login
+import mod.lang
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
@@ -30,10 +31,20 @@ def preStart():
 
 @app.route('/')
 def index():
-    return render_template('ajax_upload.htm', id=4711)
+    return mod.lang.renderBase('aut_obj_imgs.htm', objId=4711)
 
 # login
-route('/login', mod.login.login, methods=BOTH)
+route('/login',     mod.login.login, methods=BOTH)
+route('/logout',    mod.login.logout)
+route('/pwd',       mod.login.pwd,   methods=BOTH)
+
+
+# language authoring
+route('/lang/<tpc>',                mod.lang.langElemTable)
+route('/_langelem/<int:id>',        mod.lang._langElem)
+route('/_setlang/<int:id>',         mod.lang._setlang, methods=POST)
+route('/_newlangform/<tpc>',        mod.lang._newLangForm)
+route('/_newlang/<tpc>/<int:id>',   mod.lang._newLang, methods=POST)
 
 # image ajax calls
 route('/_addimgs/<int:objId>',      mod.img._addObjImgs, methods=POST)

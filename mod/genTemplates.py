@@ -3,7 +3,7 @@
 from glob import glob
 import re
 from os import path
-from mod.utilz import cleanFile
+from mod.utilz import cleanFile, debug
 
 TEMPLATES_FOLDER = 'templates'
 
@@ -20,7 +20,7 @@ def genTemplates(basehtm:str='aut_base.htm'):
             fh.close()
             newcont = '\n'.join([add_tp, cont.strip(), add_bt])
             outFile = path.join(TEMPLATES_FOLDER, rxNm.sub('GEN_', path.basename(file), 1))
-            print(outFile)
+            debug(outFile)
 
             fh = open(outFile, 'w')
             fh.write(newcont)

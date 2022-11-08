@@ -88,20 +88,25 @@ function popup(route)
     debug('popup: ' + route);
     getAjax(route, rt => {
         let pc = geti('popup_content');
-        let pf = geti('popup_form');
-        if (pc && pf)
+        if (pc)
         {
             pc.innerHTML = rt;
-            showPopup()
-            for (let a of pf.querySelectorAll('textarea'))
+            let pf = geti('popup_form');
+            if (pf)
             {
-                if (a.value == '')
+                showPopup()
+                for (let a of pf.querySelectorAll('textarea'))
                 {
-                    a.focus();
-                    break;
+                    if (a.value == '')
+                    {
+                        a.focus();
+                        break;
+                    }
                 }
             }
+            else debug('pf not found.')
         }
+        else debug('pc not found.')
     });
 }
 
@@ -115,7 +120,7 @@ function submitPopup(route)
         debug('missing content');
         return;
     }
-    postAjax(route, new FormData(form), rt => {
+    postAjax(new FormData(form), route, rt => {
         let ct = geti('content');
         if (ct) ct.innerHTML = rt;
         closePopup();
@@ -190,7 +195,7 @@ function rmImg(ev)
     }
 }
 
-function dragOverImg(ev)
+function dragOver(ev)
 {
     ev.preventDefault();
 }
@@ -198,7 +203,7 @@ function dragOverImg(ev)
 function makeDrop(elem)
 {
     elem.ondrop = placeImg;
-    elem.ondragover = dragOverImg;
+    elem.ondragover = dragOver;
 }
 
 function makeImg(target, e, drop)
@@ -223,18 +228,18 @@ function addImgEnd(target)
     debug('addImgEnd');
     let de = document.createElement('div');
     de.ondrop = placeImg;
-    de.ondragover = dragOverImg;
+    de.ondragover = dragOver;
     de.className = 'imgend';
     de.innerHTML = '@END';
     target.appendChild(de);
 
     target.endElem = de;
     target.ondrop = dropImg;
-    target.ondragover = dragOverImg;
+    target.ondragover = dragOver;
 
     let dr = document.createElement('div');
     dr.ondrop = rmImg;
-    dr.ondragover = dragOverImg;
+    dr.ondragover = dragOver;
     dr.className = 'imgrm';
     dr.innerHTML = 'REMOVE';
     target.appendChild(dr);
