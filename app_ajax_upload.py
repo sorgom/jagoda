@@ -6,6 +6,7 @@ from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.saveImg import checkImgFolders
 from mod.base import *
 import mod.img
+import mod.login
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
@@ -31,6 +32,10 @@ def preStart():
 def index():
     return render_template('ajax_upload.htm', id=4711)
 
+# login
+route('/login', mod.login.login, methods=BOTH)
+
+# image ajax calls
 route('/_addimgs/<int:objId>',      mod.img._addObjImgs, methods=POST)
 route('/_imgs/<int:objId>',         mod.img._objImgs)
 route('/_orderimgs/<int:objId>',    mod.img._orderObjImgs, methods=POST)

@@ -20,8 +20,8 @@ class MyDB(MySQL):
         return self.nextSeq('LANG')
 
     def getId(self, usr:str, pwd:str):
-        sql = "SELECT autID('%s', '%s');" % (self.mask(usr), self.md5(pwd))
-        return int(self.getOne(sql))
+        sql = "SELECT getAutId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
+        return self.getNum(sql)
 
     def setPwd(self, id:int, pwd1:str, pwd2:str):
         if pwd1 != pwd2:
