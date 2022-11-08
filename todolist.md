@@ -4,10 +4,27 @@
 - standard containers / boxes
 
 ## Considerations
+### language support
+- first language fixed for captions
+  - captions placed with first language, e.g. cap['file']
+  - first entry not editable (stored in db with labguage item type)
 ### all ids are unique
-  - everything can be identified by ID
-  - only one sequenz
+- everything can be identified by ID
+- only one sequenz
   - only one table elment
+- alternative: ID contaims type of element
+  - identification just by ID
+### imaging
+- does it make sense to save originals?
+  - make it a config entry?
+- save image exif
+  - let's see the performance: get exif from mini
+  - exif should be kept private
+    - save separate exif mini with nearly no size? => exif folder?
+    - but copyrigth displayed?
+    - general copyrights disclaimer?
+    - set copyright generally?
+  - SIMPLE SOLUTION: safe exif as JSON
 ### element types:
 - physical types
   - have dimensions
@@ -48,11 +65,10 @@
 - freeze table head
 
 ## js
-- find all required / invalid form elements
-    - partially done
+- DONE: find all required / invalid form elements
 - resize event
 - keybord evaluation
-- submit without submit (doesn' work)
+- DONE: submit without submit (doesn' work)
 
 ## html
 - keybord evaluation to element
@@ -65,7 +81,7 @@
 - the application session secret has to be set in MySQL DB by root
 
 ## image processing
-- limit number of images
+- DONE: limit number of images
 
 # doing
 
