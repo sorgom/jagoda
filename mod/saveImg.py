@@ -2,10 +2,15 @@ from PIL import Image, ExifTags, TiffImagePlugin
 from shutil import copyfile
 from os import path, makedirs
 from glob import glob
+from mod.MyDB import db
+from mod.base import *
+
+# TODO: make part of config
+MAX_NUM_IMGES = 8
 
 SOURCE_FILE_KEY = 41728
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff'}
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 FOLDER_BASE  = 'static/img/'
 FOLDER_MINI  = path.join(FOLDER_BASE, 'mini')
 FOLDER_FULL  = path.join(FOLDER_BASE, 'full')
@@ -68,19 +73,23 @@ def validImageName(filename:str) -> bool:
         return True
     return False
 
-def saveImg(file, id):
+def saveImg(file, objId=None):
     ext = _ext(file.filename)
     if ext and _allowedImgExt(ext):
         with Image.open(file) as img1:
+            imgId = db().getNextImgId()
             # print('processing: ', file.filename)
             # print(dir(file))
-            file.save(_pathSaveOrig(id, ext))
+            file.save(_pathSaveOrig(imgId, ext))
             exif = _getExif(img1, file.filename)
             img2 = img1.copy()
-            _saveImg(img1, _pathFull(id), SIZE_FULL, QUALY_FULL, exif)
-            miniPath = _pathMini(id)
-            _saveImg(img2, miniPath, SIZE_MINI, QUALY_MINI, exif)
-            return miniPath
+            _saveImg(img1, _pathFull(imgId), SIZE_FULL, QUALY_FULL, exif)
+            _saveImg(img2, _pathMini(imgId), SIZE_MINI, QUALY_MINI, exif)
+            if objId is None:
+                db().addImg(imgId)
+            else:
+                db().addObjectImg(objId, imgId)
+            return imgId
     return None
 
 def _allImg(folder):

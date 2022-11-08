@@ -3,6 +3,17 @@ from ctypes.wintypes import CHAR
 from flask_mysqldb import MySQL
 from hashlib import md5 as libmd5
 
+__mydb__ = None
+
+def setDB(app):
+    global __mydb__
+    if not __mydb__: __mydb__ = MyDB(app)
+    return __mydb__
+
+def db():
+    global __mydb__
+    return __mydb__
+
 class MyDB(MySQL):
 
     def nextLangId(self):
@@ -67,6 +78,9 @@ class MyDB(MySQL):
 
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'CALL addObjectImg({objId}, {imgId});')
+
+    def addImg(self, imgId:int):
+        self.call(f'CALL addImg({imgId});')
 
     def getObjectImgs(self, id:int):
         return [ 
