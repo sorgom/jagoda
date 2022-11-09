@@ -17,6 +17,8 @@
 - alternative: ID contaims type of element
   - identification just by ID
 ### imaging
+- recently added imgages
+  - save addition date
 - does it make sense to save originals?
   - make it a config entry?
 - save image exif
