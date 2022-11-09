@@ -88,7 +88,7 @@ def login():
         session.pop('id', None)
         session.pop('usr', None)
         usr = rf('usr')
-        id = mydb.getId(usr, rf('pwd'))
+        id = mydb.getUsrId(usr, rf('pwd'))
         if id > 0:
             session['id']  = id
             session['usr'] = usr

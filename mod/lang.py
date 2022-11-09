@@ -67,7 +67,7 @@ def _langElemTable(tpc:str):
 
 #   set language element data
 #   return language table of element type
-def _setlang(id:int):
+def _setLang(id:int):
     if not loggedIn(): return ERR_AUTH
     tpc = db().getLangItemType(id)
     if not tpc: return ERR_DATA

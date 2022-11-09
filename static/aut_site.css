@@ -12,6 +12,29 @@ a {
 a:visited,a:active,a:link {
     color: blue;
 }
+/*  ===================================================
+    login forms
+    ===================================================*/
+div.center {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+form.login {
+    width: 70%;
+}
+
+form.login > label,
+form.login > input {
+    display: block;
+    width: 20em;
+}
+
+form.login > label {
+    margin-top: 0.5em;
+}
 
 /*  ===================================================
     popup & cover 
@@ -166,6 +189,10 @@ div.imgDisplay > div {
     border-color: white darkgray darkgray white;
     justify-content: center;
     align-items: center;
+}
+
+div.imgDisplay img {
+    cursor: pointer;
 }
 
 .imgDisplayFix {

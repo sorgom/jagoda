@@ -58,6 +58,19 @@ function getAjax(route, func)
     xhr.send();
 }
 
+function checkLogin()
+{
+    debug('checkLogin');
+    getAjax('/_loggedIn', rt => {
+        if (rt !== 'YES')  location.replace('/login');
+    })
+}
+
+function whatchLogin()
+{
+    setInterval(checkLogin, 10000);
+}
+
 function closePopup()
 {
     debug('closePopup');
@@ -69,17 +82,21 @@ function closePopup()
 function showPopup()
 {
     debug('showPopup');
-    var cover = geti('cover');
+    let cover = geti('cover');
     cover.style.height = document.documentElement.scrollHeight + 'px';
     cover.style.visibility = 'visible';
 
-    var popup =  geti('popup');
-    var ih = window.innerHeight
-    var h = Math.round(ih * 0.8);
-    var s = Math.round(window.scrollY + ih * 0.1);
+    let popup =  geti('popup');
+    let ih = window.innerHeight
+    let h = Math.round(ih * 0.9);
+    let s = Math.round(window.scrollY + ih * 0.03);
     popup.style.height = h + 'px';
     popup.style.top = s + 'px';
     popup.style.visibility = 'visible';
+
+    let cont = geti('popup_content');
+    cont.scrollTop = 0; 
+
     document.body.style.overflow = 'hidden';
 }
 
@@ -91,10 +108,10 @@ function popup(route)
         if (pc)
         {
             pc.innerHTML = rt;
+            showPopup()
             let pf = geti('popup_form');
             if (pf)
             {
-                showPopup()
                 for (let a of pf.querySelectorAll('textarea'))
                 {
                     if (a.value == '')
@@ -104,7 +121,6 @@ function popup(route)
                     }
                 }
             }
-            else debug('pf not found.')
         }
         else debug('pc not found.')
     });
@@ -186,7 +202,7 @@ function rmImg(ev)
         let fd = new FormData();
         fd.set('imgId', imgId);
         fd.set('objId', objId);
-        postAjax(fd, '/_rmimg', rt => {
+        postAjax(fd, '/_rmObjImg', rt => {
             --par.currNumImgs;
             par.removeChild(src);
             markExceed(par);
@@ -218,6 +234,7 @@ function makeImg(target, e, drop)
     i.src = e['src'];
     i.draggable = true;
     i.ondragstart = dragImg;
+    i.onclick = imgInfo;
     d.appendChild(i);
     return d;
 }
@@ -296,7 +313,7 @@ function loadObjImgs(trgId, id)
     if (target)
     {
         target.objId = id;
-        getAjax('/_imgs/' + id, rt => { 
+        getAjax('/_objImgs/' + id, rt => { 
             upateImgs(target, rt, true);
         });
     }
@@ -317,7 +334,7 @@ function uploadImgs(inp, trgId, id)
         fd.append('files', f);
     }
     inp.value = null;
-    postAjax(fd, '/_addimgs/' + id, rt => {
+    postAjax(fd, '/_addObjImgs/' + id, rt => {
         upateImgs(target, rt, true);
     });
 }
@@ -339,7 +356,7 @@ function reloadUnusedImgs()
     let target = document.unusedImgsContainer;
     if (target)
     {
-        getAjax('/_unusedimgs', rt => {
+        getAjax('/_unusedImgs', rt => {
             upateImgs(target, rt, false);
         });
     }
@@ -385,7 +402,13 @@ function sendImgOrder(target)
         })
         if (chg.length > 0)
         {
-            postJson(chg, '/_orderimgs/' + objID, rt => { markExceed(target) });
+            postJson(chg, '/_orderObjImgs/' + objID, rt => { markExceed(target) });
         }
     }
+}
+
+function imgInfo()
+{
+    debug('imgInfo: ' + this.parentNode.imgId);
+    popup('/_imgInfo/' + this.parentNode.imgId);
 }

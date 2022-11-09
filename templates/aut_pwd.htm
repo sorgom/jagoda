@@ -1,17 +1,11 @@
 {% extends 'aut_base.htm' %}
 
 {% block content %}
-<form action="/pwd" method="post" accept-charset="ISO-8859-1">
-    <div>
-        <p>
-            <label for="pwd1">New Password</label>
-            <input type="password" placeholder="Enter New Password" name="pwd1" autofocus required>
-        </p>
-        <p>
-            <label for="pwd2">New Password Repeated</label>
-            <input type="password" placeholder="Repeat New Password" name="pwd2" required>
-        </p>
-    </div>
+<form action="/pwd" method="post" accept-charset="ISO-8859-1" class="login">
+    <label for="pwd1">New Password</label>
+    <input type="password" placeholder="Enter New Password" name="pwd1" autofocus required>
+    <label for="pwd2">New Password Repeated</label>
+    <input type="password" placeholder="Repeat New Password" name="pwd2" required>
     <button type="submit">Submit</button>
 </form>
 {% endblock %}

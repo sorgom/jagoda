@@ -10,7 +10,7 @@ def login():
         session.pop('id', None)
         session.pop('usr', None)
         usr = rf('usr')
-        id = db().getId(usr, rf('pwd'))
+        id = db().getUsrId(usr, rf('pwd'))
         if id > 0:
             session['id']  = id
             session['usr'] = usr
@@ -35,3 +35,6 @@ def logout():
     session.pop('id', None)
     session.pop('usr', None)
     return relogin()
+
+def _loggedIn():
+    return 'YES' if loggedIn() else 'NO'    

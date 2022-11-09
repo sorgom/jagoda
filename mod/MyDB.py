@@ -9,11 +9,11 @@ __mydb__ = None
 
 class MyDB(MySQL):
 
-    def nextLangId(self):
-        return self.nextSeq('LANG')
+    def getNextId(self):
+        return self.getNum('SELECT nextId();')
 
-    def getId(self, usr:str, pwd:str):
-        sql = "SELECT getAutId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
+    def getUsrId(self, usr:str, pwd:str):
+        sql = "SELECT getUsrId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
         return self.getNum(sql)
 
     def setPwd(self, id:int, pwd1:str, pwd2:str):
@@ -66,9 +66,6 @@ class MyDB(MySQL):
         return res > 0
 
     ##  images
-    def getNextImgId(self) -> int:
-        return self.nextSeq('IMG')
-
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'CALL addObjectImg({objId}, {imgId});')
 
@@ -121,9 +118,6 @@ class MyDB(MySQL):
         cursor.execute(sql)
         cursor.close()
         self.connection.commit()
-
-    def nextSeq(self, label:str) -> int:
-        return self.getNum("SELECT nextSeq('%s');" % label, True)
 
     def md5(self, val:str):
         return libmd5(val.encode('utf-8')).hexdigest()

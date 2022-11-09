@@ -4,6 +4,8 @@
 - standard containers / boxes
 
 ## Considerations
+- messaging: who edits what
+  - general ajax message lookup
 ### language support
 - first language fixed for captions
   - captions placed with first language, e.g. cap['file']
@@ -59,6 +61,8 @@
         - image of each individual required?
 
 # TODO
+- check: valid response on chrome
+
 ## css
 - input validity:
   - https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation 

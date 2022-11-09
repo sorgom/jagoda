@@ -13,12 +13,12 @@
         {% for id, labels in rows %}
             <tr>
                 {% for label in labels %}<td>{{label}}</td>{% endfor %}
-                <td><a onclick="popup('/_langelem/{{id}}');" title="edit #{{id}}"> </a></td>
+                <td><a onclick="popup('/_langElem/{{id}}');" title="edit #{{id}}"> </a></td>
             </tr>
         {% endfor %}
         <tr>
             {% for lang in langs %}<td></td>{% endfor %}
-            <td><a onclick="popup('/_newlangform/{{tpc}}');" title="new item">*</a></td>
+            <td><a onclick="popup('/_newLangForm/{{tpc}}');" title="new item">*</a></td>
         </tr>
     </tbody>
 </table>
