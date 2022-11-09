@@ -24,6 +24,23 @@ QUALY_FULL = 80
 EXT_OUT  = 'jpg'
 EXT_EXIF = 'json'
 
+RELEVANT_EXIF_TAGS = [
+    ['DateTime', 306],
+    ['Artist', 315],
+    ['Copyright', 33432],
+    ['FileSource', 41728],
+    ['Make', 271],
+    ['Model', 272],
+    ['ExifImageWidth', 40962],
+    ['ExifImageHeight', 40963],
+    ['Flash', 37385],
+    # ['ImageID', 32781],
+    # ['LensMake', 42035],
+    # ['LensModel', 42036],
+    # ['Software', 305],
+]
+
+
 def _fName(id:int, ext:str=EXT_OUT):
     return "%07d.%s" % (id, ext)
 
@@ -53,7 +70,7 @@ def _getExif(img, srcFileName:str):
             if v is not None:
                 res[k] = v
     res[SOURCE_FILE_KEY] = srcFileName
-    return [[k, v] for k, v in res.items()]
+    return res
 
 def _saveImg(img, fpath, size, quality):
     img.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
@@ -77,15 +94,6 @@ def saveImg(file, objId=None):
             db().addObjectImg(objId, id)
         return id
 
-# def _allImg(folder):
-#     return glob(path.join(folder, f'*.{EXT_OUT}'))
-
-# def allImgMini():
-#     return _allImg(FOLDER_MINI)
-
-# def allImgFull():
-#     return _allImg(FOLDER_FULL)
-
 def getImgMini(id:int):
     fp = _pathMini(id)
     return fp if path.exists(fp) else None
@@ -100,8 +108,8 @@ def getExif(id:int):
     with open(fp, 'r') as fh:
         data = json.load(fh)
         out = [
-            [l, v] for l, v in [ [ExifTags.TAGS.get(k), v] for k, v in data]
-            if l is not None
+            [l, v] for l, v in [[l, data.get(k)] for l, k in RELEVANT_EXIF_TAGS]     
+            if v is not None
         ]
         return out
 

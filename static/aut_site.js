@@ -61,13 +61,17 @@ function getAjax(route, func)
 function checkLogin()
 {
     debug('checkLogin');
+    if (!document.loggedIn) location.replace('/login');
+    document.loggedIn = false;
     getAjax('/_loggedIn', rt => {
-        if (rt !== 'YES')  location.replace('/login');
+        if (rt === 'YES') document.loggedIn = true; 
+        else location.replace('/login');
     })
 }
 
 function whatchLogin()
 {
+    document.loggedIn = true;
     setInterval(checkLogin, 10000);
 }
 
