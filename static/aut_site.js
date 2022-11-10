@@ -75,12 +75,23 @@ function whatchLogin()
     setInterval(checkLogin, 10000);
 }
 
+function escHandler(ev)
+{
+    if (ev.key == 'Escape')
+    {
+        debug('KEY ESC');
+        closePopup();
+    }
+}
+
 function closePopup()
 {
     debug('closePopup');
     geti('popup').style.visibility = 'hidden';
     geti('cover').style.visibility = 'hidden';
     document.body.style.overflow = 'auto';
+
+    document.removeEventListener('keydown', escHandler);
 }
 
 function showPopup()
@@ -102,6 +113,8 @@ function showPopup()
     cont.scrollTop = 0; 
 
     document.body.style.overflow = 'hidden';
+
+    document.addEventListener('keydown', escHandler);
 }
 
 function popup(route)

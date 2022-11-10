@@ -6,6 +6,7 @@
 ## Considerations
 - messaging: who edits what
   - general ajax message lookup
+  - install agents who get informed by item id after updates / changes
 ### language support
 - first language fixed for captions
   - captions placed with first language, e.g. cap['file']
@@ -29,6 +30,20 @@
     - general copyrights disclaimer?
     - set copyright generally?
   - SIMPLE SOLUTION: safe exif as JSON
+- duplicate detection: save md5 / sha hash of full size thumbnail or original
+  - use io.BytesIO for this
+```
+import io
+from PIL import Image
+
+im = Image.open('test.jpg')
+im_resize = im.resize((500, 500))
+buf = io.BytesIO()
+im_resize.save(buf, format='JPEG')
+byte_im = buf.getvalue()
+
+```
+  - alternatively: check python / PIP similarity features
 ### element types:
 - physical types
   - have dimensions
@@ -75,6 +90,7 @@
 - resize event
 - keybord evaluation
 - DONE: submit without submit (doesn' work)
+- multiple popup levels
 
 ## html
 - keybord evaluation to element

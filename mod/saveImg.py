@@ -10,6 +10,8 @@ from mod.utilz import debug
 MAX_NUM_IMGES = 8
 
 SOURCE_FILE_KEY = 41728
+ORIENTATION_KEY = 274
+ROTATIONS = { 3: 180, 6: 270, 8: 90 }
 
 FOLDER_BASE  = 'static/img/'
 FOLDER_MINI  = path.join(FOLDER_BASE, 'mini')
@@ -17,29 +19,21 @@ FOLDER_FULL  = path.join(FOLDER_BASE, 'full')
 FOLDER_EXIF  = path.join(FOLDER_BASE, 'exif')
 
 # TODO: make configureable
-SIZE_MINI = 160, 120
-SIZE_FULL = 800, 600
+SIZE_MINI = 160, 160
+SIZE_FULL = 800, 800
 QUALY_MINI = 80
 QUALY_FULL = 80
 EXT_OUT  = 'jpg'
 EXT_EXIF = 'json'
 
 RELEVANT_EXIF_TAGS = [
-    ['DateTime', 306],
-    ['Artist', 315],
-    ['Copyright', 33432],
-    ['FileSource', 41728],
-    ['Make', 271],
-    ['Model', 272],
-    ['ExifImageWidth', 40962],
-    ['ExifImageHeight', 40963],
-    ['Flash', 37385],
-    # ['ImageID', 32781],
-    # ['LensMake', 42035],
-    # ['LensModel', 42036],
-    # ['Software', 305],
+    ['Date Time', '306'],
+    ['Artist', '315'],
+    ['Copyright', '33432'],
+    ['File Source', '41728'],
+    ['Make', '271'],
+    ['Model', '272']
 ]
-
 
 def _fName(id:int, ext:str=EXT_OUT):
     return "%07d.%s" % (id, ext)
@@ -62,32 +56,36 @@ def _corrExif(val):
     return val
     
 def _getExif(img, srcFileName:str):
-    res = {}
+    data = {}
     exif = img.getexif()
     if exif:
         for k, v in exif.items():
             v = _corrExif(v)
             if v is not None:
-                res[k] = v
-    res[SOURCE_FILE_KEY] = srcFileName
-    return res
+                data[k] = v
+    data[SOURCE_FILE_KEY] = srcFileName
+    return data
 
 def _saveImg(img, fpath, size, quality):
-    img.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
-    img.save(fpath, quality=quality)
+    cpy = img.copy()
+    cpy.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
+    cpy.save(fpath, quality=quality)
 
 def getAcceptImgTypes():
     return 'image/jpeg'
 
 def saveImg(file, objId=None):
-    with Image.open(file) as img1:
+    with Image.open(file) as img:
         id = db().getNextId()
-        exif = _getExif(img1, file.filename)
+        data = _getExif(img, file.filename)
         with open(_pathExif(id), 'w') as fh:
-            json.dump(exif, fh)
-        img2 = img1.copy()
-        _saveImg(img1, _pathFull(id), SIZE_FULL, QUALY_FULL)
-        _saveImg(img2, _pathMini(id), SIZE_MINI, QUALY_MINI)
+            json.dump(data, fh)
+        rot = ROTATIONS.get(data.get(ORIENTATION_KEY, 0))
+        if rot:
+            debug('rotate:', rot)
+            img = img.rotate(rot, expand=True)
+        _saveImg(img, _pathFull(id), SIZE_FULL, QUALY_FULL)
+        _saveImg(img, _pathMini(id), SIZE_MINI, QUALY_MINI)
         if objId is None:
             db().addImg(id)
         else:
@@ -103,14 +101,18 @@ def getImgFull(id:int):
     return fp if path.exists(fp) else None
 
 def getExif(id:int):
+    debug('getExif')
     fp = _pathExif(id)
     if not path.exists(fp): return None
     with open(fp, 'r') as fh:
         data = json.load(fh)
+        debug('data', data)
         out = [
             [l, v] for l, v in [[l, data.get(k)] for l, k in RELEVANT_EXIF_TAGS]     
             if v is not None
         ]
+        out.insert(0, ['Image ID', id])
+        debug('out', out)
         return out
 
 def checkImgFolders():

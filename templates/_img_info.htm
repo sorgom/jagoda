@@ -1,12 +1,8 @@
-<h3>Image {{id}}</h3>
-<div class="fullimg">
+<div class="imgInfo">
+    <div class="exifData">
+        {% for l, v in data %}<div><span>{{l}}</span><span>{{v}}</span></div>{% endfor %}
+    </div>
+    <!-- <h3>Image {{id}}</h3> -->
     <img src="/{{src}}" alt="Image {{id}}"/>
-</div>
-<h3>Exif data</h3>
-<div class="exifdata">
-<table>
-{% for l, v in data %}
-<tr><td>{{l}}</td><td>{{v}}</td></tr>
-{% endfor %}
-</table>
+    <!-- <h3>Exif data</h3> -->
 </div>
