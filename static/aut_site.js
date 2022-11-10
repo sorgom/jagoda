@@ -61,14 +61,27 @@ function getAjax(route, func)
 function checkLogin()
 {
     debug('checkLogin');
+    if (!document.loggedIn) location.replace('/login');
+    document.loggedIn = false;
     getAjax('/_loggedIn', rt => {
-        if (rt !== 'YES')  location.replace('/login');
+        if (rt === 'YES') document.loggedIn = true; 
+        else location.replace('/login');
     })
 }
 
 function whatchLogin()
 {
+    document.loggedIn = true;
     setInterval(checkLogin, 10000);
+}
+
+function escHandler(ev)
+{
+    if (ev.key == 'Escape')
+    {
+        debug('KEY ESC');
+        closePopup();
+    }
 }
 
 function closePopup()
@@ -77,6 +90,8 @@ function closePopup()
     geti('popup').style.visibility = 'hidden';
     geti('cover').style.visibility = 'hidden';
     document.body.style.overflow = 'auto';
+
+    document.removeEventListener('keydown', escHandler);
 }
 
 function showPopup()
@@ -98,6 +113,8 @@ function showPopup()
     cont.scrollTop = 0; 
 
     document.body.style.overflow = 'hidden';
+
+    document.addEventListener('keydown', escHandler);
 }
 
 function popup(route)

@@ -6,6 +6,9 @@ import re
 
 SOURCE_FILE_KEY = 41728
 
+for k, l in ExifTags.TAGS.items():
+    print(l, k)
+
 # print(type(ExifTags.TAGS))
 
 # def grep(pattern, names):
@@ -31,6 +34,7 @@ SOURCE_FILE_KEY = 41728
 # print(ExifTags.TAGS.keys())
 
 # src = 'img/orig/IMG_7680.JPG'
+
 src = "/mnt/k/photo/inbox/174___10/IMG_7677.JPG"
 
 # src = 'img/orig/IMG_20220320_052252925.JPG'

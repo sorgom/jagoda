@@ -227,3 +227,30 @@ div.clr,
 div#content {
     clear: both; 
 }
+
+/*  ===================================================
+    image info display
+    ===================================================*/
+div.imgInfo {
+    /* background-color: black;
+    color: lightgray;
+    padding: 10px; */
+    padding-left: 50px;
+}
+/* div.imgInfo > img {
+    border: 1px solid lightgray;
+} */
+div.exifData {
+    display: table;
+    margin-bottom: 0.25em;
+}
+div.exifData > div {
+    display: table-row;
+}
+div.exifData > div:first-child {
+    font-weight: bold;
+}
+div.exifData > div > span {
+    display: table-cell;
+    padding-right: 1em;
+}
