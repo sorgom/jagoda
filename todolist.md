@@ -11,6 +11,7 @@
 - first language fixed for captions
   - captions placed with first language, e.g. cap['file']
   - first entry not editable (stored in db with labguage item type)
+- apply spellchecks to display by assigning ILCs?
 ### all ids are unique
 - everything can be identified by ID
 - only one sequenz
