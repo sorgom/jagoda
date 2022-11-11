@@ -53,9 +53,6 @@ class MyDB(MySQL):
     def getLangElem(self, id:int):
         return self.get(f'CALL getLangElem({id});')
 
-    def getNextLangId(self) -> int:
-        return self.nextSeq('LANG')
-
     def setLangElem(self, id:int, ilc:str, label:str):
         self.call("CALL setLangElem(%d, '%s', '%s');" % (id, ilc, self.mask(label)))
 

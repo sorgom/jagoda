@@ -4,10 +4,8 @@ import json
 from glob import glob
 from mod.MyDB import db
 from mod.base import *
+from mod.config import *
 from mod.utilz import debug
-
-# TODO: make part of config
-MAX_NUM_IMGES = 8
 
 SOURCE_FILE_KEY = 41728
 ORIENTATION_KEY = 274
@@ -18,11 +16,6 @@ FOLDER_MINI  = path.join(FOLDER_BASE, 'mini')
 FOLDER_FULL  = path.join(FOLDER_BASE, 'full')
 FOLDER_EXIF  = path.join(FOLDER_BASE, 'exif')
 
-# TODO: make configureable
-SIZE_MINI = 160, 160
-SIZE_FULL = 800, 800
-QUALY_MINI = 80
-QUALY_FULL = 80
 EXT_OUT  = 'jpg'
 EXT_EXIF = 'json'
 
@@ -68,11 +61,8 @@ def _getExif(img, srcFileName:str):
 
 def _saveImg(img, fpath, size, quality):
     cpy = img.copy()
-    cpy.thumbnail(size, resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
+    cpy.thumbnail((size, size), resample=Image.Resampling.BICUBIC, reducing_gap=2.0)
     cpy.save(fpath, quality=quality)
-
-def getAcceptImgTypes():
-    return 'image/jpeg'
 
 def saveImg(file, objId=None):
     with Image.open(file) as img:
@@ -84,8 +74,8 @@ def saveImg(file, objId=None):
         if rot:
             debug('rotate:', rot)
             img = img.rotate(rot, expand=True)
-        _saveImg(img, _pathFull(id), SIZE_FULL, QUALY_FULL)
-        _saveImg(img, _pathMini(id), SIZE_MINI, QUALY_MINI)
+        _saveImg(img, _pathFull(id), IMG_SIZE_FULL, IMG_QUALITY_FULL)
+        _saveImg(img, _pathMini(id), IMG_SIZE_MINI, IMG_QUALITY_MINI)
         if objId is None:
             db().addImg(id)
         else:

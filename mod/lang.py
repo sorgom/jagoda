@@ -58,8 +58,7 @@ def _langElem(id:int):
     # res = render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_setbabl/{id}')
     # debug(res)
     # return res
-    return render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_setlang/{id}')
-
+    return render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_setLang/{id}')
 
 def _langElemTable(tpc:str):
     if not loggedIn(): return ERR_AUTH
@@ -80,12 +79,12 @@ def _setLang(id:int):
 def _newLangForm(tpc:str):
     debug(f'_newLangForm({tpc})')
     if not loggedIn(): return ERR_AUTH
-    id = db().getNextLangId()
-    return render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_newlang/{tpc}/{id}')
+    id = db().getNextId()
+    return render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_newLang/{tpc}/{id}')
 
 #   ajax post: new language entry
 def _newLang(tpc:str, id:int):
     debug(f'_newlang({tpc}, {id})')
     if not loggedIn(): return ERR_AUTH
     db().newLangItem(id, tpc)
-    return _setlang(id)
+    return _setLang(id)

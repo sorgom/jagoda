@@ -1,13 +1,11 @@
-
 from flask import Flask, request, redirect, render_template
 
 from mod.MyDB import setDB
 from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
-from mod.saveImg import checkImgFolders, getAcceptImgTypes
+from mod.saveImg import checkImgFolders
 from mod.base import *
 import mod.img, mod.login, mod.lang, mod.saveImg
-# import mod.login
-# import mod.lang
+from mod.config import *
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
@@ -28,10 +26,9 @@ def preStart():
     genTemplates()
     checkImgFolders()
 
-
 @app.route('/')
 def index():
-    return mod.lang.renderBase('aut_obj_imgs.htm', objId=4711, acceptImgTypes=getAcceptImgTypes())
+    return mod.lang.renderBase('aut_obj_imgs.htm', objId=4711, acceptImgTypes=IMG_TYPE_ACCEPTED)
 
 # login
 route('/login',                     mod.login.login,        methods=BOTH)
