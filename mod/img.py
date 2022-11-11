@@ -1,6 +1,6 @@
 from mod.MyDB import db
 from mod.base import *
-from mod.saveImg import saveImg, getImgMini, getImgFull, getExif
+from mod.saveImg import saveImg, getExif
 from mod.utilz import debug
 from mod.login import loggedIn
 
@@ -12,12 +12,8 @@ def mkJson(data, withMax:bool=False):
 
 def _objImgs(objId:int):
     debug('_objImgs:', objId)
-    res = []
-    for img in db().getObjectImgs(objId):
-        src = getImgMini(img['id'])
-        if src:
-            img['src'] = src
-            res.append(img)
+    res = db().getObjectImgs(objId)
+    debug('res', res)
     return mkJson(res, True)
 
 def _addObjImgs(objId:int):
@@ -43,18 +39,11 @@ def _rmObjImg():
 
 def _unusedImgs():
     debug('_unusedImgs')
-    res = []
-    imgs = db().getUnusedImgs()
-    for img in imgs:
-        src = getImgMini(img['id'])
-        if src:
-            img['src'] = src
-            res.append(img)
-    return mkJson(res)
+    return mkJson(db().getUnusedImgs())
 
 def _imgInfo(id:int):
     debug('_imgInfo')
-    src  = getImgFull(id)
+    src  = db().getImgFileFull(id)
     data = getExif(id)
     if src and data:
         return render_template('_img_info.htm', id=id, src=src, data=data)

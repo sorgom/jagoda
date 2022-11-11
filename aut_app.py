@@ -2,7 +2,6 @@ from flask import Flask, request, redirect, render_template
 
 from mod.MyDB import setDB
 from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
-from mod.saveImg import checkImgFolders
 from mod.base import *
 import mod.img, mod.login, mod.lang, mod.saveImg
 from mod.config import *
@@ -24,7 +23,6 @@ def route(route:str, meth, **opts):
 
 def preStart():
     genTemplates()
-    checkImgFolders()
 
 @app.route('/')
 def index():

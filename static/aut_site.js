@@ -222,6 +222,7 @@ function rmImg(ev)
         postAjax(fd, '/_rmObjImg', rt => {
             --par.currNumImgs;
             par.removeChild(src);
+            sendImgOrder(par);
             markExceed(par);
             reloadUnusedImgs();
         })

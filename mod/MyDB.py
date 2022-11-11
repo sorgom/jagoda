@@ -10,7 +10,7 @@ __mydb__ = None
 class MyDB(MySQL):
 
     def getNextId(self):
-        return self.getNum('SELECT nextId();')
+        return self.getNum('SELECT nextId();', True)
 
     def getUsrId(self, usr:str, pwd:str):
         sql = "SELECT getUsrId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
@@ -71,7 +71,7 @@ class MyDB(MySQL):
 
     def getObjectImgs(self, id:int):
         return [ 
-            { 'id': id, 'ord': ord } for id, ord in self.get(f'CALL getObjectImgs({id});')
+            { 'id': id, 'ord': ord, 'src':src } for id, ord, src in self.get(f'CALL getObjectImgs({id});')
         ]
 
     def getNumObjectImgs(self, id:int):
@@ -85,8 +85,19 @@ class MyDB(MySQL):
 
     def getUnusedImgs(self):
         return [ 
-            { 'id': id, 'ord': -1 } for id in self.getFirstCol(f'CALL getUnusedImgs();')
+            { 'id': id, 'ord': -1, 'src':src } for id, src in self.get(f'CALL getUnusedImgs();')
         ]
+
+    def getImgFileMini(self, id:int):
+        return self.getOne(f'SELECT imgFileMini({id});')
+    def getImgFileFull(self, id:int):
+        return self.getOne(f'SELECT imgFileFull({id});')
+    def getImgFileExif(self, id:int):
+        return self.getOne(f'SELECT imgFileExif({id});')
+    def getImgFiles(self, id:int):
+        return self.get(f'CALL imgFiles({id});')[0]
+    def getImgFolders(self):
+        return self.get('CALL imgFolders();')[0]
 
     ## subs
 

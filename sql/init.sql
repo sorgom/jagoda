@@ -4,6 +4,7 @@ SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+-- enables funtions / procedures that don't acces any tables:
 SET GLOBAL log_bin_trust_function_creators = 1;
 
 -- ============================================================
@@ -29,6 +30,7 @@ DROP TABLE IF EXISTS LANG_ITEM_TYPE;
 CREATE TABLE LANG_ITEM_TYPE (
     TPC CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
+    STDABLE TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (TPC)
 );
 
@@ -37,6 +39,7 @@ DROP TABLE IF EXISTS LANG_ITEM;
 CREATE TABLE LANG_ITEM (
     ID BIGINT NOT NULL,
     TPC CHAR(2) NOT NULL,
+    STD TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (ID),
     FOREIGN KEY (TPC) REFERENCES LANG_ITEM_TYPE(TPC) ON DELETE CASCADE
 );
@@ -281,18 +284,63 @@ DELIMITER ;
 -- ============================================================
 -- images
 -- ============================================================
--- create new image element
-DROP PROCEDURE IF EXISTS addImg;
+DROP FUNCTION IF EXISTS imgPath;  
+DROP FUNCTION IF EXISTS imgFileMini;  
+DROP FUNCTION IF EXISTS imgFileFull;  
+DROP FUNCTION IF EXISTS imgFileExif;
+DROP PROCEDURE IF EXISTS imgFiles;
+DROP PROCEDURE IF EXISTS imgFolders;
+
 DELIMITER :)  
+CREATE FUNCTION imgPath(pSUB VARCHAR(8), pID BIGINT, pEXT VARCHAR(4))
+RETURNS VARCHAR(32)
+BEGIN
+    IF pID = -1 THEN 
+        RETURN CONCAT('static/img/',  pSUB);
+    ELSE 
+        RETURN CONCAT('static/img/',  pSUB, '/', LPAD(pID, 7, 0), '.', pEXT);
+    END IF;
+END :)  
+CREATE FUNCTION imgFileMini(pID BIGINT)
+RETURNS VARCHAR(32)
+BEGIN
+    RETURN imgPath('mini', pID, 'jpg');
+END :)  
+CREATE FUNCTION imgFileFull(pID BIGINT)
+RETURNS VARCHAR(32)
+BEGIN
+    RETURN imgPath('full', pID, 'jpg');
+END :)  
+CREATE FUNCTION imgFileExif(pID BIGINT)
+RETURNS VARCHAR(32)
+BEGIN
+    RETURN imgPath('exif', pID, 'json');
+END :)  
+CREATE PROCEDURE imgFiles(pID BIGINT)
+BEGIN
+    SELECT imgFileMini(pID), imgFileFull(pID), imgFileExif(pID);
+END :)
+CREATE PROCEDURE imgFolders()
+BEGIN
+    CALL imgFiles(-1);
+END :)
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS addImg;
+DROP PROCEDURE IF EXISTS addObjectImg;
+DROP PROCEDURE IF EXISTS getObjectImgs;
+DROP PROCEDURE IF EXISTS setObjectImg;
+DROP PROCEDURE IF EXISTS rmObjectImg;
+DROP FUNCTION IF EXISTS getNumObjectImgs;  
+DROP PROCEDURE IF EXISTS getUnusedImgs;
+
+DELIMITER :)  
+-- create new image element
 CREATE PROCEDURE addImg(pID BIGINT)
 BEGIN
     REPLACE INTO IMG(ID) VALUES (pID);
 END :)  
-DELIMITER ;
-
 -- create new objet image assignment
-DROP PROCEDURE IF EXISTS addObjectImg;
-DELIMITER :)  
 CREATE PROCEDURE addObjectImg(pOBJECT BIGINT, pIMG BIGINT)
 BEGIN
     DECLARE vORD INT;
@@ -308,54 +356,35 @@ BEGIN
 
     REPLACE INTO OBJECT_IMG VALUES (pOBJECT, pIMG, @vORD);
 END :)  
-DELIMITER ;
-
 -- retrieve all images of an object
-DROP PROCEDURE IF EXISTS getObjectImgs;
-DELIMITER :)  
 CREATE PROCEDURE getObjectImgs(pOBJECT BIGINT)
 BEGIN
-    SELECT IMG, ORD FROM OBJECT_IMG
+    SELECT IMG, ORD, imgFileMini(IMG) FROM OBJECT_IMG
     WHERE OBJECT = pOBJECT
     ORDER BY ORD;
 END :)  
-DELIMITER ;
-
 -- alter object image assignment
-DROP PROCEDURE IF EXISTS setObjectImg;
-DELIMITER :)  
 CREATE PROCEDURE setObjectImg(pOBJECT BIGINT, pIMG BIGINT, pORD INT)
 BEGIN
     REPLACE INTO OBJECT_IMG VALUES (pOBJECT, pIMG, pORD);
 END :)  
-DELIMITER ;
-
 -- remove image from object
-DROP PROCEDURE IF EXISTS rmObjectImg;
-DELIMITER :)  
 CREATE PROCEDURE rmObjectImg(pOBJECT BIGINT, pIMG BIGINT)
 BEGIN
     DELETE FROM OBJECT_IMG WHERE OBJECT = pOBJECT AND IMG = pIMG;
 END :)  
-DELIMITER ;
-
-DROP FUNCTION IF EXISTS getNumObjectImgs;  
-DELIMITER :)  
-CREATE FUNCTION getNumObjectImgs(pOBJECT BIGINT)
-RETURNS INT
-BEGIN  
-    DECLARE vNUM INT;  
-    SELECT COUNT(*) FROM OBJECT_IMG WHERE (OBJECT = pOBJECT) INTO @vNUM;  
-    RETURN @vNUM;
-END :)  
-DELIMITER ;
-
+-- TODO: do we need this?
+-- CREATE FUNCTION getNumObjectImgs(pOBJECT BIGINT)
+-- RETURNS INT
+-- BEGIN  
+--     DECLARE vNUM INT;  
+--     SELECT COUNT(*) FROM OBJECT_IMG WHERE (OBJECT = pOBJECT) INTO @vNUM;  
+--     RETURN @vNUM;
+-- END :)  
 -- retrieve all unassigned images
-DROP PROCEDURE IF EXISTS getUnusedImgs;
-DELIMITER :)  
 CREATE PROCEDURE getUnusedImgs()
 BEGIN
-    SELECT I.ID FROM IMG AS I
+    SELECT I.ID, imgFileMini(I.ID) FROM IMG AS I
     LEFT JOIN  OBJECT_IMG AS OI 
     ON OI.IMG = I.ID
     WHERE OI.IMG IS NULL
@@ -364,7 +393,7 @@ END :)
 DELIMITER ;
 
 -- ============================================================
--- authors
+-- authors / users
 -- ============================================================
 -- add / modify an Author
 DROP PROCEDURE IF EXISTS setUsr;  
@@ -406,27 +435,33 @@ DELIMITER ;
 DROP USER IF EXISTS 'aut'@'%';
 CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 GRANT SELECT, INSERT, UPDATE, DELETE ON jagoda.* TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION   jagoda.nextId               TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.initSeq              TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getLangTable         TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getLangItemTypeTable TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getLangItemTypeLabel TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getLangItemType      TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.newLangItem          TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getLangElemTable     TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getLangElem          TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.setLangElem          TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION   jagoda.isObject             TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.addImg               TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.addObjectImg         TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getObjectImgs        TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.setObjectImg         TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.rmObjectImg          TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION   jagoda.getNumObjectImgs     TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.getUnusedImgs        TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.setUsr               TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION   jagoda.getUsrId             TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE  jagoda.setPass              TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.nextId                 TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.initSeq                TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getLangTable           TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getLangItemTypeTable   TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getLangItemTypeLabel   TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getLangItemType        TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.newLangItem            TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getLangElemTable       TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getLangElem            TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.setLangElem            TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.isObject               TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.imgPath                TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.imgFileMini            TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.imgFileFull            TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.imgFileExif            TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.imgFiles               TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.imgFolders             TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.addImg                 TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.addObjectImg           TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getObjectImgs          TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.setObjectImg           TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.rmObjectImg            TO 'aut'@'%';
+-- GRANT EXECUTE ON FUNCTION   jagoda.getNumObjectImgs       TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.getUnusedImgs          TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.setUsr                 TO 'aut'@'%';
+GRANT EXECUTE ON FUNCTION   jagoda.getUsrId               TO 'aut'@'%';
+GRANT EXECUTE ON PROCEDURE  jagoda.setPass                TO 'aut'@'%';
 
 -- TODO: user type: viewer with login
 
@@ -462,10 +497,9 @@ INSERT INTO LANG VALUES
 -- W what ist is
 -- M make / techniqe of artpiece
 INSERT INTO LANG_ITEM_TYPE VALUES
-    ('ST', 'Standard Titles'),
-    ('CA', 'Website Captions'),
-    ('TP', 'Element Types'),
-    ('TQ', 'Artpiece Techniques')
+    ('OT', 'Object Titles', 1),
+    ('CA', 'Website Captions', 0),
+    ('TQ', 'Artpiece Techniques', 0)
 ;
 
 -- Captions

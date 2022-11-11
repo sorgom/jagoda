@@ -2,23 +2,14 @@
     inner table for language listings / edit
     can be content for rendering or ajax calls
 -->
-<table class="ltb">
-    <thead>
-        <tr>
-            {% for lang in langs %}<td>{{lang[1]}}</td>{% endfor %}
-            <td>edit</td>
-        </tr>
-    </thead>
-    <tbody>
-        {% for id, labels in rows %}
-            <tr>
-                {% for label in labels %}<td>{{label}}</td>{% endfor %}
-                <td><a onclick="popup('/_langElem/{{id}}');" title="edit #{{id}}"> </a></td>
-            </tr>
-        {% endfor %}
-        <tr>
-            {% for lang in langs %}<td></td>{% endfor %}
-            <td><a onclick="popup('/_newLangForm/{{tpc}}');" title="new item">*</a></td>
-        </tr>
-    </tbody>
-</table>
+<div class="clickSel">
+    <div>{% for ilc, label in langs %}<span>{{label}}</span>{% endfor %}</div>
+    {% for id, labels in rows %}
+    <a onclick="popup('/_langElem/{{id}}');" title="edit #{{id}}">
+            {% for label in labels %}<span>{{label}}</span>{% endfor %}
+    </a>        
+    {% endfor %}
+    <a onclick="popup('/_newLangForm/{{tpc}}');" title="new item">
+        {% for lang in langs %}<span>...</span>{% endfor %}
+    </a>
+</div>
