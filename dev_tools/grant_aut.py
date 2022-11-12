@@ -2,15 +2,23 @@ import re
 
 rxFind = re.compile('^ *CREATE +(PROCEDURE|FUNCTION) +(\w+)', re.I | re.M)
 
-sqf = 'sql/init.sql'
+sqf = 'sql/init_functions.sql'
 
 with open(sqf, 'r') as fh:
     cont = fh.read()
     fh.close()
-    res = [
-        "GRANT EXECUTE ON %-10s jagoda.%-22s TO 'aut'@'%%';" %  (tp, fc)
-        for tp, fc in rxFind.findall(cont)
-    ]
-    print('\n'.join(res))
+    grant = []
+    drop  = []
+    for tp, fc in rxFind.findall(cont):
+        grant.append("GRANT EXECUTE ON %-9s jagoda.%-22s TO 'aut'@'%%';" %  (tp, fc))
+        drop.append("DROP %-9s IF EXISTS %s;" % (tp, fc))
+    
+    # map(print, grant)
+    print('\n'.join(grant))
+
+    print('======================================================')
+
+    print('\n'.join(drop))
+
 
 

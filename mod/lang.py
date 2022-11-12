@@ -13,7 +13,7 @@ def getLangs():
     if not LANGS:
         LANGS = db().getLangTable()
         ILCS  = [ l[0] for l in LANGS ]
-        LANG_ITEMS = db().getLangItemTypeTable()
+        LANG_ITEMS = [item[0:2] for item in db().getLangItemTypeTable()]
 
 def langs():
     getLangs()
