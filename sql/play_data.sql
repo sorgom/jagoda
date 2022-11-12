@@ -12,10 +12,6 @@ REPLACE INTO LANG VALUES
 ;
 
 -- Language element types
--- T title
--- C caption
--- W what ist is
--- M make / techniqe of artpiece
 REPLACE INTO LANG_ITEM_TYPE VALUES
     ('OT', 'Object Titles', 1),
     ('CA', 'Website Captions', 0),
@@ -85,6 +81,8 @@ REPLACE INTO LANG_ELEM VALUES
     (36, 'en', 'Water Colour'),
     (37, 'en', 'Catalogue')
 ;
+
+
 
 -- our only article
 REPLACE INTO OBJECT(ID) VALUES

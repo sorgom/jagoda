@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template
 
-from mod.MyDB import setDB
+from mod.MyDB import setDB, db
 from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.base import *
 import mod.img, mod.login, mod.lang, mod.saveImg

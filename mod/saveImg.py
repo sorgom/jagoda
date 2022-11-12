@@ -63,6 +63,7 @@ def checkImgFolders():
 def getExif(id:int):
     debug('getExif')
     fp = db().getImgFileExif(id)
+    debug('fp', fp)
     if not path.exists(fp): return None
     with open(fp, 'r') as fh:
         data = json.load(fh)

@@ -10,7 +10,7 @@ __mydb__ = None
 class MyDB(MySQL):
 
     def getNextId(self):
-        return self.getNum('SELECT nextId();', True)
+        return self.getNum('SELECT nextId();', commit=True)
 
     def getUsrId(self, usr:str, pwd:str):
         sql = "SELECT getUsrId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
@@ -62,6 +62,9 @@ class MyDB(MySQL):
         res = self.getNum(f'SELECT isObject({id});')
         return res > 0
 
+    def getObject(self, id:int):
+        return self.getDict('SELECT * FROM ')
+
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'CALL addObjectImg({objId}, {imgId});')
@@ -70,9 +73,7 @@ class MyDB(MySQL):
         self.call(f'CALL addImg({imgId});')
 
     def getObjectImgs(self, id:int):
-        return [ 
-            { 'id': id, 'ord': ord, 'src':src } for id, ord, src in self.get(f'CALL getObjectImgs({id});')
-        ]
+        return self.getDict(f'CALL getObjectImgs({id});')
 
     def getNumObjectImgs(self, id:int):
         return self.getNum(f'SELECT getNumObjectImgs({id});')
@@ -84,9 +85,7 @@ class MyDB(MySQL):
         self.call(f'CALL rmObjectImg({objId}, {imgId});')
 
     def getUnusedImgs(self):
-        return [ 
-            { 'id': id, 'ord': -1, 'src':src } for id, src in self.get(f'CALL getUnusedImgs();')
-        ]
+        return self.getDict('CALL getUnusedImgs();')
 
     def getImgFileMini(self, id:int):
         return self.getOne(f'SELECT imgFileMini({id});')
@@ -95,31 +94,41 @@ class MyDB(MySQL):
     def getImgFileExif(self, id:int):
         return self.getOne(f'SELECT imgFileExif({id});')
     def getImgFiles(self, id:int):
-        return self.get(f'CALL imgFiles({id});')[0]
+        return self.getOneRow(f'CALL imgFiles({id});')
     def getImgFolders(self):
-        return self.get('CALL imgFolders();')[0]
+        return self.getOneRow('CALL imgFolders();')
 
-    ## subs
-
-    def get(self, sql:str, commit=False):
-        # debug('get sql:', sql)
+    def procCursor(self, sql:str, func, commit=False):
         cursor = self.connection.cursor()
         cursor.execute(sql)
-        result = cursor.fetchall()
+        res = func(cursor)
         cursor.close()
         if commit:
             self.connection.commit() 
-        return result
+        return res
 
-    def getOne(self, sql:str, commit=False):
-        res = self.get(sql, commit)
-        return res[0][0] if res else None
+    def getOneRow(self, sql:str, **args):
+        return self.procCursor(sql, lambda c : c.fetchone(), **args)
+
+    def mkDict(self, cur):
+        desc = [ d[0].lower() for d in cur.description ]
+        return list(map(lambda a : dict(zip(desc, a)), cur.fetchall()))
+
+    def getDict(self, sql:str, **args):
+        return self.procCursor(sql, self.mkDict, **args)
+
+    def get(self, sql:str, **args):
+        return self.procCursor(sql, lambda c : c.fetchall(), **args)
+
+    def getOne(self, sql:str, **args):
+        res = self.getOneRow(sql, **args)
+        return res[0] if res else None
     
     def getNum(self, sql:str, *args) -> int:
         return int(self.getOne(sql, *args))
 
-    def getFirstCol(self, sql:str, *args):
-        return [ r[0] for r in self.get(sql, *args) ]
+    def getFirstCol(self, sql:str, **args):
+        return [ r[0] for r in self.get(sql, **args) ]
 
     def call(self, sql:str):
         cursor = self.connection.cursor()

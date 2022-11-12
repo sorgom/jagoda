@@ -192,7 +192,7 @@ END :)
 -- retrieve all images of an object
 CREATE PROCEDURE getObjectImgs(pOBJECT BIGINT)
 BEGIN
-    SELECT IMG, ORD, imgFileMini(IMG) FROM OBJECT_IMG
+    SELECT IMG as id, ORD, imgFileMini(IMG) as src FROM OBJECT_IMG
     WHERE OBJECT = pOBJECT
     ORDER BY ORD;
 END :)  
@@ -209,7 +209,7 @@ END :)
 -- retrieve all unassigned images
 CREATE PROCEDURE getUnusedImgs()
 BEGIN
-    SELECT I.ID, imgFileMini(I.ID) FROM IMG AS I
+    SELECT I.ID as id, imgFileMini(I.ID) as src, -1 as ord FROM IMG AS I
     LEFT JOIN  OBJECT_IMG AS OI 
     ON OI.IMG = I.ID
     WHERE OI.IMG IS NULL
