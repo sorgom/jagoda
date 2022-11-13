@@ -28,6 +28,11 @@ def preStart():
 def index():
     return mod.lang.renderBase('aut_obj_imgs.htm', objId=4711, acceptImgTypes=IMG_TYPE_ACCEPTED)
 
+@app.route('/t')
+def testData():
+    db().testData()
+    return redirect('/')
+
 # login
 route('/login',                     mod.login.login,        methods=BOTH)
 route('/logout',                    mod.login.logout                    )

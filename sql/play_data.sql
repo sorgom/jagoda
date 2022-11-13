@@ -82,17 +82,6 @@ REPLACE INTO LANG_ELEM VALUES
     (37, 'en', 'Catalogue')
 ;
 
-
-
--- our only article
-REPLACE INTO OBJECT(ID) VALUES
-    (4711)
-;
-
-REPLACE INTO ARTICLE(ID) VALUES
-    (4711)
-;
-
 -- Some Authors
 CALL setUsr('Ilonka', 'ChangeMeSoon');
 CALL setUsr('Wumpel', 'Test123');
