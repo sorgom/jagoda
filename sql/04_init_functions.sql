@@ -4,34 +4,8 @@
 -- enables funtions / procedures that don't acces any tables:
 SET GLOBAL log_bin_trust_function_creators = 1;
 -- ============================================================
--- GENERATED>
-DROP FUNCTION  IF EXISTS nextId;
-DROP PROCEDURE IF EXISTS initSeq;
-DROP PROCEDURE IF EXISTS getLangTable;
-DROP PROCEDURE IF EXISTS getLangItemTypeTable;
-DROP PROCEDURE IF EXISTS getLangItemTypeLabel;
-DROP PROCEDURE IF EXISTS getLangItemType;
-DROP PROCEDURE IF EXISTS newLangItem;
-DROP PROCEDURE IF EXISTS getLangElemTable;
-DROP PROCEDURE IF EXISTS getLangElem;
-DROP PROCEDURE IF EXISTS setLangElem;
-DROP FUNCTION  IF EXISTS isObject;
-DROP FUNCTION  IF EXISTS imgPath;
-DROP FUNCTION  IF EXISTS imgFileMini;
-DROP FUNCTION  IF EXISTS imgFileFull;
-DROP FUNCTION  IF EXISTS imgFileExif;
-DROP PROCEDURE IF EXISTS imgFiles;
-DROP PROCEDURE IF EXISTS imgFolders;
-DROP PROCEDURE IF EXISTS addImg;
-DROP PROCEDURE IF EXISTS addObjectImg;
-DROP PROCEDURE IF EXISTS getObjectImgs;
-DROP PROCEDURE IF EXISTS setObjectImg;
-DROP PROCEDURE IF EXISTS rmObjectImg;
-DROP PROCEDURE IF EXISTS getUnusedImgs;
-DROP PROCEDURE IF EXISTS setUsr;
-DROP FUNCTION  IF EXISTS getUsrId;
-DROP PROCEDURE IF EXISTS setPass;
--- <GENERATED
+-- GENERATED DROP>
+-- <GENERATED DROP
 -- sequences
 -- ============================================================
 DELIMITER :)  
@@ -50,8 +24,8 @@ CREATE PROCEDURE initSeq()
 BEGIN
     DECLARE num BIGINT;
     SELECT GREATEST(
-    -- OBJECT.ID
-         IFNULL((SELECT MAX(ID) FROM OBJECT), 0),
+    -- OBJ.ID
+         IFNULL((SELECT MAX(ID) FROM OBJ), 0),
     -- LANG_ITEM.ID
          IFNULL((SELECT MAX(ID) FROM LANG_ITEM), 0),
     -- IMG.ID
@@ -130,87 +104,55 @@ CREATE FUNCTION isObject(pID BIGINT)
 RETURNS INT
 BEGIN  
     DECLARE vNUM INT;  
-    SELECT COUNT(*) FROM OBJECT WHERE (ID = pID) INTO @vNUM;  
+    SELECT COUNT(*) FROM OBJ WHERE (ID = pID) INTO @vNUM;  
     RETURN @vNUM;
 END :)  
 -- ============================================================
 -- images
 -- ============================================================
-CREATE FUNCTION imgPath(pSUB VARCHAR(8), pID BIGINT, pEXT VARCHAR(4))
-RETURNS VARCHAR(32)
-BEGIN
-    IF pID = -1 THEN 
-        RETURN CONCAT('static/img/',  pSUB);
-    ELSE 
-        RETURN CONCAT('static/img/',  pSUB, '/', LPAD(pID, 7, 0), '.', pEXT);
-    END IF;
-END :)  
-CREATE FUNCTION imgFileMini(pID BIGINT)
-RETURNS VARCHAR(32)
-BEGIN
-    RETURN imgPath('mini', pID, 'jpg');
-END :)  
-CREATE FUNCTION imgFileFull(pID BIGINT)
-RETURNS VARCHAR(32)
-BEGIN
-    RETURN imgPath('full', pID, 'jpg');
-END :)  
-CREATE FUNCTION imgFileExif(pID BIGINT)
-RETURNS VARCHAR(32)
-BEGIN
-    RETURN imgPath('exif', pID, 'json');
-END :)  
-CREATE PROCEDURE imgFiles(pID BIGINT)
-BEGIN
-    SELECT imgFileMini(pID), imgFileFull(pID), imgFileExif(pID);
-END :)
-CREATE PROCEDURE imgFolders()
-BEGIN
-    CALL imgFiles(-1);
-END :)
 -- create new image element
 CREATE PROCEDURE addImg(pID BIGINT)
 BEGIN
     REPLACE INTO IMG(ID) VALUES (pID);
 END :)  
 -- create new objet image assignment
-CREATE PROCEDURE addObjectImg(pOBJECT BIGINT, pIMG BIGINT)
+CREATE PROCEDURE addObjectImg(pOBJ BIGINT, pIMG BIGINT)
 BEGIN
     DECLARE vORD INT;
 
     REPLACE INTO IMG VALUES(pIMG); 
     
-    SELECT MAX(ORD) FROM OBJECT_IMG
-    WHERE OBJECT = pOBJECT
+    SELECT MAX(ORD) FROM OBJ_IMG
+    WHERE OBJ = pOBJ
     INTO @vORD;
 
     SET @vORD = IFNULL(@vORD, -1);
     SET @vORD = @vORD + 1;
 
-    REPLACE INTO OBJECT_IMG VALUES (pOBJECT, pIMG, @vORD);
+    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, @vORD);
 END :)  
 -- retrieve all images of an object
-CREATE PROCEDURE getObjectImgs(pOBJECT BIGINT)
+CREATE PROCEDURE getObjectImgs(pOBJ BIGINT)
 BEGIN
-    SELECT IMG as id, ORD, imgFileMini(IMG) as src FROM OBJECT_IMG
-    WHERE OBJECT = pOBJECT
+    SELECT IMG as id, ORD, imgFileMini(IMG) as src FROM OBJ_IMG
+    WHERE OBJ = pOBJ
     ORDER BY ORD;
 END :)  
 -- alter object image assignment
-CREATE PROCEDURE setObjectImg(pOBJECT BIGINT, pIMG BIGINT, pORD INT)
+CREATE PROCEDURE setObjectImg(pOBJ BIGINT, pIMG BIGINT, pORD INT)
 BEGIN
-    REPLACE INTO OBJECT_IMG VALUES (pOBJECT, pIMG, pORD);
+    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, pORD);
 END :)  
 -- remove image from object
-CREATE PROCEDURE rmObjectImg(pOBJECT BIGINT, pIMG BIGINT)
+CREATE PROCEDURE rmObjectImg(pOBJ BIGINT, pIMG BIGINT)
 BEGIN
-    DELETE FROM OBJECT_IMG WHERE OBJECT = pOBJECT AND IMG = pIMG;
+    DELETE FROM OBJ_IMG WHERE OBJ = pOBJ AND IMG = pIMG;
 END :)  
 -- retrieve all unassigned images
 CREATE PROCEDURE getUnusedImgs()
 BEGIN
     SELECT I.ID as id, imgFileMini(I.ID) as src, -1 as ord FROM IMG AS I
-    LEFT JOIN  OBJECT_IMG AS OI 
+    LEFT JOIN  OBJ_IMG AS OI 
     ON OI.IMG = I.ID
     WHERE OI.IMG IS NULL
     ORDER BY I.ID;
@@ -237,36 +179,9 @@ CREATE PROCEDURE setPass(pID BIGINT, pMD5 VARCHAR(32))
 BEGIN
     UPDATE USR SET PASS = pMD5 WHERE ID = pID;
 END :)  
-
 -- ============================================================
 -- ## Assigned Database Users
 -- ============================================================
 DELIMITER ;
--- GENERATED>
-GRANT EXECUTE ON FUNCTION  jagoda.nextId                 TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.initSeq                TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getLangTable           TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getLangItemTypeTable   TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getLangItemTypeLabel   TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getLangItemType        TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.newLangItem            TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getLangElemTable       TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getLangElem            TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.setLangElem            TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION  jagoda.isObject               TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION  jagoda.imgPath                TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION  jagoda.imgFileMini            TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION  jagoda.imgFileFull            TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION  jagoda.imgFileExif            TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.imgFiles               TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.imgFolders             TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.addImg                 TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.addObjectImg           TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getObjectImgs          TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.setObjectImg           TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.rmObjectImg            TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.getUnusedImgs          TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.setUsr                 TO 'aut'@'%';
-GRANT EXECUTE ON FUNCTION  jagoda.getUsrId               TO 'aut'@'%';
-GRANT EXECUTE ON PROCEDURE jagoda.setPass                TO 'aut'@'%';
--- <GENERATED
+-- GENERATED GRANT>
+-- <GENERATED GRANT

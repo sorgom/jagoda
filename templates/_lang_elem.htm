@@ -4,13 +4,7 @@
 -->
 <form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}');return false;">
     <table class="lel">
-        {% for ilc, label, value in rows[0:1] %}
-            <tr>
-                <td>{{label}}</td>
-                <td><textarea rows=2 name="{{ilc}}" lang="{{ilc}}" autofocus required>{{value}}</textarea></td>
-            </tr>
-        {% endfor %}
-        {% for ilc, label, value in rows[1:] %}
+        {% for ilc, label, value in rows %}
             <tr>
                 <td>{{label}}</td>
                 <td><textarea rows=2 name="{{ilc}}" lang="{{ilc}}">{{value}}</textarea></td>

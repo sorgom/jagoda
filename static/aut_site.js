@@ -146,14 +146,23 @@ function popup(route)
 function submitPopup(route)
 {
     debug('submitPopup: ' + route);
-    let form = geti('popup_form');
-    if  (!form) return;
-    if (form.querySelector(':invalid'))
+    let pf = geti('popup_form');
+    if (!pf) return;
+    let ok = false;
+    for (let a of pf.querySelectorAll('textarea'))
+    {
+        if (a.value != '')
+        {
+            ok = true;
+            break;
+        }
+    }
+    if (!ok) 
     {
         debug('missing content');
         return;
     }
-    postAjax(new FormData(form), route, rt => {
+    postAjax(new FormData(pf), route, rt => {
         let ct = geti('content');
         if (ct) ct.innerHTML = rt;
         closePopup();

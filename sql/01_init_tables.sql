@@ -60,9 +60,10 @@ CREATE TABLE LANG_ELEM (
 -- ============================================================
 -- ## content elements
 -- ============================================================
+-- 
 -- physical objects
-DROP TABLE IF EXISTS OBJECT;
-CREATE TABLE OBJECT (
+DROP TABLE IF EXISTS OBJ;
+CREATE TABLE OBJ (
     ID BIGINT NOT NULL,
     TITLE BIGINT NOT NULL,
     DIM1 INT NOT NULL DEFAULT 0,
@@ -82,7 +83,7 @@ CREATE TABLE ARTICLE (
     VAL TINYINT(1) DEFAULT 0,
     PUB TINYINT(1) DEFAULT 0,
     PRIMARY KEY (ID),
-    FOREIGN KEY (ID)    REFERENCES OBJECT(ID)    ON DELETE CASCADE,
+    FOREIGN KEY (ID)    REFERENCES OBJ(ID)    ON DELETE CASCADE,
     FOREIGN KEY (WHAT)  REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
 -- ============================================================
@@ -95,13 +96,13 @@ CREATE TABLE IMG (
     PRIMARY KEY (ID)
 );
 -- object image assignment
-DROP TABLE IF EXISTS OBJECT_IMG;
-CREATE TABLE OBJECT_IMG (
-    OBJECT BIGINT NOT NULL,
+DROP TABLE IF EXISTS OBJ_IMG;
+CREATE TABLE OBJ_IMG (
+    OBJ BIGINT NOT NULL,
     IMG BIGINT NOT NULL,
     ORD INT NOT NULL DEFAULT 1,
-    PRIMARY KEY (OBJECT, IMG),
-    FOREIGN KEY (OBJECT) REFERENCES OBJECT(ID) ON DELETE CASCADE,
+    PRIMARY KEY (OBJ, IMG),
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE,
     FOREIGN KEY (IMG)    REFERENCES IMG(ID)    ON DELETE CASCADE
 );
 -- ============================================================

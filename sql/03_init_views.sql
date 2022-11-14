@@ -9,14 +9,23 @@
 --  - all objects without image
 
 -- all objects with 1st image
-drop view if exists OBJECT_IMG_1ST;
-create view OBJECT_IMG_1ST as
-select T1.OBJECT as ID, imgFileMini(T1.IMG) as SRC from OBJECT_IMG as T1
+drop view if exists OBJ_IMG_1ST;
+create view OBJ_IMG_1ST as
+select T1.OBJ as ID, imgFileMini(T1.IMG) as SRC from OBJ_IMG as T1
 inner join
-(select OBJECT, min(ORD) as ORD2 from OBJECT_IMG GROUP BY OBJECT) as T2
-ON T1.OBJECT = T2.OBJECT AND T1.ORD = T2.ORD2;
+(select OBJ, min(ORD) as ORD2 from OBJ_IMG group by OBJ) as T2
+ON T1.OBJ = T2.OBJ AND T1.ORD = T2.ORD2;
 
--- all assigned language elenets with order
+-- language item can be / is standard
+drop view if exists LANG_ITEM_STD;
+create view LANG_ITEM_STD as
+select LI.*, LT.STDABLE
+from 
+LANG_ITEM as LI
+inner join LANG_ITEM_TYPE as LT
+on LI.TPC = LT.TPC;
+
+-- all assigned language elements with order
 drop view if exists LANG_ELEM_ORD;
 create view LANG_ELEM_ORD as
 select LE.ID, LE.LABEL, LA.ILC, LA.ORD from LANG_ELEM as LE

@@ -147,7 +147,7 @@ class MyDB(MySQL):
     # create a lot of articles and titels
     def testData(self):
         self.call('delete from LANG_ITEM where TPC = "OT";')
-        self.call('delete from OBJECT;')
+        self.call('delete from OBJ;')
         # random language elements
         langs = self.getLangTable()
         slen = len(langs)
@@ -162,7 +162,7 @@ class MyDB(MySQL):
         offset = 2000
         sizes = [10, 20, 50, 300, 400, 1000]
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
-        sql = ' '.join(['insert into OBJECT(ID, TITLE, DIM1, DIM2, DIM3) values', ','.join(ins), ';'])
+        sql = ' '.join(['insert into OBJ(ID, TITLE, DIM1, DIM2, DIM3) values', ','.join(ins), ';'])
         self.call(sql)
         ins = [f'({id + offset})' for id in ids]
         sql = ' '.join(['insert into ARTICLE(ID) values', ','.join(ins), ';'])
