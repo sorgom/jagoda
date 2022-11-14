@@ -5,6 +5,12 @@
 SET GLOBAL log_bin_trust_function_creators = 1;
 -- ============================================================
 -- GENERATED DROP>
+drop function  if exists imgPath;
+drop function  if exists imgFileMini;
+drop function  if exists imgFileFull;
+drop function  if exists imgFileExif;
+drop procedure if exists imgFiles;
+drop procedure if exists imgFolders;
 -- <GENERATED DROP
 DELIMITER :)  
 -- ============================================================
@@ -45,4 +51,10 @@ END :)
 
 DELIMITER ;
 -- GENERATED GRANT>
+grant execute on function  jagoda.imgPath                to 'aut'@'%';
+grant execute on function  jagoda.imgFileMini            to 'aut'@'%';
+grant execute on function  jagoda.imgFileFull            to 'aut'@'%';
+grant execute on function  jagoda.imgFileExif            to 'aut'@'%';
+grant execute on procedure jagoda.imgFiles               to 'aut'@'%';
+grant execute on procedure jagoda.imgFolders             to 'aut'@'%';
 -- <GENERATED GRANT

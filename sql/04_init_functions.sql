@@ -5,6 +5,26 @@
 SET GLOBAL log_bin_trust_function_creators = 1;
 -- ============================================================
 -- GENERATED DROP>
+drop function  if exists nextId;
+drop procedure if exists initSeq;
+drop procedure if exists getLangTable;
+drop procedure if exists getLangItemTypeTable;
+drop procedure if exists getLangItemTypeLabel;
+drop procedure if exists getLangItemType;
+drop procedure if exists newLangItem;
+drop procedure if exists getLangElemTable;
+drop procedure if exists getLangElem;
+drop procedure if exists setLangElem;
+drop function  if exists isObject;
+drop procedure if exists addImg;
+drop procedure if exists addObjectImg;
+drop procedure if exists getObjectImgs;
+drop procedure if exists setObjectImg;
+drop procedure if exists rmObjectImg;
+drop procedure if exists getUnusedImgs;
+drop procedure if exists setUsr;
+drop function  if exists getUsrId;
+drop procedure if exists setPass;
 -- <GENERATED DROP
 -- sequences
 -- ============================================================
@@ -184,4 +204,24 @@ END :)
 -- ============================================================
 DELIMITER ;
 -- GENERATED GRANT>
+grant execute on function  jagoda.nextId                 to 'aut'@'%';
+grant execute on procedure jagoda.initSeq                to 'aut'@'%';
+grant execute on procedure jagoda.getLangTable           to 'aut'@'%';
+grant execute on procedure jagoda.getLangItemTypeTable   to 'aut'@'%';
+grant execute on procedure jagoda.getLangItemTypeLabel   to 'aut'@'%';
+grant execute on procedure jagoda.getLangItemType        to 'aut'@'%';
+grant execute on procedure jagoda.newLangItem            to 'aut'@'%';
+grant execute on procedure jagoda.getLangElemTable       to 'aut'@'%';
+grant execute on procedure jagoda.getLangElem            to 'aut'@'%';
+grant execute on procedure jagoda.setLangElem            to 'aut'@'%';
+grant execute on function  jagoda.isObject               to 'aut'@'%';
+grant execute on procedure jagoda.addImg                 to 'aut'@'%';
+grant execute on procedure jagoda.addObjectImg           to 'aut'@'%';
+grant execute on procedure jagoda.getObjectImgs          to 'aut'@'%';
+grant execute on procedure jagoda.setObjectImg           to 'aut'@'%';
+grant execute on procedure jagoda.rmObjectImg            to 'aut'@'%';
+grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
+grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
+grant execute on function  jagoda.getUsrId               to 'aut'@'%';
+grant execute on procedure jagoda.setPass                to 'aut'@'%';
 -- <GENERATED GRANT
