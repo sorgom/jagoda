@@ -26,7 +26,7 @@ def preStart():
 
 @app.route('/')
 def index():
-    return mod.lang.renderBase('aut_obj_imgs.htm', objId=4711, acceptImgTypes=IMG_TYPE_ACCEPTED)
+    return mod.lang.renderBase('aut_obj_imgs.htm', objId=102003, acceptImgTypes=IMG_TYPE_ACCEPTED)
 
 @app.route('/t')
 def testData():

@@ -1,17 +1,32 @@
+# current
+2022-11-15
+- fix
+  - new language elements save:
+  ```
+  MySQLdb.OperationalError: (1136, "Column count doesn't match value count at row 1") 
+  ```
+
 # ideas / concepts
 ## containers and boxes
 - dimensions
 - standard containers / boxes
+## language support
+- import / export: excel
+
 
 ## Considerations
 - messaging: who edits what
   - general ajax message lookup
   - install agents who get informed by item id after updates / changes
 ### language support
-- first language fixed for captions
-  - captions placed with first language, e.g. cap['file']
-  - first entry not editable (stored in db with labguage item type)
-- apply spellchecks to display by assigning ILCs?
+#### website captions
+- pre-defined / own class
+- linked to shortcut names like FILE, OWN
+- cannot be removed / added
+- called by short
+- own editor
+- view only rights
+
 ### all ids are unique
 - everything can be identified by ID
 - only one sequenz
@@ -33,6 +48,7 @@
   - SIMPLE SOLUTION: safe exif as JSON
 - duplicate detection: save md5 / sha hash of full size thumbnail or original
   - use io.BytesIO for this
+  - use pre-defined similarity definitions?
 ```
 import io
 from PIL import Image

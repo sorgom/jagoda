@@ -4,7 +4,7 @@
 -->
 <form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}');return false;">
     <table class="lel">
-        {% for ilc, label, value in rows %}
+        {% for ilc, label, value in data %}
             <tr>
                 <td>{{label}}</td>
                 <td><textarea rows=2 name="{{ilc}}" lang="{{ilc}}">{{value}}</textarea></td>
@@ -12,6 +12,11 @@
         {% endfor %}
     </table>
     <input type="hidden" name="tpc" value="{{tpc}}">
+    <input type="hidden" name="stdable" value="{{item['stdable']}}">
+    {% if item['stdable'] %}
+        <input type="checkbox" id="std" name="std" {{ 'checked' if item['std'] else '' }}>
+        <label for="std">Use as standard title</label>
+    {% endif %}
     <div class="buttons">
         <button type="submit">SUBMIT</button>
     </div>

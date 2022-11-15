@@ -4,12 +4,12 @@
 -->
 <div class="clickSel">
     <div>{% for ilc, label in langs %}<span>{{label}}</span>{% endfor %}</div>
+    <a onclick="popup('/_newLangForm/{{tpc}}');" title="new item">
+        {% for lang in langs %}<span>...</span>{% endfor %}
+    </a>
     {% for id, labels in rows %}
     <a onclick="popup('/_langElem/{{id}}');" title="edit #{{id}}">
             {% for label in labels %}<span>{{label}}</span>{% endfor %}
     </a>        
     {% endfor %}
-    <a onclick="popup('/_newLangForm/{{tpc}}');" title="new item">
-        {% for lang in langs %}<span>...</span>{% endfor %}
-    </a>
 </div>

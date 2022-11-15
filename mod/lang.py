@@ -58,7 +58,9 @@ def _langElem(id:int):
     # res = render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_setbabl/{id}')
     # debug(res)
     # return res
-    return render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_setLang/{id}')
+    item = db().getLangItem(id)
+    debug('item:', item)
+    return render_template('_lang_elem.htm', id=id, data=getLangElem(id), item=item, submit=f'_setLang/{id}')
 
 def _langElemTable(tpc:str):
     if not loggedIn(): return ERR_AUTH
@@ -71,17 +73,19 @@ def _setLang(id:int):
     tpc = db().getLangItemType(id)
     if not tpc: return ERR_DATA
     getLangs()
-    for ilc in ILCS:
-        db().setLangElem(id, ilc, rf(ilc))
+    db().setLangElems(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    if rf('stdable'):
+        db().setLangItemStd(id, rf('std'))
     return _langElemTable(tpc)
 
-#   ajax get: new babl entry form
+#   ajax get: new language entry form
 def _newLangForm(tpc:str):
     debug(f'_newLangForm({tpc})')
     if not loggedIn(): return ERR_AUTH
     id = db().getNextId()
+    item = db().getNewLangItem(tpc)
     debug('new id:', id)
-    return render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_newLang/{tpc}/{id}')
+    return render_template('_lang_elem.htm', id=id, data=getLangElem(id), item=item, submit=f'_newLang/{tpc}/{id}')
 
 #   ajax post: new language entry
 def _newLang(tpc:str, id:int):

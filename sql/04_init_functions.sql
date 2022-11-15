@@ -7,24 +7,13 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 -- GENERATED DROP>
 drop function  if exists nextId;
 drop procedure if exists initSeq;
-drop procedure if exists getLangTable;
-drop procedure if exists getLangItemTypeTable;
-drop procedure if exists getLangItemTypeLabel;
-drop procedure if exists getLangItemType;
-drop procedure if exists newLangItem;
 drop procedure if exists getLangElemTable;
-drop procedure if exists getLangElem;
+drop procedure if exists setLangItemStd;
 drop procedure if exists setLangElem;
-drop function  if exists isObject;
-drop procedure if exists addImg;
 drop procedure if exists addObjectImg;
-drop procedure if exists getObjectImgs;
-drop procedure if exists setObjectImg;
-drop procedure if exists rmObjectImg;
 drop procedure if exists getUnusedImgs;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
-drop procedure if exists setPass;
 -- <GENERATED DROP
 -- sequences
 -- ============================================================
@@ -59,52 +48,25 @@ END :)
 -- ============================================================
 -- language support
 -- ============================================================
--- language table
-CREATE PROCEDURE getLangTable()  
-BEGIN
-    SELECT ILC, LABEL FROM LANG ORDER BY ORD;
-END :)  
--- retrieve language element types
-CREATE PROCEDURE getLangItemTypeTable()
-BEGIN
-    SELECT * FROM LANG_ITEM_TYPE;
-END :)  
--- retrieve language element type label
-CREATE PROCEDURE getLangItemTypeLabel(pTP CHAR(2))  
-BEGIN
-    SELECT LABEL FROM LANG_ITEM_TYPE WHERE TPC = pTP LIMIT 1;
-END :)  
--- retrieve type of a language item
-CREATE PROCEDURE getLangItemType(pID BIGINT)  
-BEGIN
-    SELECT TPC FROM LANG_ITEM WHERE ID = pID LIMIT 1;
-END :)  
--- create new language item
-CREATE PROCEDURE newLangItem(pID BIGINT, pTP CHAR(2))  
-BEGIN
-    INSERT INTO LANG_ITEM VALUES (pID, pTP);
-END :)  
 -- retrieve all language elements of a type 
 CREATE PROCEDURE getLangElemTable(pTPC CHAR(2))  
 BEGIN
     SELECT E.ID, E.ILC, E.LABEL 
-    FROM LANG_ELEM as E
+    FROM LANG_ELEM_ORD as E
         INNER JOIN LANG_ITEM as I
         ON E.ID = I.ID 
-        INNER JOIN LANG as L 
-        ON E.ILC = L.ILC
     WHERE I.TPC = pTPC
-    ORDER BY E.ID, L.ORD;
+    ORDER BY E.ID, E.ORD;
 END :)  
--- retrieve language element by ID
-CREATE PROCEDURE getLangElem(pID BIGINT)  
+-- set language item standard
+create procedure setLangItemStd(pID bigint, pSTD tinyint)
 BEGIN
-    SELECT L.ILC, E.LABEL
-    FROM LANG_ELEM as E INNER JOIN LANG as L 
-    ON E.ILC = L.ILC 
-    WHERE E.ID = pID
-    ORDER BY L.ORD;
-END :)  
+    declare vOK TINYINT;
+    select STDABLE from LANG_ITEM_STD where ID = pID into @vOK;
+    if @vOK THEN
+        UPDATE LANG_ITEM set STD = pSTD where ID = pID;
+    end if;
+END :)
 -- set language element
 CREATE PROCEDURE setLangElem(
     pID BIGINT, 
@@ -120,21 +82,9 @@ END :)
 -- ============================================================
 -- objects
 -- ============================================================
-CREATE FUNCTION isObject(pID BIGINT)
-RETURNS INT
-BEGIN  
-    DECLARE vNUM INT;  
-    SELECT COUNT(*) FROM OBJ WHERE (ID = pID) INTO @vNUM;  
-    RETURN @vNUM;
-END :)  
 -- ============================================================
 -- images
 -- ============================================================
--- create new image element
-CREATE PROCEDURE addImg(pID BIGINT)
-BEGIN
-    REPLACE INTO IMG(ID) VALUES (pID);
-END :)  
 -- create new objet image assignment
 CREATE PROCEDURE addObjectImg(pOBJ BIGINT, pIMG BIGINT)
 BEGIN
@@ -150,23 +100,6 @@ BEGIN
     SET @vORD = @vORD + 1;
 
     REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, @vORD);
-END :)  
--- retrieve all images of an object
-CREATE PROCEDURE getObjectImgs(pOBJ BIGINT)
-BEGIN
-    SELECT IMG as id, ORD, imgFileMini(IMG) as src FROM OBJ_IMG
-    WHERE OBJ = pOBJ
-    ORDER BY ORD;
-END :)  
--- alter object image assignment
-CREATE PROCEDURE setObjectImg(pOBJ BIGINT, pIMG BIGINT, pORD INT)
-BEGIN
-    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, pORD);
-END :)  
--- remove image from object
-CREATE PROCEDURE rmObjectImg(pOBJ BIGINT, pIMG BIGINT)
-BEGIN
-    DELETE FROM OBJ_IMG WHERE OBJ = pOBJ AND IMG = pIMG;
 END :)  
 -- retrieve all unassigned images
 CREATE PROCEDURE getUnusedImgs()
@@ -194,11 +127,6 @@ BEGIN
     SELECT ID FROM USR WHERE (NAME = LOWER(pNAME) AND PASS = pMD5) INTO @vID; 
     RETURN @vID;
 END :)  
--- change password of author by ID
-CREATE PROCEDURE setPass(pID BIGINT, pMD5 VARCHAR(32)) 
-BEGIN
-    UPDATE USR SET PASS = pMD5 WHERE ID = pID;
-END :)  
 -- ============================================================
 -- ## Assigned Database Users
 -- ============================================================
@@ -206,22 +134,11 @@ DELIMITER ;
 -- GENERATED GRANT>
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
-grant execute on procedure jagoda.getLangTable           to 'aut'@'%';
-grant execute on procedure jagoda.getLangItemTypeTable   to 'aut'@'%';
-grant execute on procedure jagoda.getLangItemTypeLabel   to 'aut'@'%';
-grant execute on procedure jagoda.getLangItemType        to 'aut'@'%';
-grant execute on procedure jagoda.newLangItem            to 'aut'@'%';
 grant execute on procedure jagoda.getLangElemTable       to 'aut'@'%';
-grant execute on procedure jagoda.getLangElem            to 'aut'@'%';
+grant execute on procedure jagoda.setLangItemStd         to 'aut'@'%';
 grant execute on procedure jagoda.setLangElem            to 'aut'@'%';
-grant execute on function  jagoda.isObject               to 'aut'@'%';
-grant execute on procedure jagoda.addImg                 to 'aut'@'%';
 grant execute on procedure jagoda.addObjectImg           to 'aut'@'%';
-grant execute on procedure jagoda.getObjectImgs          to 'aut'@'%';
-grant execute on procedure jagoda.setObjectImg           to 'aut'@'%';
-grant execute on procedure jagoda.rmObjectImg            to 'aut'@'%';
 grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
-grant execute on procedure jagoda.setPass                to 'aut'@'%';
 -- <GENERATED GRANT

@@ -11,95 +11,101 @@ __mydb__ = None
 class MyDB(MySQL):
 
     def getNextId(self):
-        return self.getNum('SELECT nextId();', commit=True)
+        return self.getNum('select nextId();', commit=True)
 
     def getUsrId(self, usr:str, pwd:str):
-        sql = "SELECT getUsrId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
+        sql = "select getUsrId('%s', '%s');" % (self.mask(usr), self.md5(pwd))
         return self.getNum(sql)
 
     def setPwd(self, id:int, pwd1:str, pwd2:str):
         if pwd1 != pwd2:
             return False
-        sql = "CALL setPASS(%d, '%s');" % (id, self.md5(pwd1))
-        self.call(sql)
+        self.call(f'update USR set PASS = "{self.md5(pwd1)}" where ID = {id};')
         return True
 
     ## lanaguage support        
 
     # list of [icl, label]
     def getLangTable(self):
-        return self.get('CALL getLangTable();')
+        return self.get('select ILC, LABEL from LANG order by ORD;')
 
     # list of [tpc, label]
     def getLangItemTypeTable(self):
-        return self.get('CALL getLangItemTypeTable();')
+        return self.get('select * from LANG_ITEM_TYPE;')
 
     # label of given language type
     def getLangItemTypeLabel(self, tpc:str):
-        return self.getOne(f'CALL getLangItemTypeLabel("{tpc}");')
+        return self.getOne(f'select LABEL from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')
 
     # type of language entry by id
     def getLangItemType(self, id:int):
-        return self.getOne(f'CALL getLangItemType({id})')
+        return self.getOne(f'select TPC from LANG_ITEM where ID = {id} limit 1;')
 
     # create new language item
     def newLangItem(self, id:int, tpc:str):
-        self.call(f'CALL newLangItem({id}, "{tpc}")')
+        self.call(f'insert into LANG_ITEM(ID, TPC) values ({id}, "{tpc}")')
 
     # list of [id, ilc, label]
     def getLangElemTable(self, tpc:str):
-        return self.get(f'CALL getLangElemTable("{tpc}");')
+        return self.get(f'call getLangElemTable("{tpc}");')
 
+    # select ILC, LABEL from LANG_ELEM_ORD  where ID = 100001 order by ORD;
     # list of [ilc, label]
     def getLangElem(self, id:int):
-        return self.get(f'CALL getLangElem({id});')
+        return self.get(f'select ILC, LABEL from LANG_ELEM_ORD where ID = {id} order by ORD;')
 
-    def setLangElem(self, id:int, ilc:str, label:str):
-        self.call("CALL setLangElem(%d, '%s', '%s');" % (id, ilc, self.mask(label)))
+    # select * from LANG_ITEM_STD where ID = 100001 limit 1;
+    def getLangItem(self, id:int):
+        return self.getDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')[0]
+
+    def getNewLangItem(self, tpc:str):
+        return self.getDict(f'select STDABLE, 0 as STD from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')[0]
+
+    def setLangElems(self, id:int, data:list):
+        self.multi('LANG_ELEM', [f'({id}, \'{ilc}\', \'{self.mask(label)}\')' for ilc, label in data])
+        self.call(f"delete from LANG_ELEM where ID = {id} and LABEL = '';")
+
+    def setLangItemStd(self, id:int, std:int):
+        debug(f'setLangItemStd({id}, {std});')
+        self.call(f'call setLangItemStd({id}, {1 if std else 0});')
 
     ## objects
 
-    def isObject(self, id:int) -> bool:
-        res = self.getNum(f'SELECT isObject({id});')
-        return res > 0
-
     def getObject(self, id:int):
-        return self.getDict('SELECT * FROM ')
+        return self.getDict('select * FROM ')
 
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
-        self.call(f'CALL addObjectImg({objId}, {imgId});')
+        self.call(f'call addObjectImg({objId}, {imgId});')
 
     def addImg(self, imgId:int):
-        self.call(f'CALL addImg({imgId});')
+        self.call(f'replace into IMG(ID) values ({imgId});')
 
-    def getObjectImgs(self, id:int):
-        return self.getDict(f'CALL getObjectImgs({id});')
-
-    def getNumObjectImgs(self, id:int):
-        return self.getNum(f'SELECT getNumObjectImgs({id});')
-
+    def getObjectImgs(self, objId:int):
+        return self.getDict(f'select IMG as ID, ORD, imgFileMini(IMG) as SRC from OBJ_IMG where OBJ = {objId} order by ORD;')
+    
     def setObjectImg(self, objId:int, imgId:int, ord:int):
-        self.call(f'CALL setObjectImg({objId}, {imgId}, {ord});')
+        self.call(f'replace into OBJ_IMG values ({objId}, {imgId}, {ord});')
 
     def rmObjectImg(self, objId:int, imgId:int):
-        self.call(f'CALL rmObjectImg({objId}, {imgId});')
+        self.call(f'delete from OBJ_IMG where OBJ = {objId} and IMG = {imgId};')
 
     def getUnusedImgs(self):
-        return self.getDict('CALL getUnusedImgs();')
+        return self.getDict('call getUnusedImgs();')
 
     def getImgFileMini(self, id:int):
-        return self.getOne(f'SELECT imgFileMini({id});')
+        return self.getOne(f'select imgFileMini({id});')
     def getImgFileFull(self, id:int):
-        return self.getOne(f'SELECT imgFileFull({id});')
+        return self.getOne(f'select imgFileFull({id});')
     def getImgFileExif(self, id:int):
-        return self.getOne(f'SELECT imgFileExif({id});')
+        return self.getOne(f'select imgFileExif({id});')
     def getImgFiles(self, id:int):
-        return self.getOneRow(f'CALL imgFiles({id});')
+        return self.getOneRow(f'call imgFiles({id});')
     def getImgFolders(self):
-        return self.getOneRow('CALL imgFolders();')
+        return self.getOneRow('call imgFolders();')
 
     def procCursor(self, sql:str, func, commit=False):
+        debug('SQL:', sql)
         cursor = self.connection.cursor()
         cursor.execute(sql)
         res = func(cursor)
@@ -132,6 +138,7 @@ class MyDB(MySQL):
         return [ r[0] for r in self.get(sql, **args) ]
 
     def call(self, sql:str):
+        debug('call:', sql)
         cursor = self.connection.cursor()
         cursor.execute(sql)
         cursor.close()
@@ -143,6 +150,11 @@ class MyDB(MySQL):
     def mask(self, val:str):
         return val.replace('\\', '\\\\').replace('\'', '\\\'')
 
+    def multi(self, tablefields:str, ins:list, insert:bool=False):
+        cir = 'insert' if insert else 'replace'
+        head = f'{cir} into {tablefields} values'
+        sql  = '\n'.join([head, ','.join(ins), ';'])
+        self.call(sql) 
 
     # create a lot of articles and titels
     def testData(self):
@@ -152,21 +164,15 @@ class MyDB(MySQL):
         langs = self.getLangTable()
         slen = len(langs)
         ids = list(range(100000, 110000))
-        ins = [f'({id}, "OT")' for id in ids]
-        sql = ' '.join(['insert into LANG_ITEM(ID, TPC) values', ','.join(ins), ';'])
-        self.call(sql)
-        ins = [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))]
-        sql = ' '.join(['insert into LANG_ELEM values', ','.join(ins), ';'])
-        self.call(sql)
+        self.multi('LANG_ITEM(ID, TPC)', [f'({id}, "OT")' for id in ids], insert=True)
+        self.multi('LANG_ELEM', [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
         # random articles / objects
         offset = 2000
-        sizes = [10, 20, 50, 300, 400, 1000]
+        sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
-        sql = ' '.join(['insert into OBJ(ID, TITLE, DIM1, DIM2, DIM3) values', ','.join(ins), ';'])
-        self.call(sql)
-        ins = [f'({id + offset})' for id in ids]
-        sql = ' '.join(['insert into ARTICLE(ID) values', ','.join(ins), ';'])
-        self.call(sql)
+        self.multi('OBJ(ID, TITLE, DIM1, DIM2, DIM3)', ins, True)
+        self.multi('ARTICLE(ID)', [f'({id + offset})' for id in ids])
+        self.call('call initSeq();')
 
 def setDB(app):
     global __mydb__
