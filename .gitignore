@@ -4,3 +4,4 @@ dump
 __pycache__
 GEN_*.htm
 tmp_*
+tmp.*

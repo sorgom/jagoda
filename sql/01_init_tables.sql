@@ -152,6 +152,13 @@ CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 GRANT SELECT, INSERT, DELETE ON jagoda.* TO 'aut'@'%';
 
 -- GENERATED UPDATE>
+grant update (STD                                     ) on jagoda.LANG_ITEM  to 'aut'@'%';
+grant update (LABEL                                   ) on jagoda.LANG_ELEM  to 'aut'@'%';
+grant update (TITLE, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ        to 'aut'@'%';
+grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ARTICLE    to 'aut'@'%';
+grant update (ORD                                     ) on jagoda.OBJ_IMG    to 'aut'@'%';
+grant update (NUM                                     ) on jagoda.SEQ        to 'aut'@'%';
+grant update (NAME, PASS, RC                          ) on jagoda.USR        to 'aut'@'%';
 -- <GENERATED UPDATE
 
 -- TODO: user type: viewer with login
