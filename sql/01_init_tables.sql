@@ -14,7 +14,7 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 -- ILC, ISO Language Codes acc. to 
 -- https://www.w3schools.com/tags/ref_language_codes.asp
 DROP TABLE IF EXISTS LANG;
-CREATE TABLE LANG (
+CREATE TABLE LANG ( -- ROOT
     ILC CHAR(2) NOT NULL,
     LABEL VARCHAR(64) NOT NULL,
     ORD INT NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE LANG (
 );
 -- possible type of language item
 DROP TABLE IF EXISTS LANG_ITEM_TYPE;
-CREATE TABLE LANG_ITEM_TYPE (
+CREATE TABLE LANG_ITEM_TYPE ( -- ROOT
     TPC CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
     STDABLE TINYINT NOT NULL DEFAULT 0,
@@ -110,8 +110,7 @@ CREATE TABLE OBJ_IMG (
 -- ## sequences
 -- ============================================================
 DROP TABLE IF EXISTS SEQ;
-CREATE TABLE SEQ  
-(  
+CREATE TABLE SEQ (  
     ID TINYINT NOT NULL,
     NUM BIGINT NOT NULL,
     PRIMARY KEY (ID)
@@ -121,8 +120,7 @@ INSERT INTO SEQ VALUES(1, 0);
 -- ## users
 -- ============================================================
 DROP TABLE IF EXISTS ROLE;
-CREATE TABLE ROLE  
-(  
+CREATE TABLE ROLE (  -- ROOT
     RC CHAR(1) NOT NULL,
     LABEL VARCHAR(8) NOT NULL,
     PRIMARY KEY (RC)
@@ -135,7 +133,7 @@ INSERT INTO ROLE VALUES
 
 DROP TABLE IF EXISTS USR;
 CREATE TABLE USR  
-(  
+(
     ID BIGINT NOT NULL AUTO_INCREMENT,
     NAME VARCHAR(32) NOT NULL,
     PASS VARCHAR(32) BINARY NOT NULL,
@@ -151,7 +149,10 @@ DELIMITER ;
 -- Author can change Content
 DROP USER IF EXISTS 'aut'@'%';
 CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
-GRANT SELECT, INSERT, UPDATE, DELETE ON jagoda.* TO 'aut'@'%';
+GRANT SELECT, INSERT, DELETE ON jagoda.* TO 'aut'@'%';
+
+-- GENERATED UPDATE>
+-- <GENERATED UPDATE
 
 -- TODO: user type: viewer with login
 

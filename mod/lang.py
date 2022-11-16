@@ -88,8 +88,8 @@ def _newLangForm(tpc:str):
     return render_template('_lang_elem.htm', id=id, data=getLangElem(id), item=item, submit=f'_newLang/{tpc}/{id}')
 
 #   ajax post: new language entry
-def _newLang(tpc:str, id:int):
-    debug(f'_newlang({tpc}, {id})')
+def _newLangItem(tpc:str, id:int):
+    debug(f'_newlangItem({tpc}, {id})')
     if not loggedIn(): return ERR_AUTH
     db().newLangItem(id, tpc)
     return _setLang(id)
