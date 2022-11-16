@@ -42,6 +42,7 @@ CREATE TABLE LANG_ITEM (
     ID BIGINT NOT NULL,
     TPC CHAR(2) NOT NULL,
     STD TINYINT NOT NULL DEFAULT 0,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID),
     FOREIGN KEY (TPC) REFERENCES LANG_ITEM_TYPE(TPC) ON DELETE CASCADE
 );
@@ -152,7 +153,7 @@ CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 GRANT SELECT, INSERT, DELETE ON jagoda.* TO 'aut'@'%';
 
 -- GENERATED UPDATE>
-grant update (STD                                     ) on jagoda.LANG_ITEM  to 'aut'@'%';
+grant update (STD, TST                                ) on jagoda.LANG_ITEM  to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.LANG_ELEM  to 'aut'@'%';
 grant update (TITLE, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ        to 'aut'@'%';
 grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ARTICLE    to 'aut'@'%';

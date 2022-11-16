@@ -7,7 +7,6 @@ import random
 
 __mydb__ = None
 
-
 class MyDB(MySQL):
 
     def getNextId(self):
@@ -25,46 +24,52 @@ class MyDB(MySQL):
 
     ## lanaguage support        
 
+    # get list of current languages
     # list of [icl, label]
     def getLangTable(self):
         return self.get('select ILC, LABEL from LANG order by ORD;')
 
+    # get list of item types
     # list of [tpc, label]
     def getLangItemTypeTable(self):
         return self.get('select * from LANG_ITEM_TYPE;')
 
-    # label of given language type
+    # get label of given language type
     def getLangItemTypeLabel(self, tpc:str):
         return self.getOne(f'select LABEL from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')
 
-    # type of language entry by id
+    # get lang item type of language entry by id
     def getLangItemType(self, id:int):
         return self.getOne(f'select TPC from LANG_ITEM where ID = {id} limit 1;')
 
-    # create new language item
+    # create new language item (head)
     def newLangItem(self, id:int, tpc:str):
         self.call(f'insert into LANG_ITEM(ID, TPC) values ({id}, "{tpc}")')
 
-    # list of [id, ilc, label]
-    def getLangElemTable(self, tpc:str):
+    # get table fo lang items of given type
+    def getLangItems(self, tpc:str):
         return self.get(f'call getLangElemTable("{tpc}");')
 
-    # select ILC, LABEL from LANG_ELEM_ORD  where ID = 100001 order by ORD;
+    # get elements of a lang item
     # list of [ilc, label]
-    def getLangElem(self, id:int):
+    def getLangItem(self, id:int):
         return self.get(f'select ILC, LABEL from LANG_ELEM_ORD where ID = {id} order by ORD;')
 
-    # select * from LANG_ITEM_STD where ID = 100001 limit 1;
-    def getLangItem(self, id:int):
+    # get head (info) of language item
+    def getLangItemInfo(self, id:int):
         return self.getDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')[0]
 
-    def getNewLangItem(self, tpc:str):
+    # get head (info) of for a new language item
+    def getNewLangItemInfo(self, tpc:str):
         return self.getDict(f'select STDABLE, 0 as STD from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')[0]
 
-    def setLangElems(self, id:int, data:list):
+    # set elements of a lang item
+    def setLangItem(self, id:int, data:list):
         self.multi('LANG_ELEM', [f'({id}, \'{ilc}\', \'{self.mask(label)}\')' for ilc, label in data])
         self.call(f"delete from LANG_ELEM where ID = {id} and LABEL = '';")
-
+        self.call(f'update LANG_ITEM set TST = CURRENT_TIMESTAMP where ID = {id};')
+    
+    # change lang item standard flag
     def setLangItemStd(self, id:int, std:int):
         debug(f'setLangItemStd({id}, {std});')
         self.call(f'call setLangItemStd({id}, {1 if std else 0});')

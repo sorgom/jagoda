@@ -31,65 +31,73 @@ def renderBase(template:str, **args):
     getLangs()
     return render_template(template, langs=LANGS, ilcs=ILCS, langItems=LANG_ITEMS, **args)
 
-def getLangElemTable(tpc:str):
+def getLangItems(tpc:str):
     getLangs()
-    data = db().getLangElemTable(tpc)
+    data = db().getLangItems(tpc)
     fnd = {}
     for (id, ilc, label) in data:
         fnd.setdefault(id, {})[ilc] = label
     return [ [ id, [ fnd[id].get(ilc, '') for ilc in ILCS ] ] for id in fnd.keys() ]
 
-def getLangElem(id:int):
+def getLangItem(id:int):
     getLangs()
-    data = db().getLangElem(id)
+    data = db().getLangItem(id)
     fnd = { ilc:value for ilc, value in data }
     return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
+#   ============================================================
+#   CALLS
+#   ============================================================
 #   listing of all language elements of a type
 #   html: language elements listing
-def langElemTable(tpc:str):
+def langItems(tpc:str):
     title = db().getLangItemTypeLabel(tpc)
     if not title: return redirect('/')
-    return renderBase('GEN_lang_table.htm', tpc=tpc, title=title, rows=getLangElemTable(tpc))
+    return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getLangItems(tpc))
 
-def _langElem(id:int):
-    debug(f'_langElem({id})')
+#   ============================================================
+#   AJAX
+#   ============================================================
+#   listing of all lang items of a type
+def _langItems(tpc:str):
     if not loggedIn(): return ERR_AUTH
-    # res = render_template('_lang_elem.htm', id=id, rows=getLangElem(id), submit=f'_setbabl/{id}')
+    return renderBase('_lang_items.htm', tpc=tpc, items=getLangItems(tpc))
+
+#   lising of elements of a lang item
+def _langItem(id:int):
+    debug(f'_langItem({id})')
+    if not loggedIn(): return ERR_AUTH
+    # res = render_template('_lang_elem.htm', id=id, rows=getLangItem(id), submit=f'_setbabl/{id}')
     # debug(res)
     # return res
-    item = db().getLangItem(id)
+    item = db().getLangItemInfo(id)
     debug('item:', item)
-    return render_template('_lang_elem.htm', id=id, data=getLangElem(id), item=item, submit=f'_setLang/{id}')
+    return render_template('_lang_item.htm', id=id, data=getLangItem(id), item=item, submit=f'_setLangItem/{id}')
 
-def _langElemTable(tpc:str):
-    if not loggedIn(): return ERR_AUTH
-    return renderBase('_lang_table.htm', tpc=tpc, rows=getLangElemTable(tpc))
-
-#   set language element data
+#   set language item element data
 #   return language table of element type
-def _setLang(id:int):
+def _setLangItem(id:int):
     if not loggedIn(): return ERR_AUTH
     tpc = db().getLangItemType(id)
     if not tpc: return ERR_DATA
     getLangs()
-    db().setLangElems(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
     if rf('stdable'):
         db().setLangItemStd(id, rf('std'))
-    return _langElemTable(tpc)
+    return _langItems(tpc)
 
 #   ajax get: new language entry form
-def _newLangForm(tpc:str):
-    debug(f'_newLangForm({tpc})')
+def _newLangItem(tpc:str):
+    debug(f'_newLangItem({tpc})')
     if not loggedIn(): return ERR_AUTH
     id = db().getNextId()
-    item = db().getNewLangItem(tpc)
+    item = db().getNewLangItemInfo(tpc)
     debug('new id:', id)
-    return render_template('_lang_elem.htm', id=id, data=getLangElem(id), item=item, submit=f'_newLang/{tpc}/{id}')
+    return render_template('_lang_item.htm', id=id, data=getLangItem(id), item=item, submit=f'_addLangItem/{tpc}/{id}')
 
 #   ajax post: new language entry
-def _newLangItem(tpc:str, id:int):
+def _addLangItem(tpc:str, id:int):
     debug(f'_newlangItem({tpc}, {id})')
     if not loggedIn(): return ERR_AUTH
     db().newLangItem(id, tpc)
-    return _setLang(id)
+    return _setLangItem(id)

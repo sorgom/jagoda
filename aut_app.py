@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, render_template
 from mod.MyDB import setDB, db
 from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.base import *
-import mod.img, mod.login, mod.lang, mod.saveImg
+from mod import img, login, lang, saveImg
 from mod.config import *
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
@@ -26,7 +26,7 @@ def preStart():
 
 @app.route('/')
 def index():
-    return mod.lang.renderBase('aut_obj_imgs.htm', objId=102003, acceptImgTypes=IMG_TYPE_ACCEPTED)
+    return lang.renderBase('aut_obj_imgs.htm', objId=102003, acceptImgTypes=IMG_TYPE_ACCEPTED)
 
 @app.route('/t')
 def testData():
@@ -34,25 +34,25 @@ def testData():
     return redirect('/')
 
 # login
-route('/login',                     mod.login.login,        methods=BOTH)
-route('/logout',                    mod.login.logout                    )
-route('/pwd',                       mod.login.pwd,          methods=BOTH)
-route('/_loggedIn',                 mod.login._loggedIn                 )
+route('/login',                     login.login,        methods=BOTH)
+route('/logout',                    login.logout                    )
+route('/pwd',                       login.pwd,          methods=BOTH)
+route('/_loggedIn',                 login._loggedIn                 )
 
 # language authoring
-route('/lang/<tpc>',                mod.lang.langElemTable              )
-route('/_langElem/<int:id>',        mod.lang._langElem                  )
-route('/_setLang/<int:id>',         mod.lang._setLang,      methods=POST)
-route('/_newLangForm/<tpc>',        mod.lang._newLangForm               )
-route('/_newLang/<tpc>/<int:id>',   mod.lang._newLang,      methods=POST)
+route('/langItems/<tpc>',               lang.langItems                  )
+route('/_langItem/<int:id>',            lang._langItem                  )
+route('/_setLangItem/<int:id>',         lang._setLangItem,  methods=POST)
+route('/_newLangItem/<tpc>',            lang._newLangItem               )
+route('/_addLangItem/<tpc>/<int:id>',   lang._addLangItem,  methods=POST)
 
 # image ajax calls
-route('/_addObjImgs/<int:objId>',   mod.img._addObjImgs,    methods=POST)
-route('/_objImgs/<int:objId>',      mod.img._objImgs                    )
-route('/_orderObjImgs/<int:objId>', mod.img._orderObjImgs,  methods=POST)
-route('/_rmObjImg',                 mod.img._rmObjImg,      methods=POST)
-route('/_unusedImgs',               mod.img._unusedImgs                 )
-route('/_imgInfo/<int:id>',         mod.img._imgInfo                    )
+route('/_addObjImgs/<int:objId>',   img._addObjImgs,    methods=POST)
+route('/_objImgs/<int:objId>',      img._objImgs                    )
+route('/_orderObjImgs/<int:objId>', img._orderObjImgs,  methods=POST)
+route('/_rmObjImg',                 img._rmObjImg,      methods=POST)
+route('/_unusedImgs',               img._unusedImgs                 )
+route('/_imgInfo/<int:id>',         img._imgInfo                    )
 
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@
                 <!-- TODO: generated content: babl editing -->
                 <ul>
                 {% for tpc, label in langItems %}
-                    <li><a href="/lang/{{tpc}}">Edit {{label}}</a></li>
+                    <li><a href="/langItems/{{tpc}}">Edit {{label}}</a></li>
                 {% endfor %}
                 </ul>
             </div>
@@ -53,5 +53,8 @@
         which can prevent errors, and speed up website response time.
     -->
     <script src="/static/aut_site.js"></script>
+    <script>
+        document.onload = whatchLogin();
+    </script>
 </body>
 </html>

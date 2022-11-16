@@ -56,7 +56,7 @@ BEGIN
         INNER JOIN LANG_ITEM as I
         ON E.ID = I.ID 
     WHERE I.TPC = pTPC
-    ORDER BY E.ID, E.ORD;
+    ORDER BY I.TST desc, E.ORD;
 END :)  
 -- set language item standard
 create procedure setLangItemStd(pID bigint, pSTD tinyint)

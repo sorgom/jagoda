@@ -19,15 +19,15 @@ REPLACE INTO LANG_ITEM_TYPE VALUES
 ;
 
 -- Captions
-REPLACE INTO LANG_ITEM VALUES
-    (1, 'CA', 0),
-    (2, 'CA', 0),
-    (3, 'CA', 0),
-    (4, 'CA', 0),
-    (5, 'CA', 0),
-    (6, 'CA', 0),
-    (7, 'CA', 0),
-    (8, 'CA', 0)
+REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+    (1, 'CA'),
+    (2, 'CA'),
+    (3, 'CA'),
+    (4, 'CA'),
+    (5, 'CA'),
+    (6, 'CA'),
+    (7, 'CA'),
+    (8, 'CA')
 ;
 
 REPLACE INTO LANG_ELEM VALUES
@@ -41,13 +41,13 @@ REPLACE INTO LANG_ELEM VALUES
     (8, 'en', 'Technique')
 ;
 
-REPLACE INTO LANG_ITEM VALUES
-    (20, 'CA', 0),
-    (21, 'CA', 0),
-    (22, 'CA', 0),
-    (23, 'CA', 0),
-    (24, 'CA', 0),
-    (25, 'CA', 0)
+REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+    (20, 'CA'),
+    (21, 'CA'),
+    (22, 'CA'),
+    (23, 'CA'),
+    (24, 'CA'),
+    (25, 'CA')
 ;
 
 REPLACE INTO LANG_ELEM VALUES
@@ -62,14 +62,14 @@ REPLACE INTO LANG_ELEM VALUES
 ;
 
 -- Make
-REPLACE INTO LANG_ITEM VALUES
-    (31, 'TQ', 0),
-    (32, 'TQ', 0),
-    (33, 'TQ', 0),
-    (34, 'TQ', 0),
-    (35, 'TQ', 0),
-    (36, 'TQ', 0),
-    (37, 'TQ', 0)
+REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+    (31, 'TQ'),
+    (32, 'TQ'),
+    (33, 'TQ'),
+    (34, 'TQ'),
+    (35, 'TQ'),
+    (36, 'TQ'),
+    (37, 'TQ')
 ;
 
 REPLACE INTO LANG_ELEM VALUES
