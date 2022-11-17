@@ -35,8 +35,12 @@
             "id": "2cd20a1857395512",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "MySQL/Role Assignement.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ],
@@ -106,6 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "MySQL/Role Assignement.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -122,6 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "MySQL/Role Assignement.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -143,7 +149,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "MySQL/Role Assignement.md"
+              }
             }
           }
         ]
@@ -155,7 +163,6 @@
   },
   "active": "2cd20a1857395512",
   "lastOpenFiles": [
-    "MySQL/Role Assignement.md",
     "MySQL/MySQL_cursor.md",
     "Flask_MogonDB.md",
     "MySQL/make columns read only.md",

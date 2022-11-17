@@ -48,7 +48,7 @@ class MyDB(MySQL):
 
     # get table fo lang items of given type
     def getLangItems(self, tpc:str):
-        return self.get(f'call getLangElemTable("{tpc}");')
+        return self.get(f'call getLangItems("{tpc}");')
 
     # get elements of a lang item
     # list of [ilc, label]

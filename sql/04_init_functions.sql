@@ -7,7 +7,7 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 -- GENERATED DROP>
 drop function  if exists nextId;
 drop procedure if exists initSeq;
-drop procedure if exists getLangElemTable;
+drop procedure if exists getLangItems;
 drop procedure if exists setLangItemStd;
 drop procedure if exists setLangElem;
 drop procedure if exists addObjectImg;
@@ -48,8 +48,8 @@ END :)
 -- ============================================================
 -- language support
 -- ============================================================
--- retrieve all language elements of a type 
-CREATE PROCEDURE getLangElemTable(pTPC CHAR(2))  
+-- retrieve all language items of a type 
+CREATE PROCEDURE getLangItems(pTPC CHAR(2))  
 BEGIN
     SELECT E.ID, E.ILC, E.LABEL 
     FROM LANG_ELEM_ORD as E
@@ -134,7 +134,7 @@ DELIMITER ;
 -- GENERATED GRANT>
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
-grant execute on procedure jagoda.getLangElemTable       to 'aut'@'%';
+grant execute on procedure jagoda.getLangItems           to 'aut'@'%';
 grant execute on procedure jagoda.setLangItemStd         to 'aut'@'%';
 grant execute on procedure jagoda.setLangElem            to 'aut'@'%';
 grant execute on procedure jagoda.addObjectImg           to 'aut'@'%';
@@ -142,3 +142,4 @@ grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
 -- <GENERATED GRANT
+

@@ -1,4 +1,4 @@
-from replGenSql import replGenSql, USR
+from replGenSql import replGenSql, ROLE_AUT, DB, USR
 import re
 from glob import glob
 
@@ -11,7 +11,7 @@ def genSql(fpath:str):
         grant = []
         drop  = []
         for tp, fc in rxCreate.findall(cont):
-            grant.append("grant execute on %-9s jagoda.%-22s to %s;" %  (tp.lower(), fc, USR))
+            grant.append("grant execute on %-9s %s.%-22s to %s;" %  (tp.lower(), DB, fc, USR))
             drop.append("drop %-9s if exists %s;" % (tp.lower(), fc))
 
         cont = replGenSql('GRANT', grant, replGenSql('DROP', drop, cont))

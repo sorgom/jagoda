@@ -67,12 +67,9 @@ def _langItems(tpc:str):
 def _langItem(id:int):
     debug(f'_langItem({id})')
     if not loggedIn(): return ERR_AUTH
-    # res = render_template('_lang_elem.htm', id=id, rows=getLangItem(id), submit=f'_setbabl/{id}')
-    # debug(res)
-    # return res
     item = db().getLangItemInfo(id)
     debug('item:', item)
-    return render_template('_lang_item.htm', id=id, data=getLangItem(id), item=item, submit=f'_setLangItem/{id}')
+    return render_template('_lang_item.htm', itemId=id, data=getLangItem(id), item=item, submit=f'_setLangItem/{id}')
 
 #   set language item element data
 #   return language table of element type
