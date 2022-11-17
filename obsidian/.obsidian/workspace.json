@@ -30,9 +30,17 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "2cd20a1857395512",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -98,7 +106,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "MySQL/MySQL_cursor.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +122,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "MySQL/MySQL_cursor.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -137,9 +143,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "MySQL/MySQL_cursor.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -149,15 +153,16 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "7f4fb4c0c6979cb0",
+  "active": "2cd20a1857395512",
   "lastOpenFiles": [
+    "MySQL/Role Assignement.md",
+    "MySQL/MySQL_cursor.md",
     "Flask_MogonDB.md",
     "MySQL/make columns read only.md",
     "MySQL/CLI with Password.md",
     "general/md file syntax.md",
     "MySQL/Have a look at ROLES.md",
     "New_Article.md",
-    "MySQL/MySQL_cursor.md",
     "Python/use variable in regex.md"
   ]
 }
