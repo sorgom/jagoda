@@ -1,0 +1,9 @@
+<h1>Object no. {{objId}}</h1>
+    <button onclick="popup('/_qrcode/{{objId}}');">QRCode</button>
+<h2>Title:</h2>
+{% if ttlId %}
+    <button onclick="popup('/_edArtTtl/{{objId}}/{{ttlId}}');">Edit title</button>
+{% else %}
+    <button onclick="popup('/_newArtTtl/{{objId}}');">Create new title</button>
+{% endif %}
+    <button onclick="popup('/_newArtStdTtl/{{objId}}');">Use a standard title</button>

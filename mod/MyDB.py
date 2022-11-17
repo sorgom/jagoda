@@ -53,6 +53,7 @@ class MyDB(MySQL):
     # get elements of a lang item
     # list of [ilc, label]
     def getLangItem(self, id:int):
+        debug('getLangItem', __name__, id)
         return self.get(f'select ILC, LABEL from LANG_ELEM_ORD where ID = {id} order by ORD;')
 
     # get head (info) of language item
@@ -74,10 +75,24 @@ class MyDB(MySQL):
         debug(f'setLangItemStd({id}, {std});')
         self.call(f'call setLangItemStd({id}, {1 if std else 0});')
 
+    #   get listing of standard titles
+    def getStdTtls(self):
+        return self.get('select ID, LABEL from LANG_ELEM_1ST where STD = 1 and TPC = "OT";')
+
+    #   get first label of given lang item id
+    def getFirstLabel(self, id:int):
+        return self.getOne(f'select LABEL from LANG_ELEM_1ST where ID = {id} limit 1;')
+
+
     ## objects
 
     def getObject(self, id:int):
         return self.getDict('select * FROM ')
+    
+    def addArt(self, objId:int, ttlId:int):
+        self.call(f'insert into OBJ(ID, TITLE) values ({objId}, {ttlId});')
+
+
 
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
@@ -165,18 +180,20 @@ class MyDB(MySQL):
     def testData(self):
         self.call('delete from LANG_ITEM where TPC = "OT";')
         self.call('delete from OBJ;')
+        random.seed()
         # random language elements
         langs = self.getLangTable()
         slen = len(langs)
         ids = list(range(100000, 110000))
-        self.multi('LANG_ITEM(ID, TPC)', [f'({id}, "OT")' for id in ids], insert=True)
+        stds = [ 0 for n in range(20) ] + [1]
+        self.multi('LANG_ITEM(ID, TPC, STD)', [f'({id}, "OT", {random.choice(stds)})' for id in ids], insert=True)
         self.multi('LANG_ELEM', [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
         # random articles / objects
         offset = 2000
         sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
         self.multi('OBJ(ID, TITLE, DIM1, DIM2, DIM3)', ins, True)
-        self.multi('ARTICLE(ID)', [f'({id + offset})' for id in ids])
+        self.multi('ART(ID)', [f'({id + offset})' for id in ids])
         self.call('call initSeq();')
 
 def setDB(app):

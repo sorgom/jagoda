@@ -37,10 +37,11 @@ order by LE.ID, LA.ORD;
 -- first available language element
 drop view if exists LANG_ELEM_1ST;
 create view LANG_ELEM_1ST as
-select LE.ID, LE.LABEL, LE.ILC from LANG_ELEM_ORD as LE
-inner join
-(select ID, min(ORD) as MIO from LANG_ELEM_ORD group by ID) as MO
-on LE.ID = MO.ID and LE.ORD = MO.MIO 
+select LE.ID, LE.LABEL, LE.ILC, LI.STD, LI.TPC from LANG_ELEM_ORD as LE
+inner join (select ID, min(ORD) as MIO from LANG_ELEM_ORD group by ID) as MO
+on LE.ID = MO.ID and LE.ORD = MO.MIO
+inner join LANG_ITEM as LI
+on LI.ID = LE.ID 
 order by LE.ID;
 
 -- cross table all elements all languages

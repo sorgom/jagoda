@@ -66,14 +66,14 @@ CREATE TABLE LANG_ELEM (
 DROP TABLE IF EXISTS OBJ;
 CREATE TABLE OBJ (
     ID BIGINT NOT NULL,
-    TITLE BIGINT NOT NULL,
+    TTL BIGINT NOT NULL,
     DIM1 DECIMAL(10, 1) NOT NULL DEFAULT 0,
     DIM2 DECIMAL(10, 1) NOT NULL DEFAULT 0,
     DIM3 DECIMAL(10, 1) NOT NULL DEFAULT 0,
     LOC BIGINT NOT NULL DEFAULT 0,
     TST DATETIME not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID), 
-    FOREIGN KEY (TITLE) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
+    FOREIGN KEY (TTL) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
 -- article / artifact
 DROP TABLE IF EXISTS ART;
@@ -166,7 +166,7 @@ grant select                         on jagoda.ROLE                 to 'aut'@'%'
 grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
 grant update (STD, TST                                ) on jagoda.LANG_ITEM            to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.LANG_ELEM            to 'aut'@'%';
-grant update (TITLE, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ                  to 'aut'@'%';
+grant update (TTL, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ                  to 'aut'@'%';
 grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ART                  to 'aut'@'%';
 grant update (ORD                                     ) on jagoda.OBJ_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';

@@ -54,9 +54,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "71410ce52f33b891",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Python/Frequently Forgotten.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -122,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "git/Frequently Forgotten.md",
+                "file": "Python/Frequently Forgotten.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -139,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "git/Frequently Forgotten.md",
+                "file": "Python/Frequently Forgotten.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -162,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "git/Frequently Forgotten.md"
+                "file": "Python/Frequently Forgotten.md"
               }
             }
           }
@@ -173,16 +185,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "d01f8f8dae45d04b",
+  "active": "71410ce52f33b891",
   "lastOpenFiles": [
+    "MySQL/MySQL_cursor.md",
+    "Python/Frequently Forgotten.md",
+    "git/Frequently Forgotten.md",
     "MySQL/Have a look at ROLES.md",
     "MySQL/Role Assignement.md",
-    "MySQL/MySQL_cursor.md",
     "Flask_MogonDB.md",
     "MySQL/make columns read only.md",
     "MySQL/CLI with Password.md",
     "general/md file syntax.md",
-    "New_Article.md",
-    "Python/use variable in regex.md"
+    "New_Article.md"
   ]
 }

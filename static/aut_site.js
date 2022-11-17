@@ -162,11 +162,19 @@ function submitPopup(route)
         debug('missing content');
         return;
     }
-    postAjax(new FormData(pf), route, rt => {
-        let ct = geti('content');
-        if (ct) ct.innerHTML = rt;
-        closePopup();
-    });
+    postAjax(new FormData(pf), route, setContent);
+}
+
+function setContent(html)
+{
+    let ct = geti('content');
+    if (ct) ct.innerHTML = html;
+    closePopup();   
+}
+
+function newArtTtl(objId, ttlId)
+{
+    getAjax(['_newArt', objId, ttlId].join('/'), setContent)
 }
 
 function dragImg(ev)

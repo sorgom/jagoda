@@ -56,6 +56,18 @@ def langItems(tpc:str):
     return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getLangItems(tpc))
 
 #   ============================================================
+#   API
+#   ============================================================
+def setLangItem(id:int):
+    if not loggedIn(): return ERR_AUTH
+    tpc = db().getLangItemType(id)
+    if not tpc: return ERR_DATA
+    getLangs()
+    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    if rf('stdable'):
+        db().setLangItemStd(id, rf('std'))
+    return None
+#   ============================================================
 #   AJAX
 #   ============================================================
 #   listing of all lang items of a type
@@ -98,3 +110,6 @@ def _addLangItem(tpc:str, id:int):
     if not loggedIn(): return ERR_AUTH
     db().newLangItem(id, tpc)
     return _setLangItem(id)
+
+def _label(id:int):
+    return db().getFirstLabel(id)

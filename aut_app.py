@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, render_template
 from mod.MyDB import setDB, db
 from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.base import *
-from mod import img, login, lang, saveImg
+from mod import img, login, lang, saveImg, art
 from mod.config import *
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
@@ -45,6 +45,7 @@ route('/_langItem/<int:id>',            lang._langItem                  )
 route('/_setLangItem/<int:id>',         lang._setLangItem,  methods=POST)
 route('/_newLangItem/<tpc>',            lang._newLangItem               )
 route('/_addLangItem/<tpc>/<int:id>',   lang._addLangItem,  methods=POST)
+route('/_label/<int:id>',               lang._label                     )
 
 # image ajax calls
 route('/_addObjImgs/<int:objId>',   img._addObjImgs,    methods=POST)
@@ -54,6 +55,12 @@ route('/_rmObjImg',                 img._rmObjImg,      methods=POST)
 route('/_unusedImgs',               img._unusedImgs                 )
 route('/_imgInfo/<int:id>',         img._imgInfo                    )
 
+# articles
+route('/newArt1',                           art.newArt1)
+route('/_newArtStdTtl/<int:objId>',         art._newArtStdTtl)
+route('/_newArtTtl/<int:objId>',            art._newArtTtl)
+route('/newArt2/<int:objId>/<int:ttlId>',   art.newArt2G)
+route('/newArt2',                           art.newArt2P, methods=POST)
 
 if __name__ == '__main__':
     preStart()

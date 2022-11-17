@@ -1,0 +1,12 @@
+<!-- 
+    required parameters:
+    - action    JS call
+    - items     listing of id, label
+    - objId     obj id to assign title to
+ -->
+
+<div class="titles">
+    {% for id, label in items %}
+    <a href="{{action}}/{{objId}}/{{id}}">{{label}}</a>
+    {% endfor %}
+</div>
