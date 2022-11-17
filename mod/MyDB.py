@@ -53,7 +53,6 @@ class MyDB(MySQL):
     # get elements of a lang item
     # list of [ilc, label]
     def getLangItem(self, id:int):
-        debug('getLangItem', __name__, id)
         return self.get(f'select ILC, LABEL from LANG_ELEM_ORD where ID = {id} order by ORD;')
 
     # get head (info) of language item

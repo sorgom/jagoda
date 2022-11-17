@@ -58,15 +58,7 @@ def langItems(tpc:str):
 #   ============================================================
 #   API
 #   ============================================================
-def setLangItem(id:int):
-    if not loggedIn(): return ERR_AUTH
-    tpc = db().getLangItemType(id)
-    if not tpc: return ERR_DATA
-    getLangs()
-    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
-    if rf('stdable'):
-        db().setLangItemStd(id, rf('std'))
-    return None
+
 #   ============================================================
 #   AJAX
 #   ============================================================
