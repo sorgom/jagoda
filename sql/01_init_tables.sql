@@ -153,6 +153,8 @@ CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 grant select on jagoda.* to 'aut'@'%';
 
 -- GENERATED GRANT>
+grant select                         on jagoda.LANG                 to 'aut'@'%';
+grant select                         on jagoda.LANG_ITEM_TYPE       to 'aut'@'%';
 grant select, insert, delete         on jagoda.LANG_ITEM            to 'aut'@'%';
 grant select, insert, delete         on jagoda.LANG_ELEM            to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ                  to 'aut'@'%';
@@ -160,10 +162,8 @@ grant select, insert, delete         on jagoda.ART                  to 'aut'@'%'
 grant select, insert, delete         on jagoda.IMG                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ_IMG              to 'aut'@'%';
 grant select, insert, delete         on jagoda.SEQ                  to 'aut'@'%';
+grant select                         on jagoda.ROLE                 to 'aut'@'%';
 grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
--- <GENERATED GRANT
-
--- GENERATED UPDATE>
 grant update (STD, TST                                ) on jagoda.LANG_ITEM            to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.LANG_ELEM            to 'aut'@'%';
 grant update (TITLE, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ                  to 'aut'@'%';
@@ -171,14 +171,5 @@ grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ART           
 grant update (ORD                                     ) on jagoda.OBJ_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';
 grant update (NAME, PASS, RC                          ) on jagoda.USR                  to 'aut'@'%';
--- <GENERATED UPDATE
-
-
-
--- TODO: user type: viewer with login
-
--- -- Web Visitor can just read
--- DROP USER IF EXISTS 'web'@'%';
--- CREATE USER 'web'@'%' IDENTIFIED BY 'ww';
--- GRANT SELECT ON jagoda.* TO 'web'@'%';
+-- <GENERATED GRANT
 

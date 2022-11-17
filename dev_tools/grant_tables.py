@@ -30,7 +30,8 @@ def procUpdate(table, cont):
     return "grant update (%-40s) on %s.%-20s to %s;" % (', '.join(cols), DB, table, USR)
 
 def procGrant(table, cont):
-    return None if rxRoot.search(cont) else "grant %-30s on %s.%-20s to %s;" % (grantAut, DB, table, USR)
+    grant = grantMin if rxRoot.search(cont) else grantAut
+    return "grant %-30s on %s.%-20s to %s;" % (grant, DB, table, USR)
 
 with open(tblFile, 'r') as fh:
     cont = fh.read()
@@ -39,13 +40,9 @@ with open(tblFile, 'r') as fh:
         update for update in [ procUpdate(table, cont) for table, cont in findings ]
         if update
     ]
-    grants = [ 
-        grant for grant in [ procGrant(table, cont) for table, cont in findings ] 
-        if grant
-    ]
+    grants = [ procGrant(table, cont) for table, cont in findings ]
 
-    cont = replGenSql('UPDATE', updates, cont)
-    cont = replGenSql('GRANT', grants, cont)
+    cont = replGenSql('GRANT', grants + updates, cont)
 
     with open(tblFile, 'w') as fh:
         fh.write(cont)
