@@ -89,7 +89,7 @@ LX.ILC = LEO.ILC
 order by LX.ID
 ;
 
-select ID, SRC, LABEL from ART_IMG_LABEL
+select ID, SRC, LABEL, TST from ART_IMG_LABEL
 order by TST desc
 limit 20
 ; 

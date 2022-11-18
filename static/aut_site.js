@@ -489,7 +489,9 @@ function updateObjImg()
     const oid = geti('objId');
     if (img && oid)
     {
+        debug('updateObjImg ...')
         getAjax('/_objImg/' + oid.textContent, rt => {
+            debug('updateObjImg:', rt)
             img.src = rt;
         })
     }

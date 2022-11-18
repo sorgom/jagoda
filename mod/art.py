@@ -5,6 +5,8 @@ from mod.MyDB import db
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
 
+DIM_FIELDS = [f'dim{n}' for n in range(1,4)]
+
 def newArt1():
     return renderBase('aut_new_art_1.htm', objId=db().getNextId(), title='New Article')
 
@@ -35,7 +37,17 @@ def _newArt2(objId:int, ttlId:int):
 #   save dimensions
 #   display image site
 def _newArt3(objId:int):
-    debug(request.form)
+    data = dict(request.form)
+    debug('data dict:', data)
+    debug('dims', DIM_FIELDS)
+    factor = 2.54 if data['unit'] == 'inch' else 1
+    debug('factor:', factor) 
+    rdims = [
+        float((data[d] or '0').replace(',', '.')) * factor
+        for d in DIM_FIELDS
+    ]
+    debug('rdims', rdims)
+    # values = 
     return redirect('/')
 
 def _objImg(objId:int):

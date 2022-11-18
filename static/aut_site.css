@@ -195,6 +195,10 @@ div.dims > input {
     text-align: center;
 }
 
+.objTitel {
+    font-style: italic;
+}
+
 /*  ===================================================
     ## image display
     ===================================================*/
@@ -223,7 +227,8 @@ div.imgDisplay {
     overflow-Y: auto;
 }
 
-div.imgDisplay > div {
+div.imgDisplay > div,
+div.img {
     display: flex;
     float: left;
     width: 170px;
@@ -251,7 +256,8 @@ div.imgDisplay > div.exd {
     border-color: orange red red orange;
 }
 
-div.objImgs > div:first-child {
+div.objImgs > div:first-child, 
+div.objImg {
     border-color: lightgreen darkgreen darkgreen lightgreen;
     background-color: white;
 }

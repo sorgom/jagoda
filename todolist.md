@@ -3,6 +3,11 @@
 - lang items with timestamp
 - dimensions form
 
+2022-11-19
+- make navigation safe:
+  - JS: popupReplace
+
+
 
 # ideas / concepts
 ## containers and boxes
