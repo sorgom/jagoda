@@ -17,3 +17,6 @@ def rf(field:str):
 def post():
     return request.method == 'POST'
 
+def debug(*args):
+    print(*args)
+

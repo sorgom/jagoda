@@ -4,7 +4,6 @@ import json
 from mod.MyDB import db
 from mod.base import *
 from mod.config import *
-from mod.utilz import debug
 
 SOURCE_FILE_KEY = 41728
 ORIENTATION_KEY = 274

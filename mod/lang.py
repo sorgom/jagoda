@@ -1,8 +1,7 @@
 from flask import redirect, render_template
 from mod.MyDB import db
-from mod.utilz import debug
 from mod.login import loggedIn 
-from mod.base import ERR_DATA, ERR_AUTH, rf, post
+from mod.base import *
 
 LANGS = None
 ILCS  = None
@@ -58,6 +57,12 @@ def langItems(tpc:str):
 #   ============================================================
 #   API
 #   ============================================================
+#   save lang item elements from form
+def saveLangItem(id:int):
+    getLangs()
+    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    if rf('stdable'):
+        db().setLangItemStd(id, rf('std'))
 
 #   ============================================================
 #   AJAX
@@ -81,10 +86,11 @@ def _setLangItem(id:int):
     if not loggedIn(): return ERR_AUTH
     tpc = db().getLangItemType(id)
     if not tpc: return ERR_DATA
-    getLangs()
-    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
-    if rf('stdable'):
-        db().setLangItemStd(id, rf('std'))
+    saveLangItem(id)
+    # getLangs()
+    # db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    # if rf('stdable'):
+    #     db().setLangItemStd(id, rf('std'))
     return _langItems(tpc)
 
 #   ajax get: new language entry form

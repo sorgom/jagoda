@@ -1,7 +1,6 @@
 from mod.MyDB import db
 from mod.base import *
 from mod.saveImg import saveImg, getExif
-from mod.utilz import debug
 from mod.login import loggedIn
 
 # TODO: make part of config

@@ -2,11 +2,7 @@
     inner table for language entry / edit
     content for ajax calls
 -->
-{% if action %}
-<form id="popup_form" method="post" action="/{{action}}">
-{´% else %}
 <form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}');return false;">
-{% endif %}
     <table class="lel">
         {% for ilc, label, value in data %}
             <tr>

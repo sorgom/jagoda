@@ -7,6 +7,6 @@
 
 <div class="titles">
     {% for id, label in items %}
-    <a href="{{action}}/{{objId}}/{{id}}">{{label}}</a>
+    <a onclick="submitPopup('/{{submit}}/{{objId}}/{{id}}')">{{label}}</a>
     {% endfor %}
 </div>

@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, render_template
 from mod.MyDB import setDB, db
 from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.base import *
-from mod import img, login, lang, saveImg, art
+from mod import img, login, lang, saveImg, art, qrc
 from mod.config import *
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
@@ -56,11 +56,13 @@ route('/_unusedImgs',               img._unusedImgs                 )
 route('/_imgInfo/<int:id>',         img._imgInfo                    )
 
 # articles
-route('/newArt1',                           art.newArt1)
+route('/newArt',                            art.newArt1)
 route('/_newArtStdTtl/<int:objId>',         art._newArtStdTtl)
 route('/_newArtTtl/<int:objId>',            art._newArtTtl)
-route('/newArt2/<int:objId>/<int:ttlId>',   art.newArt2G)
-route('/newArt2',                           art.newArt2P, methods=POST)
+route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
+
+# general
+route('/_qrc/<int:id>/<what>',           qrc._qrc)
 
 if __name__ == '__main__':
     preStart()

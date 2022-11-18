@@ -4,9 +4,10 @@ function geti(id)
     return document.getElementById(id);
 }
 
-function debug(str)
+function debug(...args)
 {
-    console.log(str);
+
+    console.log(...args);
 }
 
 function clean(target)
@@ -75,6 +76,10 @@ function whatchLogin()
     setInterval(checkLogin, 10000);
 }
 
+//  ============================================================
+//  ## popups
+//  ============================================================
+
 function escHandler(ev)
 {
     if (ev.key == 'Escape')
@@ -117,6 +122,18 @@ function showPopup()
     document.addEventListener('keydown', escHandler);
 }
 
+function focusEmpty(form)
+{
+    for (let a of form.querySelectorAll('textarea'))
+    {
+        if (a.value == '')
+        {
+            a.focus();
+            break;
+        }
+    }
+}
+
 function popup(route)
 {
     debug('popup: ' + route);
@@ -127,17 +144,17 @@ function popup(route)
             pc.innerHTML = rt;
             showPopup()
             let pf = geti('popup_form');
-            if (pf)
-            {
-                for (let a of pf.querySelectorAll('textarea'))
-                {
-                    if (a.value == '')
-                    {
-                        a.focus();
-                        break;
-                    }
-                }
-            }
+            if (pf) focusEmpty(pf);
+            // {
+            //     for (let a of pf.querySelectorAll('textarea'))
+            //     {
+            //         if (a.value == '')
+            //         {
+            //             a.focus();
+            //             break;
+            //         }
+            //     }
+            // }
         }
         else debug('pc not found.')
     });
@@ -145,24 +162,28 @@ function popup(route)
 
 function submitPopup(route)
 {
-    debug('submitPopup: ' + route);
+    debug('submitPopup:', route);
     let pf = geti('popup_form');
-    if (!pf) return;
-    let ok = false;
-    for (let a of pf.querySelectorAll('textarea'))
+    if (pf)
     {
-        if (a.value != '')
+        let ok = false;
+        for (let a of pf.querySelectorAll('textarea'))
         {
-            ok = true;
-            break;
+            if (a.value != '')
+            {
+                ok = true;
+                break;
+            }
         }
+        if (!ok) 
+        {
+            debug('missing content');
+            focusEmpty(pf);
+            return;
+        }
+        postAjax(new FormData(pf), route, setContent);
     }
-    if (!ok) 
-    {
-        debug('missing content');
-        return;
-    }
-    postAjax(new FormData(pf), route, setContent);
+    else getAjax(route, setContent);
 }
 
 function setContent(html)
@@ -172,10 +193,18 @@ function setContent(html)
     closePopup();   
 }
 
-function newArtTtl(objId, ttlId)
-{
-    getAjax(['_newArt', objId, ttlId].join('/'), setContent)
-}
+//  ============================================================
+//  ## objects / aticles
+//  ============================================================
+
+// function newArtTtl(objId, ttlId)
+// {
+//     getAjax(['_newArt', objId, ttlId].join('/'), setContent)
+// }
+
+//  ============================================================
+//  ## image processing
+//  ============================================================
 
 function dragImg(ev)
 {
@@ -203,7 +232,7 @@ function placeImg(ev)
     {
         makeDrop(src);
     } 
-    debug('id  : ' + this.imgId);
+    debug('id:', this.imgId);
     par.insertBefore(src, this);
     sendImgOrder(par);
 }
@@ -229,8 +258,8 @@ function rmImg(ev)
     let par = this.parentNode;
     let imgId = src.imgId;
     let objId = par.objId;
-    debug('imgId: ' + imgId);
-    debug('objId: ' + objId);
+    debug('imgId:', imgId);
+    debug('objId:', objId);
     if (imgId && objId)
     {
         let fd = new FormData();
@@ -261,10 +290,11 @@ function makeImg(target, e, drop)
 {
     let d = document.createElement('div');
     if (drop) makeDrop(d);
-    d.id = target.id + '_' + e['id'];
+    // d.id = target.id + '_' + e['id'];
+    d.id = [target.id, e['id']].join('_');
     d.imgId = e['id'];
     d.ord = e['ord'];
-    debug('id: ' + d.id);
+    debug('id:', d.id);
     let i = document.createElement('img');
     i.src = e['src'];
     i.draggable = true;
@@ -343,7 +373,7 @@ function upateImgs(target, json, drop)
 
 function loadObjImgs(trgId, id)
 {
-    debug('loadObjImgs: ' + id);
+    debug('loadObjImgs:', id);
     let target = geti(trgId);
     if (target)
     {
@@ -356,7 +386,7 @@ function loadObjImgs(trgId, id)
 
 function uploadImgs(inp, trgId, id)
 {
-    debug('uploadImgs: ' + id);
+    debug('uploadImgs:', id);
     let target = geti(trgId);
     if (!target) return;
     let objId = target.objId;
@@ -376,7 +406,7 @@ function uploadImgs(inp, trgId, id)
 
 function loadUnusedImgs(trgId)
 {
-    debug('loadUnusedImgs: ' + trgId);
+    debug('loadUnusedImgs:', trgId);
     let target = geti(trgId);
     if (target)
     {
@@ -421,7 +451,7 @@ function sendImgOrder(target)
     let objID = target.objId;
     if (objID)
     {
-        debug('sendImgOrder: ' + objID);
+        debug('sendImgOrder:', objID);
         let chg = [];
         let n = 0;
         target.childNodes.forEach(e => {
@@ -444,6 +474,32 @@ function sendImgOrder(target)
 
 function imgInfo()
 {
-    debug('imgInfo: ' + this.parentNode.imgId);
+    debug('imgInfo:', this.parentNode.imgId);
     popup('/_imgInfo/' + this.parentNode.imgId);
+}
+
+//  ============================================================
+//  ## print
+//  ============================================================
+
+function printElementContentById(id)
+{
+    let elem = geti(id);
+    if (elem) printElementContent(elem)
+}
+
+// print innerHTML of an element
+// NOTE: css formatting gets lost unless explicitly given in style attributes
+function printElementContent(elem)
+{
+    const ifr = document.createElement("iframe");
+    ifr.style.display = "none";
+    document.body.appendChild(ifr);
+    const pri = ifr.contentWindow;
+    pri.document.open();
+    pri.document.write(elem.innerHTML);
+    pri.document.close();
+    pri.focus();
+    pri.print();
+    pri.onafterprint = () => { document.body.removeChild(ifr); }
 }

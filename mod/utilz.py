@@ -21,9 +21,6 @@ def cleanFile(filename:str):
             fh.write(cleanTxt(cont))
             fh.close()
 
-def debug(*args):
-    print(*args)
-
 if __name__ == '__main__':
     names = ['Zardoz', 'Wumpel',' Wumpel', 'lola', 'Rumpel', 'FileDate']
     

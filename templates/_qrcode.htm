@@ -1,0 +1,9 @@
+<div style="width: 50%; margin: auto;">
+    <div id="printme" onclick="printElementContent(this);" style="cursor: pointer;">
+        <div style="display: inline-block; padding: 10px; border: 1px solid black">
+            <h1 style="font-family:Verdana,Helvetica,Sans-Serif,Arial;">ID: {{id}}</h1>
+            <img src="data:image/png;base64, {{b64}}" alt="{{url}}" />
+        </div>
+    </div>
+    <button onclick="printElementContentById('printme');" style="margin-top:20px;">Print</button>
+</div>

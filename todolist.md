@@ -1,10 +1,8 @@
 # current
-2022-11-15
-- fix
-  - new language elements save:
-  ```
-  MySQLdb.OperationalError: (1136, "Column count doesn't match value count at row 1") 
-  ```
+2022-11-18
+- lang items with timestamp
+- dimensions form
+
 
 # ideas / concepts
 ## containers and boxes

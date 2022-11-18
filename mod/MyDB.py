@@ -2,7 +2,7 @@
 from ctypes.wintypes import CHAR
 from flask_mysqldb import MySQL
 from hashlib import md5 as libmd5
-from mod.utilz import debug
+from mod.base import debug
 import random
 
 __mydb__ = None
@@ -45,6 +45,9 @@ class MyDB(MySQL):
     # create new language item (head)
     def newLangItem(self, id:int, tpc:str):
         self.call(f'insert into LANG_ITEM(ID, TPC) values ({id}, "{tpc}")')
+
+    def newObjTtl(self, id:int):
+        return self.newLangItem(id, 'OT')
 
     # get table fo lang items of given type
     def getLangItems(self, tpc:str):
