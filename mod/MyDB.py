@@ -74,16 +74,16 @@ class MyDB(MySQL):
     
     # change lang item standard flag
     def setLangItemStd(self, id:int, std:int):
-        debug(f'setLangItemStd({id}, {std});')
+        debug(id, std)
         self.call(f'call setLangItemStd({id}, {1 if std else 0});')
 
     #   get listing of standard titles
     def getStdTtls(self):
-        return self.get('select ID, LABEL from LANG_ELEM_1ST where STD = 1 and TPC = "OT";')
+        return self.get('select ID, LABEL from LANG_ITEM_1ST where STD = 1 and TPC = "OT";')
 
     #   get first label of given lang item id
     def getFirstLabel(self, id:int):
-        return self.getOne(f'select LABEL from LANG_ELEM_1ST where ID = {id} limit 1;')
+        return self.getOne(f'select LABEL from LANG_ITEM_1ST where ID = {id} limit 1;')
 
 
     ## objects
@@ -91,10 +91,15 @@ class MyDB(MySQL):
     def getObject(self, id:int):
         return self.getDict('select * FROM ')
     
+    def addObj(self, objId:int, ttlId:int):
+        self.call(f'insert into OBJ(ID, TTL) values ({objId}, {ttlId});')
+
     def addArt(self, objId:int, ttlId:int):
-        self.call(f'insert into OBJ(ID, TITLE) values ({objId}, {ttlId});')
+        self.addObj(objId, ttlId)
+        self.call(f'insert into ART(ID) values ({objId});')
 
-
+    def getObjImgLabel(self, objId:int):
+        return self.getOneRow(f'select SRC, LABEL from OBJ_IMG_LABEL where OBJ = {objId} limit 1;')
 
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
@@ -127,7 +132,7 @@ class MyDB(MySQL):
         return self.getOneRow('call imgFolders();')
 
     def procCursor(self, sql:str, func, commit=False):
-        debug('SQL:', sql)
+        debug(sql)
         cursor = self.connection.cursor()
         cursor.execute(sql)
         res = func(cursor)
@@ -160,7 +165,7 @@ class MyDB(MySQL):
         return [ r[0] for r in self.get(sql, **args) ]
 
     def call(self, sql:str):
-        debug('call:', sql)
+        debug(sql)
         cursor = self.connection.cursor()
         cursor.execute(sql)
         cursor.close()
@@ -194,7 +199,7 @@ class MyDB(MySQL):
         offset = 2000
         sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
-        self.multi('OBJ(ID, TITLE, DIM1, DIM2, DIM3)', ins, True)
+        self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', ins, True)
         self.multi('ART(ID)', [f'({id + offset})' for id in ids])
         self.call('call initSeq();')
 

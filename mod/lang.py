@@ -74,7 +74,7 @@ def _langItems(tpc:str):
 
 #   lising of elements of a lang item
 def _langItem(id:int):
-    debug(f'_langItem({id})')
+    debug(id)
     if not loggedIn(): return ERR_AUTH
     item = db().getLangItemInfo(id)
     debug('item:', item)
@@ -95,7 +95,7 @@ def _setLangItem(id:int):
 
 #   ajax get: new language entry form
 def _newLangItem(tpc:str):
-    debug(f'_newLangItem({tpc})')
+    debug(tpc)
     if not loggedIn(): return ERR_AUTH
     id = db().getNextId()
     item = db().getNewLangItemInfo(tpc)
@@ -104,7 +104,7 @@ def _newLangItem(tpc:str):
 
 #   ajax post: new language entry
 def _addLangItem(tpc:str, id:int):
-    debug(f'_newlangItem({tpc}, {id})')
+    debug(tpc, id)
     if not loggedIn(): return ERR_AUTH
     db().newLangItem(id, tpc)
     return _setLangItem(id)

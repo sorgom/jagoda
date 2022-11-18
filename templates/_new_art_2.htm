@@ -1,0 +1,16 @@
+<h1>Object no. {{objId}}</h1>
+<h2>Dimensions:</h2>
+<form action="/_newArt3/{{objId}}" method="post">
+    <div class="dims">
+        <input type="text" name="dim1" value="{{art['dim1']}}" pattern="\d+(?:[.,]\d+)?"> X
+        <input type="text" name="dim2" value="{{art['dim2']}}" pattern="\d+(?:[.,]\d+)?"> X
+        <input type="text" name="dim3" value="{{art['dim3']}}" pattern="\d+(?:[.,]\d+)?">
+    </div>
+    <div>
+        <input type="radio" id="cm" name="unit" value="cm" checked>
+        <label for="cm">cm</label><br>
+        <input type="radio" id="inch" name="unit" value="inch">
+        <label for="inch">inch</label>
+    </div>
+    <button type="submit">Next Step</button>
+</form> 

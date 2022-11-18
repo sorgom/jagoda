@@ -188,19 +188,19 @@ function submitPopup(route)
 
 function setContent(html)
 {
-    let ct = geti('content');
-    if (ct) ct.innerHTML = html;
+    const ct = geti('content');
+    if (ct)
+    {
+        ct.innerHTML = html;
+        const qs = ct.querySelector('input');
+        if (qs) qs.focus();
+    }
     closePopup();   
 }
 
 //  ============================================================
 //  ## objects / aticles
 //  ============================================================
-
-// function newArtTtl(objId, ttlId)
-// {
-//     getAjax(['_newArt', objId, ttlId].join('/'), setContent)
-// }
 
 //  ============================================================
 //  ## image processing
@@ -271,6 +271,7 @@ function rmImg(ev)
             sendImgOrder(par);
             markExceed(par);
             reloadUnusedImgs();
+            updateObjImg();
         })
     }
 }
@@ -467,8 +468,12 @@ function sendImgOrder(target)
         })
         if (chg.length > 0)
         {
-            postJson(chg, '/_orderObjImgs/' + objID, rt => { markExceed(target) });
+            postJson(chg, '/_orderObjImgs/' + objID, rt => { 
+                markExceed(target);
+                updateObjImg(); 
+            });
         }
+
     }
 }
 
@@ -476,6 +481,18 @@ function imgInfo()
 {
     debug('imgInfo:', this.parentNode.imgId);
     popup('/_imgInfo/' + this.parentNode.imgId);
+}
+
+function updateObjImg()
+{
+    const img = geti('objImg');
+    const oid = geti('objId');
+    if (img && oid)
+    {
+        getAjax('/_objImg/' + oid.textContent, rt => {
+            img.src = rt;
+        })
+    }
 }
 
 //  ============================================================

@@ -60,7 +60,7 @@ def checkImgFolders():
             makedirs(folder)    
 
 def getExif(id:int):
-    debug('getExif')
+    debug()
     fp = db().getImgFileExif(id)
     debug('fp', fp)
     if not path.exists(fp): return None

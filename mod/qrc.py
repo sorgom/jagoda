@@ -13,7 +13,7 @@ def qrc():
 
 def _qrc(id:int, what:str='object'):
     url = '/'.join([WEB_SITE, what, str(id)])
-    debug(__name__, 'url:', url)
+    debug('url:', url)
     b64 = qrc().ascii(url)
     return render_template('_qrcode.htm', id=id, url=url, b64=b64)    
 

@@ -1,0 +1,10 @@
+{% extends 'aut_base.htm' %}
+
+{% block content %}
+    <h1>Object no. <span id="objId">{{objId}}</span></h1>
+    <img src="/{{objImg}}" alt="object {{objId}}" id="objImg"/>
+    <h1 class="objTitel">{{objTitel}}</h1>
+    <button onclick="popup('/_qrc/{{objId}}/{{what}}');">QRCode</button>
+    {% block obj %}
+    {% endblock %}
+{% endblock %}

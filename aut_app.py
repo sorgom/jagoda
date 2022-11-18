@@ -26,7 +26,7 @@ def preStart():
 
 @app.route('/')
 def index():
-    return lang.renderBase('aut_obj_imgs.htm', objId=102003, acceptImgTypes=IMG_TYPE_ACCEPTED)
+    return art.renderObj(102003, 'aut_obj_imgs.htm', acceptImgTypes=IMG_TYPE_ACCEPTED)
 
 @app.route('/t')
 def testData():
@@ -55,11 +55,14 @@ route('/_rmObjImg',                 img._rmObjImg,      methods=POST)
 route('/_unusedImgs',               img._unusedImgs                 )
 route('/_imgInfo/<int:id>',         img._imgInfo                    )
 
-# articles
+# articles / objects
 route('/newArt',                            art.newArt1)
 route('/_newArtStdTtl/<int:objId>',         art._newArtStdTtl)
 route('/_newArtTtl/<int:objId>',            art._newArtTtl)
 route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
+route('/_newArt3/<int:objId>',              art._newArt3, methods=POST)
+
+route('/_objImg/<int:objId>',               art._objImg)
 
 # general
 route('/_qrc/<int:id>/<what>',           qrc._qrc)
