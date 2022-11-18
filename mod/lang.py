@@ -26,10 +26,6 @@ def langItems():
     getLangs()
     return LANG_ITEMS
 
-def renderBase(template:str, **args):
-    getLangs()
-    return render_template(template, langs=LANGS, ilcs=ILCS, langItems=LANG_ITEMS, **args)
-
 def getLangItems(tpc:str):
     getLangs()
     data = db().getLangItems(tpc)
@@ -64,6 +60,9 @@ def saveLangItem(id:int):
     if rf('stdable'):
         db().setLangItemStd(id, rf('std'))
 
+def renderBase(template:str, **args):
+    getLangs()
+    return render_template(template, langs=LANGS, ilcs=ILCS, langItems=LANG_ITEMS, **args)
 #   ============================================================
 #   AJAX
 #   ============================================================
