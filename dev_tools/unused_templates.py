@@ -1,6 +1,7 @@
 import re
 from glob import glob
-from os import path
+from os import path, remove
+from sys import argv
 
 rxHtm = re.compile('(\w+\.htm)')
 
@@ -19,10 +20,11 @@ for fpath in glob('mod/*.py'):
 
 print(calls)
 
-files = [ bn for bn in [ path.basename(f) for f in glob('templates/*.htm')] if not calls.get(bn) ]
+files = [ file for file in glob('templates/*.htm') if not calls.get(path.basename(file)) ]
 
 for file in sorted(files):
     print(file)
 
-
-
+if len(argv) > 1 and argv[1] == '-X':
+   for file in files:
+        remove(file)
