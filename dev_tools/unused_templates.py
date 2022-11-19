@@ -5,22 +5,20 @@ from sys import argv
 
 rxHtm = re.compile('(\w+\.htm)')
 
-calls = {}
+usage = {}
 
 def findInFile(fpath:str):
-    global calls
+    global usage
     with open(fpath, 'r') as fh:
         cont = fh.read()
-        for m in rxHtm.findall(cont):
-            calls[m] = calls.get(m, 0) + 1
+        for match in rxHtm.findall(cont):
+            usage[match] = usage.get(match, 0) + 1
 
 
 for fpath in glob('mod/*.py'):
      findInFile(fpath)
 
-print(calls)
-
-files = [ file for file in glob('templates/*.htm') if not calls.get(path.basename(file)) ]
+files = [ file for file in glob('templates/*.htm') if not usage.get(path.basename(file)) ]
 
 for file in sorted(files):
     print(file)
