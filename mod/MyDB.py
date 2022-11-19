@@ -79,7 +79,7 @@ class MyDB(MySQL):
 
     #   get listing of standard titles
     def getStdTtls(self):
-        return self.get('select ID, LABEL from LANG_ITEM_1ST where STD = 1 and TPC = "OT";')
+        return self.get('select ID, LABEL from LANG_ITEM_1ST where STD = 1 and TPC = "OT" order by TST desc;')
 
     #   get first label of given lang item id
     def getFirstLabel(self, id:int):
@@ -100,6 +100,12 @@ class MyDB(MySQL):
 
     def getObjImgLabel(self, objId:int):
         return self.getOneRow(f'select SRC, LABEL from OBJ_IMG_LABEL where OBJ = {objId} limit 1;')
+
+    def getObj(self, objId:int):
+        return self.getDict(f'select * from OBJ where ID = {objId} limit 1;')[0]
+
+    def setObjDims(self, objId:int, dims:list):
+        self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
 
     ##  images
     def addObjectImg(self, objId:int, imgId:int):

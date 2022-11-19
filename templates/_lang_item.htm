@@ -2,7 +2,7 @@
     inner table for language entry / edit
     content for ajax calls
 -->
-<form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}');return false;">
+<form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}', '{{replace}}');return false;">
     <table class="lel">
         {% for ilc, label, value in data %}
             <tr>

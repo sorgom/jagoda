@@ -6,6 +6,10 @@ from mod.base import *
 from mod import img, login, lang, saveImg, art, qrc
 from mod.config import *
 
+#   industrial run:
+# from gevent.pywsgi import WSGIServer
+
+
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
 # secret string for session cooky
@@ -56,11 +60,13 @@ route('/_unusedImgs',               img._unusedImgs                 )
 route('/_imgInfo/<int:id>',         img._imgInfo                    )
 
 # articles / objects
-route('/newArt',                            art.newArt1)
+route('/newArt',                            art.newArt)
 route('/_newArtStdTtl/<int:objId>',         art._newArtStdTtl)
 route('/_newArtTtl/<int:objId>',            art._newArtTtl)
+route('/newArtTtl/<int:objId>',             art.newArtTtl)
 route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
-route('/_newArt3/<int:objId>',              art._newArt3, methods=POST)
+route('/objDims/<int:objId>',               art.objDims,  methods=BOTH)
+route('/edArt/<int:objId>',                 art.edArt)
 
 route('/_objImg/<int:objId>',               art._objImg)
 
@@ -71,3 +77,7 @@ if __name__ == '__main__':
     preStart()
 
     app.run(host="localhost", port=8001, debug=True)
+
+#   industrial run:
+    # http_server = WSGIServer(('', 8001), app)
+    # http_server.serve_forever()

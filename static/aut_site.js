@@ -145,24 +145,14 @@ function popup(route)
             showPopup()
             let pf = geti('popup_form');
             if (pf) focusEmpty(pf);
-            // {
-            //     for (let a of pf.querySelectorAll('textarea'))
-            //     {
-            //         if (a.value == '')
-            //         {
-            //             a.focus();
-            //             break;
-            //         }
-            //     }
-            // }
         }
         else debug('pc not found.')
     });
 }
 
-function submitPopup(route)
+function submitPopup(route, route2=false)
 {
-    debug('submitPopup:', route);
+    debug('submitPopup:', route, route2);
     let pf = geti('popup_form');
     if (pf)
     {
@@ -181,9 +171,21 @@ function submitPopup(route)
             focusEmpty(pf);
             return;
         }
-        postAjax(new FormData(pf), route, setContent);
+        postAjax(new FormData(pf), route, rt => {
+            if (route2) repRoute(route2);
+            else setContent(rt);
+        });
     }
-    else getAjax(route, setContent);
+    else getAjax(route, rt => {
+        if (route2) repRoute(route2);
+        else setContent(rt);
+    });
+}
+
+function repRoute(route)
+{
+    debug('repRoute', route);
+    location.replace(route);
 }
 
 function setContent(html)
@@ -271,7 +273,6 @@ function rmImg(ev)
             sendImgOrder(par);
             markExceed(par);
             reloadUnusedImgs();
-            updateObjImg();
         })
     }
 }
@@ -445,6 +446,7 @@ function markExceed(target)
             ++n; 
         }
     })
+    updateObjImg();
 }
 
 function sendImgOrder(target)
@@ -470,7 +472,6 @@ function sendImgOrder(target)
         {
             postJson(chg, '/_orderObjImgs/' + objID, rt => { 
                 markExceed(target);
-                updateObjImg(); 
             });
         }
 
