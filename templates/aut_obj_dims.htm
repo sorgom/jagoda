@@ -4,7 +4,7 @@
 <h2>Dimensions:</h2>
 <form action="/objDims/{{objId}}" method="post">
     <div class="dims">
-        <input type="text" name="dim1" value="{{obj['dim1']}}" pattern="\d+(?:[.,]\d+)?" autofocus> X
+        <input type="text" name="dim1" value="{{obj['dim1']}}" pattern="\d+(?:[.,]\d+)?" autofocus onfocus="this.select()"> X
         <input type="text" name="dim2" value="{{obj['dim2']}}" pattern="\d+(?:[.,]\d+)?"> X
         <input type="text" name="dim3" value="{{obj['dim3']}}" pattern="\d+(?:[.,]\d+)?">
     </div>

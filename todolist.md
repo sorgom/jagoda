@@ -5,7 +5,12 @@
 - all sorts of updates must update object concerned
   - image assignement
   - title changes
-- gimmik: rename template script  
+- gimmik: 
+  - rename template script  
+  - qrcode
+    - close on print / printpopup()
+    - alternative: just print, don't popup
+
 
 2022-11-18
 - lang items with timestamp

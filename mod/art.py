@@ -22,7 +22,7 @@ def _newArtStdTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     items = db().getStdTtls()
-    return render_template('_assign_obj_title.htm', items=items, submit=f'_newArt2/{objId}', replace=f'/objDims/{objId}')
+    return render_template('_title_selector.htm', items=items, submit=f'_newArt2/{objId}', replace=f'/objDims/{objId}')
 
 def _newArtTtl(objId:int):
     debug(objId)
