@@ -30,7 +30,10 @@ def preStart():
 
 @app.route('/')
 def index():
-    return art.renderObj(102003, 'aut_obj_imgs.htm', acceptImgTypes=IMG_TYPE_ACCEPTED)
+    if login.loggedIn():
+        return lang.renderBase('aut_base.htm')
+    else:
+        return redirect('/login')
 
 @app.route('/t')
 def testData():
@@ -65,8 +68,11 @@ route('/_newArtStdTtl/<int:objId>',         art._newArtStdTtl)
 route('/_newArtTtl/<int:objId>',            art._newArtTtl)
 route('/newArtTtl/<int:objId>',             art.newArtTtl)
 route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
-route('/objDims/<int:objId>',               art.objDims,  methods=BOTH)
 route('/edArt/<int:objId>',                 art.edArt)
+route('/objDims/<int:objId>',               art.objDims,  methods=BOTH)
+route('/objImgs/<int:objId>',               art.objImgs)
+
+route('/_edArtList',                        art._edArtList)
 
 route('/_objImg/<int:objId>',               art._objImg)
 

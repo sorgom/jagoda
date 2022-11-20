@@ -83,24 +83,29 @@ input:invalid {
 }
 
 /* ============= selection tables */
-div.clickSel {
+div.clickSel,
+div.objSel {
     display: table;
     width: 100%;
 }
 
-div.clickSel a:hover {
+div.clickSel a:hover,
+div.objSel a:hover {
     background-color: lightblue;
 }
 
-div.clickSel > * {
+div.clickSel > *,
+div.objSel > a {
     display: table-row;
     min-height: 1em;
 }
+
 div.clickSel > div {
     background-color: cyan;
 }
 
-div.clickSel span {
+div.clickSel span 
+{
     display: table-cell;
     border: 1px solid lightgray;
     padding: 0.1em;
@@ -110,7 +115,41 @@ div.clickSel > a > span {
     font-style: italic;
 }
 
+div.objSel > a > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 1em;
+}
 
+
+div.objSel > a > div > div
+{
+    display: flex;
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+div.objSel > a > div > div > img
+{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+
+#obj_top > div {
+    float: left;
+}
+#obj_top > div > div{
+    margin-left: 2em;
+}
+
+
+#obj_top_end {
+    clear: both;
+}
 
 table, th, td {
     border: 1px solid;
@@ -230,7 +269,7 @@ div.imgDisplay {
 div.imgDisplay > div,
 div.img {
     display: flex;
-    float: left;
+    /* float: left; */
     width: 170px;
     height: 170px;
     margin: 2px;
@@ -239,6 +278,11 @@ div.img {
     justify-content: center;
     align-items: center;
 }
+
+div.imgDisplay > div {
+    float: left;
+}
+
 
 div.imgDisplay img {
     cursor: pointer;
@@ -265,7 +309,6 @@ div.objImg {
 .imgrm {
     background-color: orange;
 }
-
 
 div.menu > div {
     float: left;

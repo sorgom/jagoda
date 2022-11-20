@@ -45,8 +45,7 @@ def _newArt2(objId:int, ttlId:int):
         db().addArt(objId, ttlId)
     return 'DONE'
 
-#   save dimensions
-#   display image site
+
 def objDims(objId:int):
     if post():
         data = dict(request.form)
@@ -72,3 +71,6 @@ def objImgs(objId:int):
 def _objImg(objId:int):
     return db().getObjImgLabel(objId)[0]
 
+#   article listing for popups
+def _edArtList():
+    return render_template('_obj_selector.htm', items=db().getArtList(), action='edArt')

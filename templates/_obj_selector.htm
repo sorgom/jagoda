@@ -1,0 +1,12 @@
+<!--
+    inner table for object seletor
+    image, id, (1st) title
+    can be content of 
+-->
+<div class="objSel">
+    {% for id, src, label in items %}
+    <a href="/{{action}}/{{id}}" title="object #{{id}}">
+        <div><div><img src="{{src}}"/></div></div><div>{{id}}</div><div>{{label}}</div>
+    </a>        
+    {% endfor %}
+</div>

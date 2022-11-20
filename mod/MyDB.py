@@ -107,6 +107,11 @@ class MyDB(MySQL):
     def setObjDims(self, objId:int, dims:list):
         self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
 
+    #   list of articles [id, img, label]
+    #   TODO: reasonable limitation
+    def getArtList(self):
+        return self.get('select ID, SRC, LABEL from ART_IMG_LABEL order by TST desc limit 100;')
+
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'call addObjectImg({objId}, {imgId});')

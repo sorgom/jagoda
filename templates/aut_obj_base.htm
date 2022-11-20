@@ -2,12 +2,25 @@
 
 {% block content %}
     <h1>Object no. <span id="objId">{{objId}}</span></h1>
-    <div class="img objImg">
-        <img src="/{{objImg}}" alt="object {{objId}}" id="objImg"/>
-    </div>
-    <div class="imgDisplayEnd"></div>
     <h1 class="objTitel">"{{objTitel}}"</h1>
-    <button onclick="popup('/_qrc/{{objId}}/{{what}}');">QRCode</button>
-    {% block obj %}
+    <div id="obj_top">
+        <div class="img objImg">
+            <img src="{{objImg}}" alt="object {{objId}}" id="objImg"/>
+        </div>
+        <div>
+            <ul>
+                <li><a onclick="popup('/_qrc/{{objId}}/{{what}}');">QRCode</a></li>
+                <li><a href="/objDims/{{objId}}">Edit Object Dimensions</a></li>
+                <li><a href="/objImgs/{{objId}}">Edit Object Images</a></li>
+            </ul>
+            <div>
+                {% block obj %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <div id="obj_top_end"></div>
+    {% block obj_full %}
     {% endblock %}
+
 {% endblock %}

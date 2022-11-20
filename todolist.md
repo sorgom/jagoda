@@ -1,4 +1,12 @@
 # current
+22-11-20
+- object selector (popup)
+  - similar std title selector _lang_items
+- all sorts of updates must update object concerned
+  - image assignement
+  - title changes
+- gimmik: rename template script  
+
 2022-11-18
 - lang items with timestamp
 - dimensions form
