@@ -1,0 +1,5 @@
+<div class="titles">
+    {% for id, label in items %}
+    <a onclick="usePopupClick('/{{submit}}/{{id}}', '{{field}}')">{{label}}</a>
+    {% endfor %}
+</div>

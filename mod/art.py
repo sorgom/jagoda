@@ -7,10 +7,12 @@ from mod.base import *
 
 DIM_FIELDS = [f'dim{n}' for n in range(1,4)]
 
-def renderObj(objId:int, template:str, what='art', **args):
-    objImg, objTitel = db().getObjImgLabel(objId)
-    debug(objImg, objTitel)
-    return renderBase(template, objId=objId, objImg=objImg, objTitel=objTitel, what=what, **args)
+def renderArt(objId:int, template:str, what='art', **args):
+    art = db().getArt(objId)
+    debug(art)
+    # objImg, objTitel = db().getObjImgLabel(objId)
+    # debug(objImg, objTitel)
+    return renderBase(template, obj=art, objId=objId, what='art', **args)
 
 def newArt():
     return redirect(f'/newArtTtl/{db().getNextId()}')
@@ -58,15 +60,23 @@ def objDims(objId:int):
         db().setObjDims(objId, rdims)
         return redirect(f'/edArt/{objId}')
     
-    obj = db().getObj(objId)
-    return renderObj(objId, 'aut_obj_dims.htm', obj=obj)
+    return renderArt(objId, 'aut_obj_dims.htm')
 
 def edArt(objId:int):
-    return renderObj(objId, 'aut_obj_base.htm')
+    return renderArt(objId, 'aut_obj_base.htm')
 
 def objImgs(objId:int):
-    return renderObj(objId, 'aut_obj_imgs.htm')
+    return renderArt(objId, 'aut_obj_imgs.htm')
 
+def _objSelWhat(objId:int):
+    items = db().getWhats()
+    return render_template('_obj_sel_what.htm', submit=f'_objSetWhat/{objId}', field='objWhat', items=items)
+
+def _objSetWhat(objId:int, wId:int):
+    db().setWhat(objId, wId)
+    ret = db().getLangElem1st(wId)
+    debug(ret)
+    return ret
 
 def _objImg(objId:int):
     return db().getObjImgLabel(objId)[0]

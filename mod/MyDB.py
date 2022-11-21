@@ -9,6 +9,8 @@ __mydb__ = None
 
 class MyDB(MySQL):
 
+    DimKeys = [f'dim{n}' for n in range(1,4 )]
+
     def getNextId(self):
         return self.getNum('select nextId();', commit=True)
 
@@ -60,11 +62,11 @@ class MyDB(MySQL):
 
     # get head (info) of language item
     def getLangItemInfo(self, id:int):
-        return self.getDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')[0]
+        return self.getOneDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')
 
     # get head (info) of for a new language item
     def getNewLangItemInfo(self, tpc:str):
-        return self.getDict(f'select STDABLE, 0 as STD from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')[0]
+        return self.getOneDict(f'select STDABLE, 0 as STD from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')
 
     # set elements of a lang item
     def setLangItem(self, id:int, data:list):
@@ -85,8 +87,20 @@ class MyDB(MySQL):
     def getFirstLabel(self, id:int):
         return self.getOne(f'select LABEL from LANG_ITEM_1ST where ID = {id} limit 1;')
 
+    def getWhats(self):
+        return self.get('select ID, LABEL from LANG_ITEM_1ST where TPC = "TQ" order by TST desc;')
+
+    def getLangElem1st(self, id:int):
+        return self.getOne(f'select LABEL from LANG_ITEM_1ST where ID = {id} limit 1;')
 
     ## objects
+    @staticmethod
+    def dimStrFromList(vals:list):
+        return ' x '.join(map(str, vals))
+
+    @staticmethod
+    def dimStrFromDict(res):
+        return MyDB.dimStrFromList([res[k] for k in MyDB.DimKeys])
 
     def getObject(self, id:int):
         return self.getDict('select * FROM ')
@@ -96,13 +110,13 @@ class MyDB(MySQL):
 
     def addArt(self, objId:int, ttlId:int):
         self.addObj(objId, ttlId)
-        self.call(f'insert into ART(ID) values ({objId});')
+        self.call(f'insert into ART(OBJ) values ({objId});')
 
     def getObjImgLabel(self, objId:int):
-        return self.getOneRow(f'select SRC, LABEL from OBJ_IMG_LABEL where OBJ = {objId} limit 1;')
+        return self.getOneRow(f'select SRC, LABEL from OBJ_IMG_LABEL where ID = {objId} limit 1;')
 
     def getObj(self, objId:int):
-        return self.getDict(f'select * from OBJ where ID = {objId} limit 1;')[0]
+        return self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
 
     def setObjDims(self, objId:int, dims:list):
         self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
@@ -110,8 +124,20 @@ class MyDB(MySQL):
     #   list of articles [id, img, label]
     #   TODO: reasonable limitation
     def getArtList(self):
-        return self.get('select ID, SRC, LABEL from ART_IMG_LABEL order by TST desc limit 100;')
+        return self.get('select ID, SRC, LABEL from ART_FULL order by TST desc limit 100;')
 
+    def getArt(self, objId:int):
+        res = self.getOneDict(f'select * from ART_FULL where ID = {objId} limit 1;')
+        res['dims'] = MyDB.dimStrFromDict(res)
+        return res
+
+    def getObjDims(self, objId:int):
+        res = self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
+        return MyDB.dimStrFromDict(res)
+
+    def setWhat(self, objId:int, wId:int):
+        self.call(f'update ART set what = {wId} where OBJ = {objId};')
+    
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'call addObjectImg({objId}, {imgId});')
@@ -159,8 +185,15 @@ class MyDB(MySQL):
         desc = [ d[0].lower() for d in cur.description ]
         return list(map(lambda a : dict(zip(desc, a)), cur.fetchall()))
 
+    def mkOneDict(self, cur):
+        desc = [ d[0].lower() for d in cur.description ]
+        return dict(zip(desc, cur.fetchone()))
+
     def getDict(self, sql:str, **args):
         return self.procCursor(sql, self.mkDict, **args)
+
+    def getOneDict(self, sql:str, **args):
+        return self.procCursor(sql, self.mkOneDict, **args)
 
     def get(self, sql:str, **args):
         return self.procCursor(sql, lambda c : c.fetchall(), **args)
@@ -199,19 +232,19 @@ class MyDB(MySQL):
         self.call('delete from LANG_ITEM where TPC = "OT";')
         self.call('delete from OBJ;')
         random.seed()
-        # random language elements
+        debug('random language elements')
         langs = self.getLangTable()
         slen = len(langs)
         ids = list(range(100000, 110000))
         stds = [ 0 for n in range(20) ] + [1]
         self.multi('LANG_ITEM(ID, TPC, STD)', [f'({id}, "OT", {random.choice(stds)})' for id in ids], insert=True)
         self.multi('LANG_ELEM', [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
-        # random articles / objects
+        debug('random articles / objects')
         offset = 2000
         sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
         self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', ins, True)
-        self.multi('ART(ID)', [f'({id + offset})' for id in ids])
+        self.multi('ART(OBJ)', [f'({id + offset})' for id in ids])
         self.call('call initSeq();')
 
 def setDB(app):

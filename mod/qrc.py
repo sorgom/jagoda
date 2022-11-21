@@ -11,10 +11,13 @@ def qrc():
         QRC_INST = QRCode64(border=0)
     return QRC_INST
 
-def _qrc(id:int, what:str='object'):
+def _renderQrc(template:str, id:int, what:str):
     url = '/'.join([WEB_SITE, what, str(id)])
-    debug('url:', url)
     b64 = qrc().ascii(url)
-    return render_template('_qrcode.htm', id=id, url=url, b64=b64, what=what)    
+    return render_template(template, id=id, what=what, url=url, b64=b64)
 
+def _qrc_view(id:int, what:str='art'):
+    return _renderQrc('_qrcode_view.htm', id, what)
 
+def _qrc_print(id:int, what:str='art'):
+    return _renderQrc('_qrcode_print.htm', id, what)

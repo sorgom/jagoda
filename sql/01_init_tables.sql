@@ -79,15 +79,15 @@ CREATE TABLE OBJ (
 -- article / artifact
 DROP TABLE IF EXISTS ART;
 CREATE TABLE ART (
-    ID BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
     WHAT BIGINT,
-    YEAR INT,
+    YEAR INT NOT NULL default 1984,
     CNT INT4 NOT NULL DEFAULT 1,
     VAL TINYINT(1) DEFAULT 0,
     PUB TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (ID),
-    FOREIGN KEY (ID)    REFERENCES OBJ(ID)    ON DELETE CASCADE,
-    FOREIGN KEY (WHAT)  REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
+    PRIMARY KEY (OBJ),
+    FOREIGN KEY (OBJ)  REFERENCES OBJ(ID) ON DELETE CASCADE,
+    FOREIGN KEY (WHAT) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
 -- ============================================================
 -- ## images
@@ -167,7 +167,7 @@ grant select                         on jagoda.ROLE                 to 'aut'@'%'
 grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
 grant update (STD, TST                                ) on jagoda.LANG_ITEM            to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.LANG_ELEM            to 'aut'@'%';
-grant update (TTL, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ                  to 'aut'@'%';
+grant update (TTL, DIM1, DIM2, DIM3, LOC, TST         ) on jagoda.OBJ                  to 'aut'@'%';
 grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ART                  to 'aut'@'%';
 grant update (ORD                                     ) on jagoda.OBJ_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';

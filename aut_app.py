@@ -74,10 +74,14 @@ route('/objImgs/<int:objId>',               art.objImgs)
 
 route('/_edArtList',                        art._edArtList)
 
+route('/_objSelWhat/<int:objId>',           art._objSelWhat)
+route('/_objSetWhat/<int:objId>/<int:wId>', art._objSetWhat)
+
 route('/_objImg/<int:objId>',               art._objImg)
 
 # general
-route('/_qrc/<int:id>/<what>',           qrc._qrc)
+route('/_qrc_view/<int:id>/<what>',         qrc._qrc_view)
+route('/_qrc_print/<int:id>/<what>',        qrc._qrc_print)
 
 if __name__ == '__main__':
     preStart()

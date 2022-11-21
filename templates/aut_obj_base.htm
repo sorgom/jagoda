@@ -1,17 +1,32 @@
 {% extends 'aut_base.htm' %}
 
+<!-- {'obj': 102002, 'what': None, 'year': None, 'cnt': 1, 'val': 0, 'pub': 0, 'id': 102002, 'ttl': 100002, 'dim1': Decimal('14.7'), 'dim2': Decimal('400.0'), 'dim3': Decimal('20.7'), 'loc': 0, 'tst': datetime.datetime(2022, 11, 21, 12, 21, 40), 'src': '/static/img/mini/0000000.jpg', 'label': 'LE 100002 English'}  -->
+
 {% block content %}
     <h1>Object no. <span id="objId">{{objId}}</span></h1>
-    <h1 class="objTitel">"{{objTitel}}"</h1>
+    <h1 class="objTitel">"{{obj['label']}}"</h1>
+    <!-- <p id="objWhat">{{obj['wlabel']}}</p>
+    <p id="objDims">{{obj['dim1']}} X {{obj['dim2']}} X {{obj['dim3']}}</p> -->
+    <p>
+        <a id="objYear">{{obj['year']}}</a>, 
+        <a id="objWhat" onclick="popup('/_objSelWhat/{{objId}}')">{{obj['wlabel']}}</a>,
+        <a id="objDims">{{obj['dims']}}</a>
+    </p>
     <div id="obj_top">
         <div class="img objImg">
-            <img src="{{objImg}}" alt="object {{objId}}" id="objImg"/>
+            <img src="{{obj['src']}}" alt="object {{objId}}" id="objImg"/>
         </div>
         <div>
             <ul>
-                <li><a onclick="popup('/_qrc/{{objId}}/{{what}}');">QRCode</a></li>
+                <li>QRCode
+                    <ul>
+                        <li><a onclick="popup('/_qrc_view/{{objId}}/{{what}}');">view</a></li>
+                        <li><a onclick="printAjax('/_qrc_print/{{objId}}/{{what}}');">print</a></li>
+                    </ul>
+                </li>
                 <li><a href="/objDims/{{objId}}">Edit Object Dimensions</a></li>
                 <li><a href="/objImgs/{{objId}}">Edit Object Images</a></li>
+                <li><a onclick="popup('/_objSelWhat/{{objId}}')">What is it</a></li>
             </ul>
             <div>
                 {% block obj %}

@@ -11,7 +11,7 @@
 -- all objects with 1st image
 drop view if exists OBJ_IMG_1ST;
 create view OBJ_IMG_1ST as
-select T1.OBJ, imgFileMini(T1.IMG) as SRC from OBJ_IMG as T1
+select T1.OBJ as ID, imgFileMini(T1.IMG) as SRC from OBJ_IMG as T1
 inner join
 (select OBJ, min(ORD) as ORD2 from OBJ_IMG group by OBJ) as T2
 ON T1.OBJ = T2.OBJ AND T1.ORD = T2.ORD2;
@@ -19,10 +19,10 @@ ON T1.OBJ = T2.OBJ AND T1.ORD = T2.ORD2;
 --  all objects with assigend or default image
 drop view if exists OBJ_IMG_DEF;
 create view OBJ_IMG_DEF as
-select T1.ID as OBJ, T1.TTL, T1.TST, coalesce(T2.SRC, imgFileMini(0)) as SRC from OBJ as T1
+select T1.*, coalesce(T2.SRC, imgFileMini(0)) as SRC from OBJ as T1
 left join
 OBJ_IMG_1ST as T2
-on T1.ID = T2.OBJ
+on T1.ID = T2.ID
 ;
 
 -- language item can be / is standard
@@ -55,18 +55,21 @@ order by LI.TST desc, LE.ID;
 --  all objects with (default or first) image and label
 drop view if exists OBJ_IMG_LABEL;
 create view OBJ_IMG_LABEL as
-select T1.OBJ, T1.TST, T1.SRC, T2.LABEL
+select T1.*, T2.LABEL
 from OBJ_IMG_DEF as T1
 inner join LANG_ELEM_1ST as T2
 on T1.TTL = T2.ID
 ;
 
 --  all articles with (default or first) image and label
-drop view if exists ART_IMG_LABEL;
-create view ART_IMG_LABEL as
-select T1.*, T2.TST, T2.SRC, T2.LABEL from ART as T1
+drop view if exists ART_FULL;
+create view ART_FULL as
+select T1.*, T2.*, T3.LABEL as WLABEL from ART as T1
 inner join OBJ_IMG_LABEL as T2
-on T1.ID = T2.OBJ;
+on T1.OBJ = T2.ID
+left join LANG_ELEM_1ST as T3
+on T1.WHAT = T3.ID
+;
 
 -- cross table all elements all languages
 -- pre-filled with what's available
@@ -89,7 +92,7 @@ LX.ILC = LEO.ILC
 order by LX.ID
 ;
 
-select ID, SRC, LABEL, TST from ART_IMG_LABEL
-order by TST desc
-limit 20
-; 
+-- select ID, SRC, LABEL, TST from ART_IMG_LABEL
+-- order by TST desc
+-- limit 20
+-- ; 

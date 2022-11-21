@@ -182,6 +182,21 @@ function submitPopup(route, route2=false)
     });
 }
 
+// relace a field by ajax return
+function usePopupClick(route, elemId)
+{
+    debug('usePopup', elemId)
+    const elem = geti(elemId);
+    if (elem)
+    {
+        debug(elem)
+        getAjax(route, rt => {
+            elem.innerHTML = rt,
+            closePopup();            
+        });
+    }
+}
+
 function repRoute(route)
 {
     debug('repRoute', route);
@@ -502,6 +517,11 @@ function updateObjImg()
 //  ## print
 //  ============================================================
 
+function printAjax(route)
+{
+    getAjax(route, printContent);
+}
+
 function printElementContentById(id)
 {
     let elem = geti(id);
@@ -512,12 +532,18 @@ function printElementContentById(id)
 // NOTE: css formatting gets lost unless explicitly given in style attributes
 function printElementContent(elem)
 {
+    printContent(elem.innerHTML)
+}
+
+// print content
+function printContent(content)
+{
     const ifr = document.createElement("iframe");
     ifr.style.display = "none";
     document.body.appendChild(ifr);
     const pri = ifr.contentWindow;
     pri.document.open();
-    pri.document.write(elem.innerHTML);
+    pri.document.write(content);
     pri.document.close();
     pri.focus();
     pri.print();
