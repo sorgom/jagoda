@@ -29,6 +29,7 @@ def _orderObjImgs(objId:int):
         for imgId, ord in getJson():
             debug(objId, imgId, ord)
             db().setObjectImg(objId, imgId, ord)
+        db().touchObj(objId)
         return 'DONE'
 
 def _rmObjImg():

@@ -1,5 +1,5 @@
-<h2>Dimensions:</h2>
-<form id="popup_form" method="post" onsubmit="usePopupForm('/{{submit}}', {{field}});return false;">
+<div class="center">
+<form id="popup_form" method="post" onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;">
     <div class="dims">
         <input type="text" name="dim1" value="{{obj['dim1']}}" pattern="\d+(?:[.,]\d+)?" autofocus onfocus="this.select()"> X
         <input type="text" name="dim2" value="{{obj['dim2']}}" pattern="\d+(?:[.,]\d+)?"> X
@@ -13,4 +13,5 @@
     </div>
     <input type="submit" value="Submit"/>
     <!-- <button type="submit">Submit</button> -->
-</form> 
+</form>
+</div>

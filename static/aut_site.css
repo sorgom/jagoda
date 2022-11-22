@@ -47,12 +47,22 @@ form.login > label {
 }
 
 #popup {
-    left: 1em;
+    left: 2%;
     z-index: 9;
     width: 95%;
     background-color: white;
     padding: 1%;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+#popup_head { 
+    position: relative; 
+    min-height: 1em;
+}
+#popup_head > button {
+    position: absolute;
+    top: -0.7em;
+    right: 0;
 }
 
 #cover {
@@ -99,6 +109,19 @@ div.clickSel > *,
 div.objSel > a {
     display: table-row;
     min-height: 1em;
+}
+
+div.objSel > a > div:first-child {
+    width: 60px;
+}
+
+div.objSel > a > div:nth-child(2) {
+    width: 4.5em;
+    text-align: right;
+}
+
+div.objSel > a > div:nth-child(3) {
+    font-style: italic;
 }
 
 div.clickSel > div {
@@ -221,6 +244,8 @@ div.buttons {
 /*  ===================================================
     ## objects
     ===================================================*/
+#objTitle { font-style: italic; }
+
 div.titles > a {
     display: block;
     padding: 0.1em 0.1em 0.1em 2em;
@@ -313,7 +338,7 @@ div.objImg {
 
 div.menu > div {
     float: left;
-    margin-left: 1em;
+    /* margin-left: 1em; */
     padding-right: 1em;
 }
 

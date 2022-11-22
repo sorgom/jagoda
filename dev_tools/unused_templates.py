@@ -18,6 +18,9 @@ def findInFile(fpath:str):
 for fpath in glob('mod/*.py'):
      findInFile(fpath)
 
+for fpath in glob('templates/*.htm'):
+     findInFile(fpath)
+
 files = [ file for file in glob('templates/*.htm') if not usage.get(path.basename(file)) ]
 
 for file in sorted(files):

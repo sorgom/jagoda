@@ -1,10 +1,14 @@
 # current
-22-11-20
-- object selector (popup)
-  - similar std title selector _lang_items
+- object title editor
+
 - all sorts of updates must update object concerned
   - image assignement
   - title changes
+
+# done
+22-11-20
+- object selector (popup)
+  - similar std title selector _lang_items
 - gimmik: 
   - rename template script  
   - qrcode

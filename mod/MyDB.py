@@ -62,7 +62,9 @@ class MyDB(MySQL):
 
     # get head (info) of language item
     def getLangItemInfo(self, id:int):
-        return self.getOneDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')
+        res = self.getOneDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')
+        res['ttl'] = res['id']
+        return res
 
     # get head (info) of for a new language item
     def getNewLangItemInfo(self, tpc:str):
@@ -102,10 +104,29 @@ class MyDB(MySQL):
     def dimStrFromDict(res):
         return MyDB.dimStrFromList([res[k] for k in DIM_FIELDS])
 
+    # def getObj(self, objId:int):
+    #     return self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
+
     def getObj(self, objId:int):
-        res = self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
+        res = self.getOneDict(f'select * from OBJ_IMG_LABEL where ID = {objId} limit 1;')
         res['dims'] = MyDB.dimStrFromDict(res)
         return res
+
+    #   title ID, STD, STDABLE
+    def getObjTtl(self, objId:int):
+        return self.getOneDict(f'select TTL, STD, STDABLE from OBJ_IMG_LABEL where ID = {objId} limit 1;')
+
+    def newObjTtl(self):
+        id = self.getNextId()
+        self.call(f'insert into LANG_ITEM(ID, TPC) values ({id}, "OT");')
+        return self.getLangItemInfo(id)
+
+    def setObjTtl(self, objId:int, ttlId:int):
+        self.call(f'update OBJ set TTL = {ttlId} where ID = {objId};')
+        return self.getFirstLabel(ttlId)
+
+    def getObjLabel(self, objId:int):
+        return self.getOne(f'select LABEL from OBJ_IMG_LABEL where ID = {objId} limit 1;')
 
     def addObj(self, objId:int, ttlId:int):
         self.call(f'insert into OBJ(ID, TTL) values ({objId}, {ttlId});')
@@ -116,9 +137,6 @@ class MyDB(MySQL):
 
     def getObjImgLabel(self, objId:int):
         return self.getOneRow(f'select SRC, LABEL from OBJ_IMG_LABEL where ID = {objId} limit 1;')
-
-    def getObj(self, objId:int):
-        return self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
 
     def setObjDims(self, objId:int, dims:list):
         self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
@@ -140,9 +158,13 @@ class MyDB(MySQL):
     def setWhat(self, objId:int, wId:int):
         self.call(f'update ART set what = {wId} where OBJ = {objId};')
     
+    def touchObj(self, objId:int):
+        self.call(f'update OBJ set TST = CURRENT_TIMESTAMP where ID = {objId};')
+
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'call addObjectImg({objId}, {imgId});')
+        self.touchObj(objId)
 
     def addImg(self, imgId:int):
         self.call(f'replace into IMG(ID) values ({imgId});')
@@ -152,9 +174,11 @@ class MyDB(MySQL):
     
     def setObjectImg(self, objId:int, imgId:int, ord:int):
         self.call(f'replace into OBJ_IMG values ({objId}, {imgId}, {ord});')
+        self.touchObj(objId)
 
     def rmObjectImg(self, objId:int, imgId:int):
         self.call(f'delete from OBJ_IMG where OBJ = {objId} and IMG = {imgId};')
+        self.touchObj(objId)
 
     def getUnusedImgs(self):
         return self.getDict('call getUnusedImgs();')

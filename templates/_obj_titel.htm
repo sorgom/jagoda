@@ -1,0 +1,31 @@
+<!--
+    title editor
+-->
+{% if ttl['std'] %}
+<div class="buttons">
+    <p>This is a standard title.</p>
+    <button onclick="popup('/_objOwnTtl/{{objId}}');">Create individual title</button>
+    <p></p>
+<div>
+{% endif %}
+<form id="popup_form" method="post" action="" onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;">
+    <table class="lel">
+        {% for ilc, label, value in data %}
+            <tr>
+                <td>{{label}}</td>
+                <td><textarea rows=2 name="{{ilc}}" lang="{{ilc}}">{{value}}</textarea></td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if ttl['std'] %}
+        <input type="hidden" name="std" value="1">
+    {% else %}
+        <input type="checkbox" id="std" name="std"/>
+        <label for="std">Use as standard title</label>
+    {% endif %}
+    <input type="hidden" name="stdable" value="{{ttl['stdable']}}">
+    <input type="hidden" name="ttl" value="{{ttl['ttl']}}">
+    <div class="buttons">
+        <button type="submit">Submit Changes</button>
+    </div>
+</form>

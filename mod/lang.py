@@ -34,12 +34,6 @@ def getLangItems(tpc:str):
         fnd.setdefault(id, {})[ilc] = label
     return [ [ id, [ fnd[id].get(ilc, '') for ilc in ILCS ] ] for id in fnd.keys() ]
 
-def getLangItem(id:int):
-    getLangs()
-    data = db().getLangItem(id)
-    fnd = { ilc:value for ilc, value in data }
-    return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
-
 #   ============================================================
 #   CALLS
 #   ============================================================
@@ -59,6 +53,12 @@ def saveLangItem(id:int):
     db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
     if rf('stdable'):
         db().setLangItemStd(id, rf('std'))
+
+def getLangItem(id:int):
+    getLangs()
+    data = db().getLangItem(id)
+    fnd = { ilc:value for ilc, value in data }
+    return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
 def renderBase(template:str, **args):
     getLangs()

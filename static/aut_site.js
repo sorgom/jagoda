@@ -99,7 +99,7 @@ function closePopup()
     document.removeEventListener('keydown', escHandler);
 }
 
-function showPopup()
+function showPopup(small=false)
 {
     debug('showPopup');
     let cover = geti('cover');
@@ -114,6 +114,17 @@ function showPopup()
     popup.style.top = s + 'px';
     popup.style.visibility = 'visible';
 
+    if (small)
+    {
+        popup.style.left = '20%';
+        popup.style.width = '60%';
+    }
+    else
+    {
+        popup.style.left = '2%';
+        popup.style.width = '95%';
+    }
+
     let cont = geti('popup_content');
     cont.scrollTop = 0; 
 
@@ -122,8 +133,18 @@ function showPopup()
     document.addEventListener('keydown', escHandler);
 }
 
-function focusEmpty(form)
+function focusForm(form)
 {
+    debug('focusForm');
+    const it = form.querySelector('input[type="text"]');
+
+    if (it) 
+    {
+        debug('input found:', it);
+        it.focus();
+        it.select();
+        return;
+    }
     for (let a of form.querySelectorAll('textarea'))
     {
         if (a.value == '')
@@ -134,7 +155,7 @@ function focusEmpty(form)
     }
 }
 
-function popup(route)
+function popup(route, small=false)
 {
     debug('popup: ' + route);
     getAjax(route, rt => {
@@ -142,9 +163,9 @@ function popup(route)
         if (pc)
         {
             pc.innerHTML = rt;
-            showPopup()
+            showPopup(small)
             let pf = geti('popup_form');
-            if (pf) focusEmpty(pf);
+            if (pf) focusForm(pf);
         }
         else debug('pc not found.')
     });
@@ -168,7 +189,7 @@ function submitPopup(route, route2=false)
         if (!ok) 
         {
             debug('missing content');
-            focusEmpty(pf);
+            focusForm(pf);
             return;
         }
         postAjax(new FormData(pf), route, rt => {
@@ -189,12 +210,19 @@ function usePopupClick(route, elemId)
     const elem = geti(elemId);
     if (elem)
     {
-        debug(elem)
         getAjax(route, rt => {
             elem.innerHTML = rt,
             closePopup();            
         });
     }
+}
+function usePopupSubmit(form, route, elemId)
+{
+    postAjax(new FormData(form), route, rt => {
+        const elem = geti(elemId);
+        if (elem) elem.innerHTML = rt;
+        closePopup();            
+    });
 }
 
 function repRoute(route)

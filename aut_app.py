@@ -69,8 +69,6 @@ route('/_newArtTtl/<int:objId>',            art._newArtTtl)
 route('/newArtTtl/<int:objId>',             art.newArtTtl)
 route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
 route('/edArt/<int:objId>',                 art.edArt)
-route('/objDims/<int:objId>',               art.objDims,  methods=BOTH)
-route('/objImgs/<int:objId>',               art.objImgs)
 
 route('/_edArtList',                        art._edArtList)
 
@@ -78,6 +76,9 @@ route('/_objSelWhat/<int:objId>',           art._objSelWhat)
 route('/_objSetWhat/<int:objId>/<int:wId>', art._objSetWhat)
 
 route('/_objImg/<int:objId>',               art._objImg)
+route('/_objDims/<int:objId>',              art._objDims,  methods=BOTH)
+route('/_objTtl/<int:objId>',               art._objTtl,   methods=BOTH)
+route('/_objOwnTtl/<int:objId>',            art._objOwnTtl,   methods=BOTH)
 
 # general
 route('/_qrc_view/<int:id>/<what>',         qrc._qrc_view)
