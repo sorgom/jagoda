@@ -40,5 +40,5 @@ def cleanTemplates():
 
 if __name__ == '__main__':
     genTemplates()
-    genPopups()
+    # genPopups()
     cleanTemplates()
