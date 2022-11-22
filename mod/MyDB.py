@@ -7,9 +7,9 @@ import random
 
 __mydb__ = None
 
-class MyDB(MySQL):
+DIM_FIELDS = [f'dim{n}' for n in range(1,4)]
 
-    DimKeys = [f'dim{n}' for n in range(1,4 )]
+class MyDB(MySQL):
 
     def getNextId(self):
         return self.getNum('select nextId();', commit=True)
@@ -100,11 +100,13 @@ class MyDB(MySQL):
 
     @staticmethod
     def dimStrFromDict(res):
-        return MyDB.dimStrFromList([res[k] for k in MyDB.DimKeys])
+        return MyDB.dimStrFromList([res[k] for k in DIM_FIELDS])
 
-    def getObject(self, id:int):
-        return self.getDict('select * FROM ')
-    
+    def getObj(self, objId:int):
+        res = self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
+        res['dims'] = MyDB.dimStrFromDict(res)
+        return res
+
     def addObj(self, objId:int, ttlId:int):
         self.call(f'insert into OBJ(ID, TTL) values ({objId}, {ttlId});')
 

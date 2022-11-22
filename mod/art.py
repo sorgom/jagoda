@@ -48,6 +48,22 @@ def _newArt2(objId:int, ttlId:int):
     return 'DONE'
 
 
+def _objDims(objId:int):
+    if post():
+        data = dict(request.form)
+        factor = 2.54 if data['unit'] == 'inch' else 1.0
+        rdims = [
+            float((data[d] or '0').replace(',', '.')) * factor
+            for d in DIM_FIELDS
+        ]
+        debug('rdims', rdims)
+        db().setObjDims(objId, rdims)
+        return db().getObjDims(objId)
+    
+    return render_template('_obj_dims.htm', obj=db().getObj(objId))
+
+
+
 def objDims(objId:int):
     if post():
         data = dict(request.form)
