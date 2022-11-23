@@ -61,7 +61,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Python/Frequently Forgotten.md",
+                "file": "git/Frequently Forgotten.md",
                 "mode": "source",
                 "source": false
               }
@@ -134,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/Frequently Forgotten.md",
+                "file": "git/Frequently Forgotten.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/Frequently Forgotten.md",
+                "file": "git/Frequently Forgotten.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/Frequently Forgotten.md"
+                "file": "git/Frequently Forgotten.md"
               }
             }
           }
@@ -187,8 +187,8 @@
   },
   "active": "71410ce52f33b891",
   "lastOpenFiles": [
-    "MySQL/MySQL_cursor.md",
     "Python/Frequently Forgotten.md",
+    "MySQL/MySQL_cursor.md",
     "git/Frequently Forgotten.md",
     "MySQL/Have a look at ROLES.md",
     "MySQL/Role Assignement.md",

@@ -8,3 +8,6 @@ git branch -D <branch>
 ```
 git push origin --delete <branch>
 ```
+
+### Conversion of line endings
+[Configuring Git to handle line endings](https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings)
