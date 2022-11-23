@@ -12,7 +12,7 @@ services:
       - 8080:8080
 
   db:
-    image: mysql:8.0
+    image: mysql:latest
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rr

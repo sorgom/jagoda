@@ -2,8 +2,11 @@ from flask import session, redirect, render_template
 from mod.base import post, rf
 from mod.MyDB import db
 
+def getUid() -> int:
+    return session.get('id', 0)
+
 def loggedIn():
-    return session.get('id')
+    return getUid() != 0
 
 def login():
     if post():
@@ -14,11 +17,12 @@ def login():
         if id > 0:
             session['id']  = id
             session['usr'] = usr
+            db().reduceObjRecs()
             return redirect('/')
     return render_template('aut_login.htm')
 
 def checkLogin():
-    return False if loggedIn() else relogin()
+    return None if loggedIn() else relogin()
 
 def relogin():
     return redirect('/login')

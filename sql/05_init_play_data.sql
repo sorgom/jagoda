@@ -63,23 +63,29 @@ REPLACE INTO LANG_ELEM VALUES
 
 -- Make
 REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+    (30, 'TQ'),
     (31, 'TQ'),
     (32, 'TQ'),
     (33, 'TQ'),
     (34, 'TQ'),
     (35, 'TQ'),
     (36, 'TQ'),
-    (37, 'TQ')
+    (37, 'TQ'),
+    (38, 'TQ'),
+    (39, 'TQ')
 ;
 
 REPLACE INTO LANG_ELEM VALUES
+    (31, 'en', 'Sheet of Paper'),
     (31, 'en', 'Book'),
     (32, 'en', 'Print'),
     (33, 'en', 'Skulpture'),
     (34, 'en', 'Oil on Canvas'),
     (35, 'en', 'Screen Print'),
     (36, 'en', 'Water Colour'),
-    (37, 'en', 'Catalogue')
+    (37, 'en', 'Catalogue'),
+    (38, 'en', 'Car'),
+    (39, 'en', 'Building')
 ;
 
 -- Some Authors

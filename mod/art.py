@@ -80,6 +80,10 @@ def _objImg(objId:int):
 def _edArtList():
     return render_template('_obj_selector.htm', items=db().getArtList(), action='edArt')
 
+def _edUsrArtList():
+    return render_template('_obj_selector.htm', items=db().getUsrArtList(), action='edArt')
+
+
 def _objTtl(objId:int):
     ttl = db().getObjTtl(objId)
     if post():

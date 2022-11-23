@@ -5,6 +5,9 @@
   - image assignement
   - title changes
 
+- remember:
+  - save user search as JSON
+
 # done
 22-11-20
 - object selector (popup)

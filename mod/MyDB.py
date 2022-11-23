@@ -8,8 +8,12 @@ import random
 __mydb__ = None
 
 DIM_FIELDS = [f'dim{n}' for n in range(1,4)]
+USR_RECORDS = 50
 
 class MyDB(MySQL):
+    def __init__(self, app, getUidFunc, *args):
+        self.getUid = getUidFunc
+        super().__init__(app, *args)
 
     def getNextId(self):
         return self.getNum('select nextId();', commit=True)
@@ -104,9 +108,24 @@ class MyDB(MySQL):
     def dimStrFromDict(res):
         return MyDB.dimStrFromList([res[k] for k in DIM_FIELDS])
 
+    def recObj(self, objId:int):
+        uid = self.getUid()
+        if uid:
+            self.call(f'replace into OBJ_REC(OBJ, UID, TST) values ({objId}, {uid}, CURRENT_TIMESTAMP);')
+
+    def reduceObjRecs(self):
+        uid = self.getUid()
+        if uid:
+            recs = self.getFirstCol(f'select TST from OBJ_REC where UID = {uid} limit {USR_RECORDS};')
+            if len(recs) == USR_RECORDS:
+                self.call(f'delete from OBJ_REC where UID = {uid} and TST < "{recs[-1]}";')
+
+    def touchObj(self, objId:int):
+        self.call(f'update OBJ set TST = CURRENT_TIMESTAMP where ID = {objId};')
+        self.recObj(objId)
+
     # def getObj(self, objId:int):
     #     return self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
-
     def getObj(self, objId:int):
         res = self.getOneDict(f'select * from OBJ_IMG_LABEL where ID = {objId} limit 1;')
         res['dims'] = MyDB.dimStrFromDict(res)
@@ -123,6 +142,7 @@ class MyDB(MySQL):
 
     def setObjTtl(self, objId:int, ttlId:int):
         self.call(f'update OBJ set TTL = {ttlId} where ID = {objId};')
+        self.recObj(objId)
         return self.getFirstLabel(ttlId)
 
     def getObjLabel(self, objId:int):
@@ -130,6 +150,7 @@ class MyDB(MySQL):
 
     def addObj(self, objId:int, ttlId:int):
         self.call(f'insert into OBJ(ID, TTL) values ({objId}, {ttlId});')
+        self.recObj(objId)
 
     def addArt(self, objId:int, ttlId:int):
         self.addObj(objId, ttlId)
@@ -140,11 +161,15 @@ class MyDB(MySQL):
 
     def setObjDims(self, objId:int, dims:list):
         self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
+        self.recObj(objId)
 
     #   list of articles [id, img, label]
     #   TODO: reasonable limitation
     def getArtList(self):
-        return self.get('select ID, SRC, LABEL from ART_FULL order by TST desc limit 100;')
+        return self.get('select ID, SRC, LABEL, WLABEL from ART_FULL order by TST desc limit 100;')
+
+    def getUsrArtList(self):
+        return self.get(f'call getUsrArticles({self.getUid()});')
 
     def getArt(self, objId:int):
         res = self.getOneDict(f'select * from ART_FULL where ID = {objId} limit 1;')
@@ -156,11 +181,9 @@ class MyDB(MySQL):
         return MyDB.dimStrFromDict(res)
 
     def setWhat(self, objId:int, wId:int):
-        self.call(f'update ART set what = {wId} where OBJ = {objId};')
+        self.call(f'update ART set WHAT = {wId} where OBJ = {objId};')
+        self.touchObj(objId)
     
-    def touchObj(self, objId:int):
-        self.call(f'update OBJ set TST = CURRENT_TIMESTAMP where ID = {objId};')
-
     ##  images
     def addObjectImg(self, objId:int, imgId:int):
         self.call(f'call addObjectImg({objId}, {imgId});')
@@ -255,8 +278,10 @@ class MyDB(MySQL):
 
     # create a lot of articles and titels
     def testData(self):
+        userIdTest = 3
         self.call('delete from LANG_ITEM where TPC = "OT";')
         self.call('delete from OBJ;')
+        self.call('delete from OBJ_REC;')
         random.seed()
         debug('random language elements')
         langs = self.getLangTable()
@@ -271,11 +296,12 @@ class MyDB(MySQL):
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
         self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', ins, True)
         self.multi('ART(OBJ)', [f'({id + offset})' for id in ids])
+        self.multi('OBJ_REC(OBJ, UID, TST)', [f'({id + offset}, {userIdTest}, CURRENT_TIMESTAMP - INTERVAL {n} MINUTE)' for n, id in enumerate(ids)] )
         self.call('call initSeq();')
 
-def setDB(app):
+def setDB(app, getUidFunc, *args):
     global __mydb__
-    if not __mydb__: __mydb__ = MyDB(app)
+    if not __mydb__: __mydb__ = MyDB(app, getUidFunc, *args)
     return __mydb__
 
 def db() -> MyDB:

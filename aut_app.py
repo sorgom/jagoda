@@ -13,14 +13,14 @@ from mod.config import *
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 
 # secret string for session cooky
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+app.secret_key = 'ein Hund kam in die Kueche'
 
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'aut'
 app.config['MYSQL_PASSWORD'] = 'aa'
 app.config['MYSQL_DB'] = 'jagoda'
 
-setDB(app)
+setDB(app, login.getUid)
 
 def route(route:str, meth, **opts):
     app.add_url_rule(route, view_func=meth, **opts)
@@ -41,10 +41,10 @@ def testData():
     return redirect('/')
 
 # login
-route('/login',                     login.login,        methods=BOTH)
-route('/logout',                    login.logout                    )
-route('/pwd',                       login.pwd,          methods=BOTH)
-route('/_loggedIn',                 login._loggedIn                 )
+route('/login',                         login.login,        methods=BOTH)
+route('/logout',                        login.logout                    )
+route('/pwd',                           login.pwd,          methods=BOTH)
+route('/_loggedIn',                     login._loggedIn                 )
 
 # language authoring
 route('/langItems/<tpc>',               lang.langItems                  )
@@ -71,6 +71,7 @@ route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
 route('/edArt/<int:objId>',                 art.edArt)
 
 route('/_edArtList',                        art._edArtList)
+route('/_edUsrArtList',                     art._edUsrArtList)
 
 route('/_objSelWhat/<int:objId>',           art._objSelWhat)
 route('/_objSetWhat/<int:objId>/<int:wId>', art._objSetWhat)

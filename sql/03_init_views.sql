@@ -64,7 +64,7 @@ on T1.TTL = T2.ID
 --  all articles with (default or first) image and label
 drop view if exists ART_FULL;
 create view ART_FULL as
-select T1.*, T2.*, T3.LABEL as WLABEL from ART as T1
+select T1.*, T2.*, coalesce(T3.LABEL, '??') as WLABEL from ART as T1
 inner join OBJ_IMG_LABEL as T2
 on T1.OBJ = T2.ID
 left join LANG_ITEM_1ST as T3

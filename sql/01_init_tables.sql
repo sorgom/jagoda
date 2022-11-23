@@ -72,7 +72,7 @@ CREATE TABLE OBJ (
     DIM2 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM3 DECIMAL(8,1) NOT NULL DEFAULT 0,
     LOC BIGINT NOT NULL DEFAULT 0,
-    TST DATETIME not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID), 
     FOREIGN KEY (TTL) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
@@ -89,6 +89,16 @@ CREATE TABLE ART (
     FOREIGN KEY (OBJ)  REFERENCES OBJ(ID) ON DELETE CASCADE,
     FOREIGN KEY (WHAT) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
+
+drop table if exists OBJ_REC;
+create table OBJ_REC (
+    OBJ BIGINT not null,
+    UID INT not null,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key (OBJ, UID),
+    foreign key (OBJ)  references OBJ(ID) on delete cascade
+);
+
 -- ============================================================
 -- ## images
 -- ============================================================
@@ -160,6 +170,7 @@ grant select, insert, delete         on jagoda.LANG_ITEM            to 'aut'@'%'
 grant select, insert, delete         on jagoda.LANG_ELEM            to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.ART                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.OBJ_REC              to 'aut'@'%';
 grant select, insert, delete         on jagoda.IMG                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ_IMG              to 'aut'@'%';
 grant select, insert, delete         on jagoda.SEQ                  to 'aut'@'%';
@@ -169,6 +180,7 @@ grant update (STD, TST                                ) on jagoda.LANG_ITEM     
 grant update (LABEL                                   ) on jagoda.LANG_ELEM            to 'aut'@'%';
 grant update (TTL, DIM1, DIM2, DIM3, LOC, TST         ) on jagoda.OBJ                  to 'aut'@'%';
 grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ART                  to 'aut'@'%';
+grant update (TST                                     ) on jagoda.OBJ_REC              to 'aut'@'%';
 grant update (ORD                                     ) on jagoda.OBJ_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';
 grant update (NAME, PASS, RC                          ) on jagoda.USR                  to 'aut'@'%';

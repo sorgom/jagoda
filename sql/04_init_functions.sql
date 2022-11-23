@@ -10,6 +10,7 @@ drop procedure if exists initSeq;
 drop procedure if exists getLangItems;
 drop procedure if exists setLangItemStd;
 drop procedure if exists setLangElem;
+drop procedure if exists getUsrArticles;
 drop procedure if exists addObjectImg;
 drop procedure if exists getUnusedImgs;
 drop procedure if exists setUsr;
@@ -82,6 +83,16 @@ END :)
 -- ============================================================
 -- objects
 -- ============================================================
+--  get last objects of user
+create procedure getUsrArticles(pUID int)
+begin
+    select ID, SRC, LABEL, WLABEL from ART_FULL
+    inner join OBJ_REC
+    on OBJ_REC.OBJ = ART_FULL.ID and OBJ_REC.UID = pUID
+    order by OBJ_REC.TST desc
+    limit 50;
+end :)
+
 -- ============================================================
 -- images
 -- ============================================================
@@ -137,6 +148,7 @@ grant execute on procedure jagoda.initSeq                to 'aut'@'%';
 grant execute on procedure jagoda.getLangItems           to 'aut'@'%';
 grant execute on procedure jagoda.setLangItemStd         to 'aut'@'%';
 grant execute on procedure jagoda.setLangElem            to 'aut'@'%';
+grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
 grant execute on procedure jagoda.addObjectImg           to 'aut'@'%';
 grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';

@@ -2,7 +2,7 @@ import re
 from replGenSql import replGenSql, USR, DB
 
 
-fixCols = 'ID ILC TPC STDABLE OBJ IMG'
+fixCols = 'ID ILC TPC STDABLE OBJ IMG UID'
 rxFix = re.compile('^(?:' +  '|'.join(fixCols.split()) + ')$')
 rxRoot = re.compile('^\s*--\s+ROOT')
 
