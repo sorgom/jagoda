@@ -3,17 +3,18 @@ body {
     /* margin-bottom: 1em;
     margin: 1%; */
 }
-* {font-size:14pt;font-family:Verdana,Myriad,Helvetica,Sans-Serif,Arial;}
+* {font-size:14pt;font-family:Verdana,Helvetica,Sans-Serif,Arial;}
 a {
     text-decoration: none;
+    color: blue;
     outline: none;
     cursor: pointer;
 }
-a:visited,a:active,a:link {
+/* a, a:visited,a:active,a:link {
     color: blue;
-}
+} */
 /*  ===================================================
-    login forms
+    ## login forms
     ===================================================*/
 div.center {
     display: flex;
@@ -37,7 +38,7 @@ form.login > label {
 }
 
 /*  ===================================================
-    popup & cover 
+    ## popup & cover 
     ===================================================*/
 .modal {
     position: absolute;
@@ -46,12 +47,22 @@ form.login > label {
 }
 
 #popup {
-    left: 1em;
+    left: 2%;
     z-index: 9;
     width: 95%;
     background-color: white;
     padding: 1%;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+#popup_head { 
+    position: relative; 
+    min-height: 1em;
+}
+#popup_head > button {
+    position: absolute;
+    top: -0.7em;
+    right: 0;
 }
 
 #cover {
@@ -70,10 +81,7 @@ form.login > label {
 }
 
 /*  ===================================================
-    drag & drop
-    ===================================================*/
-/*  ===================================================
-    content
+    ## content
     ===================================================*/
 #content {
     width: 90%;
@@ -86,24 +94,42 @@ input:invalid {
 }
 
 /* ============= selection tables */
-div.clickSel {
+div.clickSel,
+div.objSel {
     display: table;
     width: 100%;
 }
 
-div.clickSel a:hover {
+div.clickSel a:hover,
+div.objSel a:hover {
     background-color: lightblue;
 }
 
-div.clickSel > * {
+div.clickSel > *,
+div.objSel > a {
     display: table-row;
     min-height: 1em;
 }
+
+div.objSel > a > div:first-child {
+    width: 60px;
+}
+
+div.objSel > a > div:nth-child(2) {
+    width: 4.5em;
+    text-align: right;
+}
+
+div.objSel > a > div:nth-child(4) {
+    font-style: italic;
+}
+
 div.clickSel > div {
     background-color: cyan;
 }
 
-div.clickSel span {
+div.clickSel span 
+{
     display: table-cell;
     border: 1px solid lightgray;
     padding: 0.1em;
@@ -113,7 +139,41 @@ div.clickSel > a > span {
     font-style: italic;
 }
 
+div.objSel > a > * {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 1em;
+}
 
+
+div.objSel > a > div > div
+{
+    display: flex;
+    width: 50px;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+div.objSel > a > div > div > img
+{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+
+#obj_top > div {
+    float: left;
+}
+#obj_top > div > div{
+    margin-left: 2em;
+}
+
+
+#obj_top_end {
+    clear: both;
+}
 
 table, th, td {
     border: 1px solid;
@@ -182,7 +242,30 @@ div.buttons {
 }
 
 /*  ===================================================
-    image display
+    ## objects
+    ===================================================*/
+#objTitle { font-style: italic; }
+
+div.titles > a {
+    display: block;
+    padding: 0.1em 0.1em 0.1em 2em;
+    font-style: italic;
+}
+div.titles > a:hover {
+    background-color: lightblue;
+}
+
+div.dims > input {
+    width: 5em;
+    text-align: center;
+}
+
+.objTitel {
+    font-style: italic;
+}
+
+/*  ===================================================
+    ## image display
     ===================================================*/
 .label {
     margin-bottom: 2px;
@@ -201,7 +284,7 @@ div.buttons {
 div.imgDisplayFrame {
     width: 100%;
     border: 1px solid black;
-    min-height: 164px;
+    min-height: 180px;
     background-color: lightgray;
 }
 
@@ -209,9 +292,10 @@ div.imgDisplay {
     overflow-Y: auto;
 }
 
-div.imgDisplay > div {
+div.imgDisplay > div,
+div.img {
     display: flex;
-    float: left;
+    /* float: left; */
     width: 170px;
     height: 170px;
     margin: 2px;
@@ -221,13 +305,18 @@ div.imgDisplay > div {
     align-items: center;
 }
 
+div.imgDisplay > div {
+    float: left;
+}
+
+
 div.imgDisplay img {
     cursor: pointer;
 }
 
-.imgDisplayFix {
+/* .imgDisplayFix {
     height: 360px;
-}
+} */
 
 div.imgDisplayEnd {
     clear: both;
@@ -237,7 +326,8 @@ div.imgDisplay > div.exd {
     border-color: orange red red orange;
 }
 
-div.objImgs > div:first-child {
+div.objImgs > div:first-child, 
+div.objImg {
     border-color: lightgreen darkgreen darkgreen lightgreen;
     background-color: white;
 }
@@ -246,10 +336,9 @@ div.objImgs > div:first-child {
     background-color: orange;
 }
 
-
 div.menu > div {
     float: left;
-    margin-left: 1em;
+    /* margin-left: 1em; */
     padding-right: 1em;
 }
 

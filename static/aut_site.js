@@ -4,9 +4,10 @@ function geti(id)
     return document.getElementById(id);
 }
 
-function debug(str)
+function debug(...args)
 {
-    console.log(str);
+
+    console.log(...args);
 }
 
 function clean(target)
@@ -75,6 +76,10 @@ function whatchLogin()
     setInterval(checkLogin, 10000);
 }
 
+//  ============================================================
+//  ## popups
+//  ============================================================
+
 function escHandler(ev)
 {
     if (ev.key == 'Escape')
@@ -94,7 +99,7 @@ function closePopup()
     document.removeEventListener('keydown', escHandler);
 }
 
-function showPopup()
+function showPopup(small=false)
 {
     debug('showPopup');
     let cover = geti('cover');
@@ -109,6 +114,17 @@ function showPopup()
     popup.style.top = s + 'px';
     popup.style.visibility = 'visible';
 
+    if (small)
+    {
+        popup.style.left = '20%';
+        popup.style.width = '60%';
+    }
+    else
+    {
+        popup.style.left = '2%';
+        popup.style.width = '95%';
+    }
+
     let cont = geti('popup_content');
     cont.scrollTop = 0; 
 
@@ -117,7 +133,29 @@ function showPopup()
     document.addEventListener('keydown', escHandler);
 }
 
-function popup(route)
+function focusForm(form)
+{
+    debug('focusForm');
+    const it = form.querySelector('input[type="text"]');
+
+    if (it) 
+    {
+        debug('input found:', it);
+        it.focus();
+        it.select();
+        return;
+    }
+    for (let a of form.querySelectorAll('textarea'))
+    {
+        if (a.value == '')
+        {
+            a.focus();
+            break;
+        }
+    }
+}
+
+function popup(route, small=false)
 {
     debug('popup: ' + route);
     getAjax(route, rt => {
@@ -125,49 +163,93 @@ function popup(route)
         if (pc)
         {
             pc.innerHTML = rt;
-            showPopup()
+            showPopup(small)
             let pf = geti('popup_form');
-            if (pf)
-            {
-                for (let a of pf.querySelectorAll('textarea'))
-                {
-                    if (a.value == '')
-                    {
-                        a.focus();
-                        break;
-                    }
-                }
-            }
+            if (pf) focusForm(pf);
         }
         else debug('pc not found.')
     });
 }
 
-function submitPopup(route)
+function submitPopup(route, route2=false)
 {
-    debug('submitPopup: ' + route);
+    debug('submitPopup:', route, route2);
     let pf = geti('popup_form');
-    if (!pf) return;
-    let ok = false;
-    for (let a of pf.querySelectorAll('textarea'))
+    if (pf)
     {
-        if (a.value != '')
+        let ok = false;
+        for (let a of pf.querySelectorAll('textarea'))
         {
-            ok = true;
-            break;
+            if (a.value != '')
+            {
+                ok = true;
+                break;
+            }
         }
+        if (!ok) 
+        {
+            debug('missing content');
+            focusForm(pf);
+            return;
+        }
+        postAjax(new FormData(pf), route, rt => {
+            if (route2) repRoute(route2);
+            else setContent(rt);
+        });
     }
-    if (!ok) 
-    {
-        debug('missing content');
-        return;
-    }
-    postAjax(new FormData(pf), route, rt => {
-        let ct = geti('content');
-        if (ct) ct.innerHTML = rt;
-        closePopup();
+    else getAjax(route, rt => {
+        if (route2) repRoute(route2);
+        else setContent(rt);
     });
 }
+
+// relace a field by ajax return
+function usePopupClick(route, elemId)
+{
+    debug('usePopup', elemId)
+    const elem = geti(elemId);
+    if (elem)
+    {
+        getAjax(route, rt => {
+            elem.innerHTML = rt,
+            closePopup();            
+        });
+    }
+}
+function usePopupSubmit(form, route, elemId)
+{
+    postAjax(new FormData(form), route, rt => {
+        const elem = geti(elemId);
+        if (elem) elem.innerHTML = rt;
+        closePopup();            
+    });
+}
+
+function repRoute(route)
+{
+    debug('repRoute', route);
+    location.replace(route);
+}
+
+function setContent(html)
+{
+    const ct = geti('content');
+    if (ct)
+    {
+        ct.innerHTML = html;
+        const qs = ct.querySelector('input');
+        if (qs) qs.focus();
+    }
+    closePopup();   
+}
+
+//  ============================================================
+//  ## objects / aticles
+//  ============================================================
+
+//  ============================================================
+//  ## image processing
+//  ============================================================
 
 function dragImg(ev)
 {
@@ -195,7 +277,7 @@ function placeImg(ev)
     {
         makeDrop(src);
     } 
-    debug('id  : ' + this.imgId);
+    debug('id:', this.imgId);
     par.insertBefore(src, this);
     sendImgOrder(par);
 }
@@ -221,8 +303,8 @@ function rmImg(ev)
     let par = this.parentNode;
     let imgId = src.imgId;
     let objId = par.objId;
-    debug('imgId: ' + imgId);
-    debug('objId: ' + objId);
+    debug('imgId:', imgId);
+    debug('objId:', objId);
     if (imgId && objId)
     {
         let fd = new FormData();
@@ -253,10 +335,11 @@ function makeImg(target, e, drop)
 {
     let d = document.createElement('div');
     if (drop) makeDrop(d);
-    d.id = target.id + '_' + e['id'];
+    // d.id = target.id + '_' + e['id'];
+    d.id = [target.id, e['id']].join('_');
     d.imgId = e['id'];
     d.ord = e['ord'];
-    debug('id: ' + d.id);
+    debug('id:', d.id);
     let i = document.createElement('img');
     i.src = e['src'];
     i.draggable = true;
@@ -335,7 +418,7 @@ function upateImgs(target, json, drop)
 
 function loadObjImgs(trgId, id)
 {
-    debug('loadObjImgs: ' + id);
+    debug('loadObjImgs:', id);
     let target = geti(trgId);
     if (target)
     {
@@ -348,7 +431,7 @@ function loadObjImgs(trgId, id)
 
 function uploadImgs(inp, trgId, id)
 {
-    debug('uploadImgs: ' + id);
+    debug('uploadImgs:', id);
     let target = geti(trgId);
     if (!target) return;
     let objId = target.objId;
@@ -368,7 +451,7 @@ function uploadImgs(inp, trgId, id)
 
 function loadUnusedImgs(trgId)
 {
-    debug('loadUnusedImgs: ' + trgId);
+    debug('loadUnusedImgs:', trgId);
     let target = geti(trgId);
     if (target)
     {
@@ -406,6 +489,7 @@ function markExceed(target)
             ++n; 
         }
     })
+    updateObjImg();
 }
 
 function sendImgOrder(target)
@@ -413,7 +497,7 @@ function sendImgOrder(target)
     let objID = target.objId;
     if (objID)
     {
-        debug('sendImgOrder: ' + objID);
+        debug('sendImgOrder:', objID);
         let chg = [];
         let n = 0;
         target.childNodes.forEach(e => {
@@ -429,13 +513,67 @@ function sendImgOrder(target)
         })
         if (chg.length > 0)
         {
-            postJson(chg, '/_orderObjImgs/' + objID, rt => { markExceed(target) });
+            postJson(chg, '/_orderObjImgs/' + objID, rt => { 
+                markExceed(target);
+            });
         }
+
     }
 }
 
 function imgInfo()
 {
-    debug('imgInfo: ' + this.parentNode.imgId);
+    debug('imgInfo:', this.parentNode.imgId);
     popup('/_imgInfo/' + this.parentNode.imgId);
+}
+
+function updateObjImg()
+{
+    const img = geti('objImg');
+    const oid = geti('objId');
+    if (img && oid)
+    {
+        debug('updateObjImg ...')
+        getAjax('/_objImg/' + oid.textContent, rt => {
+            debug('updateObjImg:', rt)
+            img.src = rt;
+        })
+    }
+}
+
+//  ============================================================
+//  ## print
+//  ============================================================
+
+function printAjax(route)
+{
+    getAjax(route, printContent);
+}
+
+function printElementContentById(id)
+{
+    let elem = geti(id);
+    if (elem) printElementContent(elem)
+}
+
+// print innerHTML of an element
+// NOTE: css formatting gets lost unless explicitly given in style attributes
+function printElementContent(elem)
+{
+    printContent(elem.innerHTML)
+}
+
+// print content
+function printContent(content)
+{
+    const ifr = document.createElement("iframe");
+    ifr.style.display = "none";
+    document.body.appendChild(ifr);
+    const pri = ifr.contentWindow;
+    pri.document.open();
+    pri.document.write(content);
+    pri.document.close();
+    pri.focus();
+    pri.print();
+    pri.onafterprint = () => { document.body.removeChild(ifr); }
 }

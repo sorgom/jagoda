@@ -1,5 +1,6 @@
 import json
-from flask import request, render_template
+from sys import _getframe
+from flask import request, render_template, escape    
 
 BOTH = ['GET', 'POST']
 GET  = ['GET']
@@ -17,3 +18,8 @@ def rf(field:str):
 def post():
     return request.method == 'POST'
 
+def debug(*args):
+    print(f'## {_getframe(1).f_code.co_name}>', *args)
+
+def debugTemplate(template:str, **args):
+    return escape(render_template(template, **args))

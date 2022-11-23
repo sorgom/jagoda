@@ -66,28 +66,39 @@ CREATE TABLE LANG_ELEM (
 DROP TABLE IF EXISTS OBJ;
 CREATE TABLE OBJ (
     ID BIGINT NOT NULL,
-    TITLE BIGINT NOT NULL,
-    DIM1 DECIMAL(10, 1) NOT NULL DEFAULT 0,
-    DIM2 DECIMAL(10, 1) NOT NULL DEFAULT 0,
-    DIM3 DECIMAL(10, 1) NOT NULL DEFAULT 0,
+    TTL BIGINT NOT NULL,
+    -- dimensions in micrometers
+    DIM1 DECIMAL(8,1) NOT NULL DEFAULT 0,
+    DIM2 DECIMAL(8,1) NOT NULL DEFAULT 0,
+    DIM3 DECIMAL(8,1) NOT NULL DEFAULT 0,
     LOC BIGINT NOT NULL DEFAULT 0,
-    TST DATETIME not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID), 
-    FOREIGN KEY (TITLE) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
+    FOREIGN KEY (TTL) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
 -- article / artifact
 DROP TABLE IF EXISTS ART;
 CREATE TABLE ART (
-    ID BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
     WHAT BIGINT,
-    YEAR INT,
+    YEAR INT NOT NULL default 1984,
     CNT INT4 NOT NULL DEFAULT 1,
     VAL TINYINT(1) DEFAULT 0,
     PUB TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (ID),
-    FOREIGN KEY (ID)    REFERENCES OBJ(ID)    ON DELETE CASCADE,
-    FOREIGN KEY (WHAT)  REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
+    PRIMARY KEY (OBJ),
+    FOREIGN KEY (OBJ)  REFERENCES OBJ(ID) ON DELETE CASCADE,
+    FOREIGN KEY (WHAT) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
 );
+
+drop table if exists OBJ_REC;
+create table OBJ_REC (
+    OBJ BIGINT not null,
+    UID INT not null,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key (OBJ, UID),
+    foreign key (OBJ)  references OBJ(ID) on delete cascade
+);
+
 -- ============================================================
 -- ## images
 -- ============================================================
@@ -153,32 +164,25 @@ CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 grant select on jagoda.* to 'aut'@'%';
 
 -- GENERATED GRANT>
+grant select                         on jagoda.LANG                 to 'aut'@'%';
+grant select                         on jagoda.LANG_ITEM_TYPE       to 'aut'@'%';
 grant select, insert, delete         on jagoda.LANG_ITEM            to 'aut'@'%';
 grant select, insert, delete         on jagoda.LANG_ELEM            to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.ART                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.OBJ_REC              to 'aut'@'%';
 grant select, insert, delete         on jagoda.IMG                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ_IMG              to 'aut'@'%';
 grant select, insert, delete         on jagoda.SEQ                  to 'aut'@'%';
+grant select                         on jagoda.ROLE                 to 'aut'@'%';
 grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
--- <GENERATED GRANT
-
--- GENERATED UPDATE>
 grant update (STD, TST                                ) on jagoda.LANG_ITEM            to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.LANG_ELEM            to 'aut'@'%';
-grant update (TITLE, DIM1, DIM2, DIM3, LOC, TST       ) on jagoda.OBJ                  to 'aut'@'%';
+grant update (TTL, DIM1, DIM2, DIM3, LOC, TST         ) on jagoda.OBJ                  to 'aut'@'%';
 grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ART                  to 'aut'@'%';
+grant update (TST                                     ) on jagoda.OBJ_REC              to 'aut'@'%';
 grant update (ORD                                     ) on jagoda.OBJ_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';
 grant update (NAME, PASS, RC                          ) on jagoda.USR                  to 'aut'@'%';
--- <GENERATED UPDATE
-
-
-
--- TODO: user type: viewer with login
-
--- -- Web Visitor can just read
--- DROP USER IF EXISTS 'web'@'%';
--- CREATE USER 'web'@'%' IDENTIFIED BY 'ww';
--- GRANT SELECT ON jagoda.* TO 'web'@'%';
+-- <GENERATED GRANT
 

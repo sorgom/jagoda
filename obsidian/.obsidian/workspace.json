@@ -37,14 +37,38 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/Role Assignement.md",
+                "file": "MySQL/Have a look at ROLES.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "6d7736f0ba3dea63",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "git/Frequently Forgotten.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "71410ce52f33b891",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Python/Frequently Forgotten.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -110,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "MySQL/Role Assignement.md",
+                "file": "Python/Frequently Forgotten.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "MySQL/Role Assignement.md",
+                "file": "Python/Frequently Forgotten.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "MySQL/Role Assignement.md"
+                "file": "Python/Frequently Forgotten.md"
               }
             }
           }
@@ -161,15 +185,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "2cd20a1857395512",
+  "active": "71410ce52f33b891",
   "lastOpenFiles": [
     "MySQL/MySQL_cursor.md",
+    "Python/Frequently Forgotten.md",
+    "git/Frequently Forgotten.md",
+    "MySQL/Have a look at ROLES.md",
+    "MySQL/Role Assignement.md",
     "Flask_MogonDB.md",
     "MySQL/make columns read only.md",
     "MySQL/CLI with Password.md",
     "general/md file syntax.md",
-    "MySQL/Have a look at ROLES.md",
-    "New_Article.md",
-    "Python/use variable in regex.md"
+    "New_Article.md"
   ]
 }

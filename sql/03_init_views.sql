@@ -16,6 +16,15 @@ inner join
 (select OBJ, min(ORD) as ORD2 from OBJ_IMG group by OBJ) as T2
 ON T1.OBJ = T2.OBJ AND T1.ORD = T2.ORD2;
 
+--  all objects with assigend or default image
+drop view if exists OBJ_IMG_DEF;
+create view OBJ_IMG_DEF as
+select T1.*, coalesce(T2.SRC, imgFileMini(0)) as SRC from OBJ as T1
+left join
+OBJ_IMG_1ST as T2
+on T1.ID = T2.ID
+;
+
 -- language item can be / is standard
 drop view if exists LANG_ITEM_STD;
 create view LANG_ITEM_STD as
@@ -29,19 +38,38 @@ on LI.TPC = LT.TPC;
 drop view if exists LANG_ELEM_ORD;
 create view LANG_ELEM_ORD as
 select LE.ID, LE.LABEL, LA.ILC, LA.ORD from LANG_ELEM as LE
-inner join
-LANG as LA
+inner join LANG as LA
 on LA.ILC = LE.ILC
 order by LE.ID, LA.ORD;
 
 -- first available language element
-drop view if exists LANG_ELEM_1ST;
-create view LANG_ELEM_1ST as
-select LE.ID, LE.LABEL, LE.ILC from LANG_ELEM_ORD as LE
-inner join
-(select ID, min(ORD) as MIO from LANG_ELEM_ORD group by ID) as MO
-on LE.ID = MO.ID and LE.ORD = MO.MIO 
-order by LE.ID;
+drop view if exists LANG_ITEM_1ST;
+create view LANG_ITEM_1ST as
+select LI.*, LE.LABEL, LE.ILC from LANG_ELEM_ORD as LE
+inner join (select ID, min(ORD) as MIO from LANG_ELEM_ORD group by ID) as MO
+on LE.ID = MO.ID and LE.ORD = MO.MIO
+inner join LANG_ITEM_STD as LI
+on LI.ID = LE.ID; 
+-- order by LI.TST desc, LE.ID;
+
+--  all objects with (default or first) image and label
+drop view if exists OBJ_IMG_LABEL;
+create view OBJ_IMG_LABEL as
+select T1.*, T2.LABEL, T2.STD, T2.STDABLE
+from OBJ_IMG_DEF as T1
+inner join LANG_ITEM_1ST as T2
+on T1.TTL = T2.ID
+;
+
+--  all articles with (default or first) image and label
+drop view if exists ART_FULL;
+create view ART_FULL as
+select T1.*, T2.*, coalesce(T3.LABEL, '??') as WLABEL from ART as T1
+inner join OBJ_IMG_LABEL as T2
+on T1.OBJ = T2.ID
+left join LANG_ITEM_1ST as T3
+on T1.WHAT = T3.ID
+;
 
 -- cross table all elements all languages
 -- pre-filled with what's available
@@ -54,7 +82,7 @@ select LX.ID, LX.ILC, coalesce(LEO.LABEL, LE1.LABEL) as LABEL from
     LANG as LA
 ) as LX
 inner join
-LANG_ELEM_1ST as LE1
+LANG_ITEM_1ST as LE1
 on  LX.ID = LE1.ID
 left join
 LANG_ELEM_ORD as LEO
@@ -64,3 +92,7 @@ LX.ILC = LEO.ILC
 order by LX.ID
 ;
 
+-- select ID, SRC, LABEL, TST from ART_IMG_LABEL
+-- order by TST desc
+-- limit 20
+-- ; 

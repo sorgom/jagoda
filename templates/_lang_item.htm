@@ -2,7 +2,7 @@
     inner table for language entry / edit
     content for ajax calls
 -->
-<form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}');return false;">
+<form id="popup_form" method="post" action="" onsubmit="submitPopup('/{{submit}}', '{{replace}}');return false;">
     <table class="lel">
         {% for ilc, label, value in data %}
             <tr>
@@ -11,8 +11,9 @@
             </tr>
         {% endfor %}
     </table>
-    <input type="hidden" name="tpc" value="{{tpc}}">
+    <input type="hidden" name="tpc"     value="{{tpc}}">
     <input type="hidden" name="stdable" value="{{item['stdable']}}">
+    <input type="hidden" name="objId"   value="{{objId}}">
     {% if item['stdable'] %}
         <input type="checkbox" id="std" name="std" {{ 'checked' if item['std'] else '' }}>
         <label for="std">Use as standard title</label>

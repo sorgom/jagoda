@@ -1,14 +1,21 @@
 from PIL import Image, TiffImagePlugin #, ExifTags
 from os import path, makedirs
-import json
+import json, re
 from mod.MyDB import db
 from mod.base import *
 from mod.config import *
-from mod.utilz import debug
 
 SOURCE_FILE_KEY = 41728
 ORIENTATION_KEY = 274
 ROTATIONS = { 3: 180, 6: 270, 8: 90 }
+
+
+
+#   relative paths reuired for file save
+rxAbs = re.compile('^[/\\\\]')
+
+def relPath(absp:str):
+    return rxAbs.sub('', absp)
 
 def _corrExif(val):
     if isinstance(val, TiffImagePlugin.IFDRational):
@@ -38,7 +45,7 @@ def saveImg(file, objId=None):
     with Image.open(file) as img:
         checkImgFolders()
         id = db().getNextId()
-        fileMini, fileFull, fileExif = db().getImgFiles(id)
+        fileMini, fileFull, fileExif = tuple(map(relPath, db().getImgFiles(id)))
         debug('files:', fileMini, fileFull, fileExif)
         data = _getExif(img, file.filename)
         with open(fileExif, 'w') as fh:
@@ -56,13 +63,14 @@ def saveImg(file, objId=None):
         return id
 
 def checkImgFolders():
-    for folder in db().getImgFolders():
+    for folder in map(relPath, db().getImgFolders()):
+        debug(folder)
         if not path.exists(folder):
             makedirs(folder)    
 
 def getExif(id:int):
-    debug('getExif')
-    fp = db().getImgFileExif(id)
+    debug()
+    fp = relPath(db().getImgFileExif(id))
     debug('fp', fp)
     if not path.exists(fp): return None
     with open(fp, 'r') as fh:

@@ -1,0 +1,19 @@
+{% extends 'aut_obj_base.htm' %}
+
+{% block obj %}
+<h2>Dimensions:</h2>
+<form action="/objDims/{{objId}}" method="post">
+    <div class="dims">
+        <input type="text" name="dim1" value="{{obj['dim1']}}" pattern="\d+(?:[.,]\d+)?" autofocus onfocus="this.select()"> X
+        <input type="text" name="dim2" value="{{obj['dim2']}}" pattern="\d+(?:[.,]\d+)?"> X
+        <input type="text" name="dim3" value="{{obj['dim3']}}" pattern="\d+(?:[.,]\d+)?">
+    </div>
+    <div>
+        <input type="radio" id="cm" name="unit" value="cm" checked>
+        <label for="cm">cm</label><br>
+        <input type="radio" id="inch" name="unit" value="inch">
+        <label for="inch">inch</label>
+    </div>
+    <button type="submit">Save Dimensions</button>
+</form>
+{% endblock %}

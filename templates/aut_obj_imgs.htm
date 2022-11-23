@@ -1,8 +1,7 @@
-{% extends 'aut_base.htm' %}
+{% extends 'aut_obj_base.htm' %}
 
 {% block body %} <body onload="loadObjImgs('objImgs', {{objId}});loadUnusedImgs('freeImgs');"> {% endblock %}
-{% block content %}
-    <h1>Object no. {{objId}}</h1>
+{% block obj_full %}
     <h2>Images of object</h2>
     <p class="label">Upload image files for object from your PC (klick or drag here):</p>
     <input type="file" multiple onchange="uploadImgs(this, 'objImgs', {{objId}});" accept="{{acceptImgTypes}}" class="dropZone"/>

@@ -9,10 +9,11 @@
 </head>
     {% block body %} <body> {% endblock %}
     <div id="popup" class="modal">
-        <div class="buttons">
-            <button onclick="closePopup();">Close</button>
+        <div id="popup_head">
+            <h3 id="popup_title"></h3>
+            <button onclick="closePopup();">Close / ESC</button>
         </div>
-        <!-- this is the place ajax popup content: -->
+                <!-- this is the place ajax popup content: -->
         <div id="popup_content">
 
         </div>
@@ -38,6 +39,14 @@
                 {% endfor %}
                 </ul>
             </div>
+            <div id="art">
+                <h3>Articles</h3>
+                <ul>
+                    <li><a href="/newArt">New Article</a></li>
+                    <li><a onclick="popup('/_edArtList')">Edit Article</a></li>
+                    <li><a onclick="popup('/_edUsrArtList')">My recent Articles</a></li>
+                </ul>
+            </div>
         </div>
         <div class="clr"></div>
     </div>
@@ -48,13 +57,13 @@
             {% block content %} {% endblock %}
         </div>
     </div>
-    <!-- Why put JS at end of body:  
-        it gives the HTML time to load before any of the JavaScript loads, 
+    <!-- Why put JS at end of body:
+        it gives the HTML time to load before any of the JavaScript loads,
         which can prevent errors, and speed up website response time.
     -->
     <script src="/static/aut_site.js"></script>
-    <script>
+    <!-- <script>
         document.onload = whatchLogin();
-    </script>
+    </script> -->
 </body>
 </html>

@@ -20,9 +20,9 @@ CREATE FUNCTION imgPath(pSUB VARCHAR(8), pID BIGINT, pEXT VARCHAR(4))
 RETURNS VARCHAR(32)
 BEGIN
     IF pID = -1 THEN 
-        RETURN CONCAT('static/img/',  pSUB);
+        RETURN CONCAT('/static/img/',  pSUB);
     ELSE 
-        RETURN CONCAT('static/img/',  pSUB, '/', LPAD(pID, 7, 0), '.', pEXT);
+        RETURN CONCAT('/static/img/',  pSUB, '/', LPAD(pID, 7, 0), '.', pEXT);
     END IF;
 END :)  
 CREATE FUNCTION imgFileMini(pID BIGINT)

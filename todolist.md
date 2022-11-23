@@ -1,10 +1,33 @@
 # current
-2022-11-15
-- fix
-  - new language elements save:
-  ```
-  MySQLdb.OperationalError: (1136, "Column count doesn't match value count at row 1") 
-  ```
+- object title editor
+
+- all sorts of updates must update object concerned
+  - image assignement
+  - title changes
+
+- remember:
+  - save user search as JSON
+
+# done
+22-11-20
+- object selector (popup)
+  - similar std title selector _lang_items
+- gimmik: 
+  - rename template script  
+  - qrcode
+    - close on print / printpopup()
+    - alternative: just print, don't popup
+
+
+2022-11-18
+- lang items with timestamp
+- dimensions form
+
+2022-11-19
+- make navigation safe:
+  - JS: popupReplace
+
+
 
 # ideas / concepts
 ## containers and boxes

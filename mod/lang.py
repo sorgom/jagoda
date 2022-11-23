@@ -1,8 +1,7 @@
 from flask import redirect, render_template
 from mod.MyDB import db
-from mod.utilz import debug
 from mod.login import loggedIn 
-from mod.base import ERR_DATA, ERR_AUTH, rf, post
+from mod.base import *
 
 LANGS = None
 ILCS  = None
@@ -27,10 +26,6 @@ def langItems():
     getLangs()
     return LANG_ITEMS
 
-def renderBase(template:str, **args):
-    getLangs()
-    return render_template(template, langs=LANGS, ilcs=ILCS, langItems=LANG_ITEMS, **args)
-
 def getLangItems(tpc:str):
     getLangs()
     data = db().getLangItems(tpc)
@@ -38,12 +33,6 @@ def getLangItems(tpc:str):
     for (id, ilc, label) in data:
         fnd.setdefault(id, {})[ilc] = label
     return [ [ id, [ fnd[id].get(ilc, '') for ilc in ILCS ] ] for id in fnd.keys() ]
-
-def getLangItem(id:int):
-    getLangs()
-    data = db().getLangItem(id)
-    fnd = { ilc:value for ilc, value in data }
-    return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
 #   ============================================================
 #   CALLS
@@ -56,6 +45,25 @@ def langItems(tpc:str):
     return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getLangItems(tpc))
 
 #   ============================================================
+#   API
+#   ============================================================
+#   save lang item elements from form
+def saveLangItem(id:int):
+    getLangs()
+    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    if rf('stdable'):
+        db().setLangItemStd(id, rf('std'))
+
+def getLangItem(id:int):
+    getLangs()
+    data = db().getLangItem(id)
+    fnd = { ilc:value for ilc, value in data }
+    return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
+
+def renderBase(template:str, **args):
+    getLangs()
+    return render_template(template, langs=LANGS, ilcs=ILCS, langItems=LANG_ITEMS, **args)
+#   ============================================================
 #   AJAX
 #   ============================================================
 #   listing of all lang items of a type
@@ -65,7 +73,7 @@ def _langItems(tpc:str):
 
 #   lising of elements of a lang item
 def _langItem(id:int):
-    debug(f'_langItem({id})')
+    debug(id)
     if not loggedIn(): return ERR_AUTH
     item = db().getLangItemInfo(id)
     debug('item:', item)
@@ -77,15 +85,16 @@ def _setLangItem(id:int):
     if not loggedIn(): return ERR_AUTH
     tpc = db().getLangItemType(id)
     if not tpc: return ERR_DATA
-    getLangs()
-    db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
-    if rf('stdable'):
-        db().setLangItemStd(id, rf('std'))
+    saveLangItem(id)
+    # getLangs()
+    # db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    # if rf('stdable'):
+    #     db().setLangItemStd(id, rf('std'))
     return _langItems(tpc)
 
 #   ajax get: new language entry form
 def _newLangItem(tpc:str):
-    debug(f'_newLangItem({tpc})')
+    debug(tpc)
     if not loggedIn(): return ERR_AUTH
     id = db().getNextId()
     item = db().getNewLangItemInfo(tpc)
@@ -94,7 +103,10 @@ def _newLangItem(tpc:str):
 
 #   ajax post: new language entry
 def _addLangItem(tpc:str, id:int):
-    debug(f'_newlangItem({tpc}, {id})')
+    debug(tpc, id)
     if not loggedIn(): return ERR_AUTH
     db().newLangItem(id, tpc)
     return _setLangItem(id)
+
+def _label(id:int):
+    return db().getFirstLabel(id)
