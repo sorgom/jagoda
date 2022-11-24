@@ -1,7 +1,10 @@
 from flask import redirect, render_template
+import json
 from mod.MyDB import db
 from mod.login import loggedIn 
 from mod.base import *
+from mod.google import translate
+
 
 LANGS = None
 ILCS  = None
@@ -110,3 +113,21 @@ def _addLangItem(tpc:str, id:int):
 
 def _label(id:int):
     return db().getFirstLabel(id)
+
+def _google():
+    res = []
+    if post() and loggedIn():
+        getLangs()
+        data = dict(request.form)
+        src = None
+        for ilc in ILCS:
+            if data[ilc]:
+                src = ilc
+                txt = data[ilc]
+                break
+        if src is not None:
+            for ilc in ILCS:
+                if ilc != src and not data[ilc]:
+                    res.append([ilc, translate(src, ilc, txt)])
+    return json.dumps(res)
+

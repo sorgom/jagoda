@@ -4,71 +4,47 @@
     "type": "split",
     "children": [
       {
-        "id": "6e99c67151330565",
+        "id": "b37ec6e27f1e1e9d",
         "type": "tabs",
         "children": [
           {
-            "id": "35afd7a2ae9762f7",
+            "id": "79058d6d9d92ad21",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/make columns read only.md",
+                "file": "Jagoda/Object-Model.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "7f4fb4c0c6979cb0",
+            "id": "a25e6055f244ddf8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/MySQL_cursor.md",
+                "file": "Jagoda/Features.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "2cd20a1857395512",
+            "id": "a9193f987efd6268",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/Have a look at ROLES.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "6d7736f0ba3dea63",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "git/Frequently Forgotten.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "71410ce52f33b891",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "git/Frequently Forgotten.md",
+                "file": "Python/google_translate.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -134,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "git/Frequently Forgotten.md",
+                "file": "Python/google_translate.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "git/Frequently Forgotten.md",
+                "file": "Python/google_translate.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "git/Frequently Forgotten.md"
+                "file": "Python/google_translate.md"
               }
             }
           }
@@ -185,17 +161,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "71410ce52f33b891",
+  "active": "d01f8f8dae45d04b",
   "lastOpenFiles": [
-    "Python/Frequently Forgotten.md",
-    "MySQL/MySQL_cursor.md",
-    "git/Frequently Forgotten.md",
-    "MySQL/Have a look at ROLES.md",
-    "MySQL/Role Assignement.md",
-    "Flask_MogonDB.md",
-    "MySQL/make columns read only.md",
-    "MySQL/CLI with Password.md",
-    "general/md file syntax.md",
-    "New_Article.md"
+    "Jagoda/Features.md",
+    "Jagoda/Object-Model.md",
+    "Jagoda/Handling_limited_editions.md",
+    "Jagoda/Grouping.md",
+    "general/Unt.md",
+    "general/md_file_ syntax.md",
+    "Python/use_variable_in_regex.md",
+    "Python/FrequentlyForgotten.md",
+    "git/FrequentlyForgotten.md",
+    "templates/Template 1.md"
   ]
 }

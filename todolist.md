@@ -1,15 +1,17 @@
 # current
-- object title editor
+- locations, persons / institution, addresses
 
-- all sorts of updates must update object concerned
-  - image assignement
-  - title changes
-
-- remember:
+# remeber
+- search
+  - implement search
+    - recent
+    - make
+    - groups
   - save user search as JSON
+- limited edition as an own table / object class
 
 # done
-22-11-20
+- object title editor
 - object selector (popup)
   - similar std title selector _lang_items
 - gimmik: 
@@ -17,6 +19,9 @@
   - qrcode
     - close on print / printpopup()
     - alternative: just print, don't popup
+- all sorts of updates must update object concerned
+  - image assignement
+  - title changes
 
 
 2022-11-18
