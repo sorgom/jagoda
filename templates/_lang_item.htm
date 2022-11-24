@@ -18,8 +18,11 @@
         <input type="checkbox" id="std" name="std" {{ 'checked' if item['std'] else '' }}>
         <label for="std">Use as standard title</label>
     {% endif %}
-    <div class="buttons">
-        <button type="submit">Save Changes</button>
-        <button onclick="coogle()">google translate</button>
-    </div>
+    <!-- <div class="buttons">
+    </div> -->
 </form>
+<div class="buttons">
+    <button onclick="getGoogle()">google translate</button>
+    <input type="submit" form="popup_form" value="Save Changes"/>
+    <p id="popup_info"></p>
+</div>

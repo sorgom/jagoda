@@ -203,6 +203,12 @@ function submitPopup(route, route2=false)
     });
 }
 
+function popupInfo(text)
+{
+    let elem = geti('popup_info');
+    if (elem) elem.textContent = text;
+}
+
 // relace a field by ajax return
 function usePopupClick(route, elemId)
 {
@@ -242,6 +248,31 @@ function setContent(html)
     }
     closePopup();   
 }
+
+function getGoogle()
+{
+    debug('getGoogle');
+    let pf = geti('popup_form');
+    popupInfo('translating ...');
+    if (pf) postAjax(new FormData(pf), '/_google', setGoogle);
+}
+
+function setGoogle(rt)
+{
+    debug('setGoogle');
+    let data = JSON.parse(rt);
+    debug(data);
+    data.forEach(a => {
+        let elem = geti(a[0]);
+        if (elem) {
+            debug(a[0], a[1]);
+            elem.value = a[1];
+        }
+        else debug(a[0], 'not found')
+    });
+    popupInfo('');
+}
+
 
 //  ============================================================
 //  ## objects / aticles

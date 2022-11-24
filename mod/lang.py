@@ -121,13 +121,17 @@ def _google():
         data = dict(request.form)
         src = None
         for ilc in ILCS:
-            if data[ilc]:
+            val = data[ilc].strip()
+            if val:
                 src = ilc
-                txt = data[ilc]
+                txt = val
                 break
         if src is not None:
             for ilc in ILCS:
-                if ilc != src and not data[ilc]:
+                val = data[ilc].strip()
+                if ilc != src and not val:
                     res.append([ilc, translate(src, ilc, txt)])
-    return json.dumps(res)
+    ret = json.dumps(res)
+    debug(ret)
+    return ret
 
