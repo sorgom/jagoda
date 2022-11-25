@@ -2,7 +2,9 @@ from os import path, rename
 import subprocess, re
 from sys import argv
 from glob import glob
+
 tpldir = 'templates'
+moddir = 'mod'
 
 def isGit(fpath:str):
     return True if subprocess.run(f'git ls-files {fpath}', capture_output=True).stdout else False
@@ -33,7 +35,10 @@ if len(argv) > 2:
 
     if path.exists(oldp) and not path.exists(newp):
         rx = re.compile('\\b(GEN)?' + re.escape(old) + '\\b')
-        for fpath in glob('mod/*.py'):
+        for fpath in glob(f'{moddir}/*.py'):
+            substSrc(fpath, rx, new)
+
+        for fpath in glob(f'{tpldir}/*.htm'):
             substSrc(fpath, rx, new)
 
         renGit(oldp, newp)

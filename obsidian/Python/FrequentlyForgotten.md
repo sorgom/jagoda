@@ -6,7 +6,7 @@
 
 
 last element of list
-```
+```python
 data = [1, 2, 3]
 last = data[-1]
 ```

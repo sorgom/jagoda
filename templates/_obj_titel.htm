@@ -13,7 +13,7 @@
         {% for ilc, label, value in data %}
             <tr>
                 <td>{{label}}</td>
-                <td><textarea rows=2 name="{{ilc}}" id="{{ilc}}" lang="{{ilc}}">{{value}}</textarea></td>
+                <td><textarea rows=2 name="{{ilc}}" id="{{ilc}}" lang="{{ilc}}" maxlength="128">{{value}}</textarea></td>
             </tr>
         {% endfor %}
     </table>
