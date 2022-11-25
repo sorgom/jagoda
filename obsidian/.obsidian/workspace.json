@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "59c0a693d4580d5e",
+        "id": "673bac97b021c54f",
         "type": "tabs",
         "children": [
           {
-            "id": "4e40ddf04a092763",
+            "id": "b9dba3ed8dd85558",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -128,12 +128,12 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "d01f8f8dae45d04b",
+  "active": "b9dba3ed8dd85558",
   "lastOpenFiles": [
-    "Python/use_variable_in_regex.md",
     "Python/google_translate.md",
-    "Python/FrequentlyForgotten.md",
     "Python/arrays.md",
+    "Python/use_variable_in_regex.md",
+    "Python/FrequentlyForgotten.md",
     "MySQL/Role Assignement.md",
     "MySQL/MySQL_cursor.md",
     "MySQL/indexing.md",
