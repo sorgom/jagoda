@@ -53,6 +53,7 @@ route('/_setLangItem/<int:id>',         lang._setLangItem,  methods=POST)
 route('/_newLangItem/<tpc>',            lang._newLangItem               )
 route('/_addLangItem/<tpc>/<int:id>',   lang._addLangItem,  methods=POST)
 route('/_label/<int:id>',               lang._label                     )
+route('/_google',                       lang._google,       methods=POST)
 
 # image ajax calls
 route('/_addObjImgs/<int:objId>',   img._addObjImgs,    methods=POST)

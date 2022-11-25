@@ -3,3 +3,4 @@
 
 # this would permanently lead to changes in obsidian otherwise
 *.json text eol=lf
+*.md text eol=lf
