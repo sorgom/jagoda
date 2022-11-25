@@ -1,53 +1,75 @@
 import re
 
-rx = re.compile('(\d+) *- *(\d+)|(\d+)')
+rxPrintStyle = re.compile('(\d+) *- *(\d+)|(\d+)')
 
-text = '1, 2-5 20 -22, 8- 12,'
+#   ============================================================
+#   database JSON   [[b, e], n] (print array pra)
+#   user input      n n-m, n    (print string prs)
+#   comparison set  { n, n, n } set is not sorted nor sortable
 
-res = []
-for b, e, n in rx.findall(text):
-    if b and e:
-        res += range(int(b), int(e) + 1)
-    else:
-        res.append(int(n))
-    print(b, e, n) 
 
-res = set(res)
+def prs2set(txt:str) -> set:
+    res = []
+    for b, e, n in rxPrintStyle.findall(txt):
+        if b and e:
+            res += list(range(int(b), int(e) + 1))
+        else:
+            res.append(int(n))
+    return set(res)
 
-print(list(res))
+def pra2set(pra:list) -> set:
+    res = []
+    for x in pra:
+        if type(x) is list:
+            res += list(range(x[0], x[-1] + 1))
+        else:
+            res.append(x)
+    return set(res)
 
-moved = [9, 11, 20]
-
-rem = list(res - set(moved))
-print(list(rem))
-
-def aToStr(a:list):
-    if len(a) > 3:
-        return f'{a[0]}-{a[-1]}'
-    return ', '.join([str(n) for n in a])
-res = []
-tmp = []
-nxt = 0
-for n in rem:
-    if not tmp:
-        tmp = [n]
-    elif n == nxt:
-        tmp.append(n)
+def set2pra(s:set) -> list:
+    res = []
+    tmp = []
+    nxt = 0
+    a = [n for n in s]
+    a.sort()
+    for n in a:
+        if not tmp:
+            tmp = [n]
+        elif n == nxt:
+            tmp.append(n)
+        else:
+            res += _a2x(tmp)
+            tmp = [n]
         nxt = n + 1
-    else:
-        if (tmp): res.append(aToStr(tmp))
-        tmp = [n]
-    nxt = n + 1
-if (tmp): res.append(aToStr(tmp))
+    res += _a2x(tmp) 
+    return res   
 
-res = ', '.join(res)
+def pra2prs(pra:list):
+    return ', '.join([_x2str(x) for x in pra])
 
-print(res)
+def _x2str(x):
+    return f'{x[0]}-{x[-1]}' if type(x) is list else str(x)
 
-# l1 = [1, 2, 3]
-# l2 = [4, 3, 0]
+#   [[b, e]] or [n, n, n]
+def _a2x(a:list) -> list:
+    return [[a[0], a[-1]]] if len(a) > 2 else a
 
-# l3 = l1 + l2
-# s1 = set(l1 + l2)
-# print(l3)
-# print(s1)
+
+if __name__ == '__main__':
+
+    text = '44, 1, 2-5 20 -22, 8- 12, 33'
+
+    s = prs2set(text)
+    print('s:', s)
+
+    pra = set2pra(s)
+    print('pra:', pra)
+
+    s = pra2set(pra)
+    print('s:', s)
+
+    # a = s2a(s)
+    # print('a:', a)
+
+    # c = a2str(a)
+    # print('c:', c)

@@ -80,7 +80,7 @@ def _langItem(id:int):
     if not loggedIn(): return ERR_AUTH
     item = db().getLangItemInfo(id)
     debug('item:', item)
-    return render_template('_lang_item.htm', itemId=id, data=getLangItem(id), item=item, submit=f'_setLangItem/{id}')
+    return render_template('ttl.htm', itemId=id, data=getLangItem(id), item=item, submit=f'_setLangItem/{id}')
 
 #   set language item element data
 #   return language table of element type
@@ -102,7 +102,7 @@ def _newLangItem(tpc:str):
     id = db().getNextId()
     item = db().getNewLangItemInfo(tpc)
     debug('new id:', id)
-    return render_template('_lang_item.htm', id=id, data=getLangItem(id), item=item, submit=f'_addLangItem/{tpc}/{id}')
+    return render_template('ttl.htm', id=id, data=getLangItem(id), item=item, submit=f'_addLangItem/{tpc}/{id}')
 
 #   ajax post: new language entry
 def _addLangItem(tpc:str, id:int):

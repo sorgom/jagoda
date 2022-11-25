@@ -29,7 +29,7 @@ def _newArtTtl(objId:int):
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
     item  = db().getNewLangItemInfo('OT')
-    return render_template('_lang_item.htm', objId=objId, id=ttlId, data=getLangItem(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
+    return render_template('ttl.htm', objId=objId, id=ttlId, data=getLangItem(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):
