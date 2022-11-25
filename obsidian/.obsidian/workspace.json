@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "673bac97b021c54f",
+        "id": "bb3d940ff08308a1",
         "type": "tabs",
         "children": [
           {
-            "id": "b9dba3ed8dd85558",
+            "id": "9f758a587f67daa4",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "MySQL/json.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -81,6 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "MySQL/json.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "MySQL/json.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +124,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "MySQL/json.md"
+              }
             }
           }
         ]
@@ -128,15 +136,15 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "b9dba3ed8dd85558",
+  "active": "9f758a587f67daa4",
   "lastOpenFiles": [
+    "MySQL/indexing.md",
+    "Python/FrequentlyForgotten.md",
     "Python/google_translate.md",
     "Python/arrays.md",
     "Python/use_variable_in_regex.md",
-    "Python/FrequentlyForgotten.md",
     "MySQL/Role Assignement.md",
     "MySQL/MySQL_cursor.md",
-    "MySQL/indexing.md",
     "MySQL/json.md",
     "MySQL/CLI with Password.md",
     "HTML/references.md"
