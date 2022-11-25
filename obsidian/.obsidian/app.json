@@ -1,4 +1,9 @@
 {
   "trashOption": "none",
-  "showInlineTitle": false
+  "showInlineTitle": false,
+  "spellcheckLanguages": [
+    "de",
+    "en-US"
+  ],
+  "spellcheck": true
 }
