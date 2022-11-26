@@ -10,6 +10,14 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 -- ## language support
 -- ============================================================
 
+-- 
+DROP TABLE IF EXISTS ENT;
+CREATE TABLE ENT (
+    ID BIGINT NOT NULL,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID),
+);
+
 -- language definitions
 -- ILC, ISO Language Codes acc. to 
 -- https://www.w3schools.com/tags/ref_language_codes.asp
@@ -21,82 +29,162 @@ CREATE TABLE LANG ( -- ROOT
     PRIMARY KEY (ILC),
     UNIQUE(ORD)
 );
--- possible type of language item
-DROP TABLE IF EXISTS LANG_ITEM_TYPE;
-CREATE TABLE LANG_ITEM_TYPE ( -- ROOT
-    TPC CHAR(2) NOT NULL,
-    LABEL VARCHAR(128) NOT NULL,
-    STDABLE TINYINT NOT NULL DEFAULT 0,
-    PRIMARY KEY (TPC)
-);
--- Language element types
-INSERT INTO LANG_ITEM_TYPE VALUES
-    ('OT', 'Object Titles', 1),
-    ('CA', 'Website Captions', 0),
-    ('TQ', 'Artpiece Techniques', 0)
-;
 
--- language item of a type
-DROP TABLE IF EXISTS LANG_ITEM;
-CREATE TABLE LANG_ITEM (
-    ID BIGINT NOT NULL,
-    TPC CHAR(2) NOT NULL,
+-- title / object caption
+DROP TABLE IF EXISTS TTL;
+CREATE TABLE TTL (
+    ENT BIGINT NOT NULL,
     STD TINYINT NOT NULL DEFAULT 0,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    PRIMARY KEY (ID),
-    FOREIGN KEY (TPC) REFERENCES LANG_ITEM_TYPE(TPC) ON DELETE CASCADE
+    PRIMARY KEY (ENT),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
 );
 
--- language dependent element
--- language item for all languages
-DROP TABLE IF EXISTS LANG_ELEM;
-CREATE TABLE LANG_ELEM (
-    ID BIGINT NOT NULL,
+-- TTL element for all languages
+DROP TABLE IF EXISTS TTL_ELEM;
+CREATE TABLE TTL_ELEM (
+    TNT BIGINT NOT NULL,
     ILC CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
-    PRIMARY KEY (ID, ILC),
-    FOREIGN KEY (ID) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE,
+    PRIMARY KEY (ENT, ILC),
+    FOREIGN KEY (TNT) REFERENCES TTL(ENT) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
 );
+
+-- long text descriptions
+DROP TABLE IF EXISTS TXT;
+CREATE TABLE TXT (
+    ENT BIGINT NOT NULL,
+    PRIMARY KEY (ENT),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+);
+
+-- TXT element for all languages
+DROP TABLE IF EXISTS TXT_ELEM;
+CREATE TABLE TXT_ELEM (
+    ENT BIGINT NOT NULL,
+    ILC CHAR(2) NOT NULL,
+    CONT LONGTEXT,
+    PRIMARY KEY (ENT, ILC),
+    FOREIGN KEY (ENT) REFERENCES TXT(ENT) ON DELETE CASCADE,
+    FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
+);
+
+-- website captions
+DROP TABLE IF EXISTS CAP;
+CREATE TABLE CAP (
+    ENT BIGINT NOT NULL,
+    CPC VARCHAR(16) NOT NULL,
+    PRIMARY KEY (ENT),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+);
+
+-- CAP element for all languages
+DROP TABLE IF EXISTS CAP_ELEM;
+CREATE TABLE CAP_ELEM (
+    ENT BIGINT NOT NULL,
+    ILC CHAR(2) NOT NULL,
+    LABEL VARCHAR(128) NOT NULL,
+    PRIMARY KEY (ENT, ILC),
+    FOREIGN KEY (ENT) REFERENCES CAP(ENT) ON DELETE CASCADE,
+    FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
+);
+
+
 -- ============================================================
 -- ## content elements
 -- ============================================================
--- 
+
 -- physical objects
 DROP TABLE IF EXISTS OBJ;
 CREATE TABLE OBJ (
-    ID BIGINT NOT NULL,
+    ENT BIGINT NOT NULL,
     TTL BIGINT NOT NULL,
     -- dimensions in micrometers
     DIM1 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM2 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM3 DECIMAL(8,1) NOT NULL DEFAULT 0,
-    LOC BIGINT NOT NULL DEFAULT 0,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    PRIMARY KEY (ID), 
-    FOREIGN KEY (TTL) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
+    PRIMARY KEY (ENT), 
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TTL) REFERENCES TTL(ENT) ON DELETE CASCADE
 );
+
 -- article / artifact
 DROP TABLE IF EXISTS ART;
 CREATE TABLE ART (
     OBJ BIGINT NOT NULL,
     WHAT BIGINT,
-    YEAR INT NOT NULL default 1984,
-    CNT INT4 NOT NULL DEFAULT 1,
+    CREA DATE not null default (CURRENT_DATE),
+    LTE TINYINT(1) DEFAULT 0,
     VAL TINYINT(1) DEFAULT 0,
     PUB TINYINT(1) DEFAULT 0,
     PRIMARY KEY (OBJ),
-    FOREIGN KEY (OBJ)  REFERENCES OBJ(ID) ON DELETE CASCADE,
-    FOREIGN KEY (WHAT) REFERENCES LANG_ITEM(ID) ON DELETE CASCADE
+    FOREIGN KEY (OBJ)  REFERENCES OBJ(ENT) ON DELETE CASCADE,
+    FOREIGN KEY (WHAT) REFERENCES TTL(ENT) ON DELETE CASCADE
 );
 
-drop table if exists OBJ_REC;
-create table OBJ_REC (
-    OBJ BIGINT not null,
-    UID INT not null,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key (OBJ, UID),
-    foreign key (OBJ)  references OBJ(ID) on delete cascade
+-- article / artifact
+DROP TABLE IF EXISTS CON;
+CREATE TABLE CON (
+    OBJ BIGINT NOT NULL,
+    PRIMARY KEY (OBJ),
+    FOREIGN KEY (OBJ)  REFERENCES OBJ(ENT) ON DELETE CASCADE
+);
+-- ============================================================
+-- ## person / institution / location / exhibition
+-- ============================================================
+-- person / institution
+DROP TABLE IF EXISTS PER;
+CREATE TABLE PER (
+    ENT BIGINT NOT NULL,
+    LABEL VARCHAR(64) NOT NULL,
+    INFO  VARCHAR(128), 
+    PRIMARY KEY (ENT),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
+);
+-- location
+DROP TABLE IF EXISTS LOC;
+CREATE TABLE LOC (
+    ENT BIGINT NOT NULL,
+    LABEL VARCHAR(64) NOT NULL,
+    INFO  VARCHAR(128), 
+    PRIMARY KEY (ENT),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
+);
+-- exhibition
+DROP TABLE IF EXISTS EXH;
+CREATE TABLE EXH (
+    ENT BIGINT NOT NULL,
+    TTL BIGINT NOT NULL,
+    BEG DATE not null default (CURRENT_DATE),
+    END DATE not null default (CURRENT_DATE),
+    PRIMARY KEY (ENT),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TTL) REFERENCES TTL(ENT) ON DELETE CASCADE
+);
+
+-- person / institution - location
+-- exhibition - location
+-- via entity key
+DROP TABLE IF EXISTS ENT_LOC;
+CREATE TABLE ENT_LOC (
+    ENT BIGINT NOT NULL,
+    LOC BIGINT NOT NULL,
+    -- primary location
+    PRI TINYINT(1) DEFAULT 0,
+    PRIMARY KEY (ENT, LOC),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (LOC) REFERENCES LOC(ENT) ON DELETE CASCADE
+);
+
+-- exhibition - person / institution
+DROP TABLE IF EXISTS EXH_PER;
+CREATE TABLE EXH_PER (
+    EXH BIGINT NOT NULL,
+    PER BIGINT NOT NULL,
+    ORD INT DEFAULT 0,
+    PRIMARY KEY (EXH, PER),
+    FOREIGN KEY (EXH) REFERENCES EXH(ENT) ON DELETE CASCADE,
+    FOREIGN KEY (PER) REFERENCES PER(ENT) ON DELETE CASCADE
 );
 
 -- ============================================================
@@ -108,6 +196,7 @@ CREATE TABLE IMG (
     ID BIGINT NOT NULL,
     PRIMARY KEY (ID)
 );
+
 -- object image assignment
 DROP TABLE IF EXISTS OBJ_IMG;
 CREATE TABLE OBJ_IMG (
@@ -115,8 +204,8 @@ CREATE TABLE OBJ_IMG (
     IMG BIGINT NOT NULL,
     ORD INT NOT NULL DEFAULT 1,
     PRIMARY KEY (OBJ, IMG),
-    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE,
-    FOREIGN KEY (IMG)    REFERENCES IMG(ID)    ON DELETE CASCADE
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ENT) ON DELETE CASCADE,
+    FOREIGN KEY (IMG) REFERENCES IMG(ID) ON DELETE CASCADE
 );
 -- ============================================================
 -- ## sequences
@@ -154,6 +243,17 @@ CREATE TABLE USR
     FOREIGN KEY (RC) REFERENCES ROLE(RC) ON DELETE CASCADE 
 ) CHARACTER SET latin1;
 
+drop table if exists USR_ENT;
+create table USR_ENT (
+    USR BIGINT not null,
+    ENT BIGINT not null,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key (ENT, USR),
+    foreign key (USR)  references USR(ID) on delete cascade,
+    foreign key (ENT)  references ENT(ID) on delete cascade
+);
+
+
 -- ============================================================
 -- ## Assigned Database Users
 -- ============================================================
@@ -165,9 +265,9 @@ grant select on jagoda.* to 'aut'@'%';
 
 -- GENERATED GRANT>
 grant select                         on jagoda.LANG                 to 'aut'@'%';
-grant select                         on jagoda.LANG_ITEM_TYPE       to 'aut'@'%';
-grant select, insert, delete         on jagoda.LANG_ITEM            to 'aut'@'%';
-grant select, insert, delete         on jagoda.LANG_ELEM            to 'aut'@'%';
+grant select                         on jagoda.TTL_TYPE       to 'aut'@'%';
+grant select, insert, delete         on jagoda.TTL            to 'aut'@'%';
+grant select, insert, delete         on jagoda.TTL_ELEM            to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.ART                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.OBJ_REC              to 'aut'@'%';
@@ -176,8 +276,8 @@ grant select, insert, delete         on jagoda.OBJ_IMG              to 'aut'@'%'
 grant select, insert, delete         on jagoda.SEQ                  to 'aut'@'%';
 grant select                         on jagoda.ROLE                 to 'aut'@'%';
 grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
-grant update (STD, TST                                ) on jagoda.LANG_ITEM            to 'aut'@'%';
-grant update (LABEL                                   ) on jagoda.LANG_ELEM            to 'aut'@'%';
+grant update (STD, TST                                ) on jagoda.TTL            to 'aut'@'%';
+grant update (LABEL                                   ) on jagoda.TTL_ELEM            to 'aut'@'%';
 grant update (TTL, DIM1, DIM2, DIM3, LOC, TST         ) on jagoda.OBJ                  to 'aut'@'%';
 grant update (WHAT, YEAR, CNT, VAL, PUB               ) on jagoda.ART                  to 'aut'@'%';
 grant update (TST                                     ) on jagoda.OBJ_REC              to 'aut'@'%';

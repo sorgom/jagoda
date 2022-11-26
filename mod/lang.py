@@ -8,14 +8,14 @@ from mod.google import translate
 
 LANGS = None
 ILCS  = None
-LANG_ITEMS = None
+TTLS = None
 
 def getLangs():
-    global LANGS, ILCS, LANG_ITEMS
+    global LANGS, ILCS, TTLS
     if not LANGS:
         LANGS = db().getLangTable()
         ILCS  = [ l[0] for l in LANGS ]
-        LANG_ITEMS = [item[0:2] for item in db().getLangItemTypeTable()]
+        TTLS = [item[0:2] for item in db().getLangItemTypeTable()]
 
 def langs():
     getLangs()
@@ -27,7 +27,7 @@ def ilcs():
 
 def langItems():
     getLangs()
-    return LANG_ITEMS
+    return TTLS
 
 def getLangItems(tpc:str):
     getLangs()
@@ -65,7 +65,7 @@ def getLangItem(id:int):
 
 def renderBase(template:str, **args):
     getLangs()
-    return render_template(template, langs=LANGS, ilcs=ILCS, langItems=LANG_ITEMS, **args)
+    return render_template(template, langs=LANGS, ilcs=ILCS, langItems=TTLS, **args)
 #   ============================================================
 #   AJAX
 #   ============================================================

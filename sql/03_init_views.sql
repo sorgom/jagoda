@@ -26,29 +26,29 @@ on T1.ID = T2.ID
 ;
 
 -- language item can be / is standard
-drop view if exists LANG_ITEM_STD;
-create view LANG_ITEM_STD as
+drop view if exists TTL_STD;
+create view TTL_STD as
 select LI.*, LT.STDABLE
 from 
-LANG_ITEM as LI
-inner join LANG_ITEM_TYPE as LT
+TTL as LI
+inner join TTL_TYPE as LT
 on LI.TPC = LT.TPC;
 
 -- all assigned language elements with order
-drop view if exists LANG_ELEM_ORD;
-create view LANG_ELEM_ORD as
-select LE.ID, LE.LABEL, LA.ILC, LA.ORD from LANG_ELEM as LE
+drop view if exists TTL_ELEM_ORD;
+create view TTL_ELEM_ORD as
+select LE.ID, LE.LABEL, LA.ILC, LA.ORD from TTL_ELEM as LE
 inner join LANG as LA
 on LA.ILC = LE.ILC
 order by LE.ID, LA.ORD;
 
 -- first available language element
-drop view if exists LANG_ITEM_1ST;
-create view LANG_ITEM_1ST as
-select LI.*, LE.LABEL, LE.ILC from LANG_ELEM_ORD as LE
-inner join (select ID, min(ORD) as MIO from LANG_ELEM_ORD group by ID) as MO
+drop view if exists TTL_1ST;
+create view TTL_1ST as
+select LI.*, LE.LABEL, LE.ILC from TTL_ELEM_ORD as LE
+inner join (select ID, min(ORD) as MIO from TTL_ELEM_ORD group by ID) as MO
 on LE.ID = MO.ID and LE.ORD = MO.MIO
-inner join LANG_ITEM_STD as LI
+inner join TTL_STD as LI
 on LI.ID = LE.ID; 
 -- order by LI.TST desc, LE.ID;
 
@@ -57,7 +57,7 @@ drop view if exists OBJ_IMG_LABEL;
 create view OBJ_IMG_LABEL as
 select T1.*, T2.LABEL, T2.STD, T2.STDABLE
 from OBJ_IMG_DEF as T1
-inner join LANG_ITEM_1ST as T2
+inner join TTL_1ST as T2
 on T1.TTL = T2.ID
 ;
 
@@ -67,25 +67,25 @@ create view ART_FULL as
 select T1.*, T2.*, coalesce(T3.LABEL, '??') as WLABEL from ART as T1
 inner join OBJ_IMG_LABEL as T2
 on T1.OBJ = T2.ID
-left join LANG_ITEM_1ST as T3
+left join TTL_1ST as T3
 on T1.WHAT = T3.ID
 ;
 
 -- cross table all elements all languages
 -- pre-filled with what's available
-drop view if exists LANG_ELEM_X;
-create view LANG_ELEM_X as
+drop view if exists TTL_ELEM_X;
+create view TTL_ELEM_X as
 select LX.ID, LX.ILC, coalesce(LEO.LABEL, LE1.LABEL) as LABEL from 
 (
-    select LI.ID, LA.ILC from LANG_ITEM as LI
+    select LI.ID, LA.ILC from TTL as LI
     join
     LANG as LA
 ) as LX
 inner join
-LANG_ITEM_1ST as LE1
+TTL_1ST as LE1
 on  LX.ID = LE1.ID
 left join
-LANG_ELEM_ORD as LEO
+TTL_ELEM_ORD as LEO
 on
 LX.ID = LEO.ID and
 LX.ILC = LEO.ILC

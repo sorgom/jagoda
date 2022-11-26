@@ -36,8 +36,8 @@ BEGIN
     SELECT GREATEST(
     -- OBJ.ID
          IFNULL((SELECT MAX(ID) FROM OBJ), 0),
-    -- LANG_ITEM.ID
-         IFNULL((SELECT MAX(ID) FROM LANG_ITEM), 0),
+    -- TTL.ID
+         IFNULL((SELECT MAX(ID) FROM TTL), 0),
     -- IMG.ID
          IFNULL((SELECT MAX(ID) FROM IMG), 0)
     --  TODO
@@ -53,8 +53,8 @@ END :)
 CREATE PROCEDURE getLangItems(pTPC CHAR(2))  
 BEGIN
     SELECT E.ID, E.ILC, E.LABEL 
-    FROM LANG_ELEM_ORD as E
-        INNER JOIN LANG_ITEM as I
+    FROM TTL_ELEM_ORD as E
+        INNER JOIN TTL as I
         ON E.ID = I.ID 
     WHERE I.TPC = pTPC
     ORDER BY I.TST desc, E.ORD;
@@ -63,9 +63,9 @@ END :)
 create procedure setLangItemStd(pID bigint, pSTD tinyint)
 BEGIN
     declare vOK TINYINT;
-    select STDABLE from LANG_ITEM_STD where ID = pID into @vOK;
+    select STDABLE from TTL_STD where ID = pID into @vOK;
     if @vOK THEN
-        UPDATE LANG_ITEM set STD = pSTD where ID = pID;
+        UPDATE TTL set STD = pSTD where ID = pID;
     end if;
 END :)
 -- set language element
@@ -75,9 +75,9 @@ CREATE PROCEDURE setLangElem(
     pLABEL VARCHAR(128)) 
 BEGIN
     IF pLABEL = '' THEN
-        DELETE FROM LANG_ELEM WHERE ID = pID AND ILC = pILC;
+        DELETE FROM TTL_ELEM WHERE ID = pID AND ILC = pILC;
     ELSE
-        REPLACE INTO LANG_ELEM VALUES (pID, pILC, pLABEL);
+        REPLACE INTO TTL_ELEM VALUES (pID, pILC, pLABEL);
     END IF;
 END :)  
 -- ============================================================

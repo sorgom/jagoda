@@ -26,6 +26,8 @@
 refers:
 - person / institution
 - location
+additional attribute
+- order / main
 
 ## Ownership (PER_OBJ)
 unique relation of

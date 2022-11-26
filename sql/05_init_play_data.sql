@@ -12,14 +12,14 @@ REPLACE INTO LANG VALUES
 ;
 
 -- Language element types
-REPLACE INTO LANG_ITEM_TYPE VALUES
+REPLACE INTO TTL_TYPE VALUES
     ('OT', 'Object Titles', 1),
     ('CA', 'Website Captions', 0),
     ('TQ', 'Artpiece Techniques', 0)
 ;
 
 -- Captions
-REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+REPLACE INTO TTL(ID, TPC) VALUES
     (1, 'CA'),
     (2, 'CA'),
     (3, 'CA'),
@@ -30,7 +30,7 @@ REPLACE INTO LANG_ITEM(ID, TPC) VALUES
     (8, 'CA')
 ;
 
-REPLACE INTO LANG_ELEM VALUES
+REPLACE INTO TTL_ELEM VALUES
     (1, 'en', 'Year'),
     (2, 'en', 'Exhibitions'),
     (3, 'en', 'Location'),
@@ -41,7 +41,7 @@ REPLACE INTO LANG_ELEM VALUES
     (8, 'en', 'Technique')
 ;
 
-REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+REPLACE INTO TTL(ID, TPC) VALUES
     (20, 'CA'),
     (21, 'CA'),
     (22, 'CA'),
@@ -50,7 +50,7 @@ REPLACE INTO LANG_ITEM(ID, TPC) VALUES
     (25, 'CA')
 ;
 
-REPLACE INTO LANG_ELEM VALUES
+REPLACE INTO TTL_ELEM VALUES
     (20, 'en', 'File'),
     (20, 'fr', 'Fiche'),
     (20, 'de', 'Datei'),
@@ -62,7 +62,7 @@ REPLACE INTO LANG_ELEM VALUES
 ;
 
 -- Make
-REPLACE INTO LANG_ITEM(ID, TPC) VALUES
+REPLACE INTO TTL(ID, TPC) VALUES
     (30, 'TQ'),
     (31, 'TQ'),
     (32, 'TQ'),
@@ -75,7 +75,7 @@ REPLACE INTO LANG_ITEM(ID, TPC) VALUES
     (39, 'TQ')
 ;
 
-REPLACE INTO LANG_ELEM VALUES
+REPLACE INTO TTL_ELEM VALUES
     (31, 'en', 'Sheet of Paper'),
     (31, 'en', 'Book'),
     (32, 'en', 'Print'),

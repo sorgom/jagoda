@@ -38,19 +38,19 @@ class MyDB(MySQL):
     # get list of item types
     # list of [tpc, label]
     def getLangItemTypeTable(self):
-        return self.get('select * from LANG_ITEM_TYPE;')
+        return self.get('select * from TTL_TYPE;')
 
     # get label of given language type
     def getLangItemTypeLabel(self, tpc:str):
-        return self.getOne(f'select LABEL from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')
+        return self.getOne(f'select LABEL from TTL_TYPE where TPC = "{tpc}" limit 1;')
 
     # get lang item type of language entry by id
     def getLangItemType(self, id:int):
-        return self.getOne(f'select TPC from LANG_ITEM where ID = {id} limit 1;')
+        return self.getOne(f'select TPC from TTL where ID = {id} limit 1;')
 
     # create new language item (head)
     def newLangItem(self, id:int, tpc:str):
-        self.call(f'insert into LANG_ITEM(ID, TPC) values ({id}, "{tpc}")')
+        self.call(f'insert into TTL(ID, TPC) values ({id}, "{tpc}")')
 
     def newObjTtl(self, id:int):
         return self.newLangItem(id, 'OT')
@@ -62,23 +62,23 @@ class MyDB(MySQL):
     # get elements of a lang item
     # list of [ilc, label]
     def getLangItem(self, id:int):
-        return self.get(f'select ILC, LABEL from LANG_ELEM_ORD where ID = {id} order by ORD;')
+        return self.get(f'select ILC, LABEL from TTL_ELEM_ORD where ID = {id} order by ORD;')
 
     # get head (info) of language item
     def getLangItemInfo(self, id:int):
-        res = self.getOneDict(f'select * from LANG_ITEM_STD where ID = {id} limit 1;')
+        res = self.getOneDict(f'select * from TTL_STD where ID = {id} limit 1;')
         res['ttl'] = res['id']
         return res
 
     # get head (info) of for a new language item
     def getNewLangItemInfo(self, tpc:str):
-        return self.getOneDict(f'select STDABLE, 0 as STD from LANG_ITEM_TYPE where TPC = "{tpc}" limit 1;')
+        return self.getOneDict(f'select STDABLE, 0 as STD from TTL_TYPE where TPC = "{tpc}" limit 1;')
 
     # set elements of a lang item
     def setLangItem(self, id:int, data:list):
-        self.multi('LANG_ELEM', [f'({id}, \'{ilc}\', \'{self.mask(label)}\')' for ilc, label in data])
-        self.call(f"delete from LANG_ELEM where ID = {id} and LABEL = '';")
-        self.call(f'update LANG_ITEM set TST = CURRENT_TIMESTAMP where ID = {id};')
+        self.multi('TTL_ELEM', [f'({id}, \'{ilc}\', \'{self.mask(label)}\')' for ilc, label in data])
+        self.call(f"delete from TTL_ELEM where ID = {id} and LABEL = '';")
+        self.call(f'update TTL set TST = CURRENT_TIMESTAMP where ID = {id};')
     
     # change lang item standard flag
     def setLangItemStd(self, id:int, std:int):
@@ -87,17 +87,17 @@ class MyDB(MySQL):
 
     #   get listing of standard titles
     def getStdTtls(self):
-        return self.get('select ID, LABEL from LANG_ITEM_1ST where STD = 1 and TPC = "OT" order by TST desc;')
+        return self.get('select ID, LABEL from TTL_1ST where STD = 1 and TPC = "OT" order by TST desc;')
 
     #   get first label of given lang item id
     def getFirstLabel(self, id:int):
-        return self.getOne(f'select LABEL from LANG_ITEM_1ST where ID = {id} limit 1;')
+        return self.getOne(f'select LABEL from TTL_1ST where ID = {id} limit 1;')
 
     def getWhats(self):
-        return self.get('select ID, LABEL from LANG_ITEM_1ST where TPC = "TQ" order by TST desc;')
+        return self.get('select ID, LABEL from TTL_1ST where TPC = "TQ" order by TST desc;')
 
     def getLangElem1st(self, id:int):
-        return self.getOne(f'select LABEL from LANG_ITEM_1ST where ID = {id} limit 1;')
+        return self.getOne(f'select LABEL from TTL_1ST where ID = {id} limit 1;')
 
     ## objects
     @staticmethod
@@ -137,7 +137,7 @@ class MyDB(MySQL):
 
     def newObjTtl(self):
         id = self.getNextId()
-        self.call(f'insert into LANG_ITEM(ID, TPC) values ({id}, "OT");')
+        self.call(f'insert into TTL(ID, TPC) values ({id}, "OT");')
         return self.getLangItemInfo(id)
 
     def setObjTtl(self, objId:int, ttlId:int):
@@ -279,7 +279,7 @@ class MyDB(MySQL):
     # create a lot of articles and titels
     def testData(self):
         userIdTest = 3
-        self.call('delete from LANG_ITEM where TPC = "OT";')
+        self.call('delete from TTL where TPC = "OT";')
         self.call('delete from OBJ;')
         self.call('delete from OBJ_REC;')
         random.seed()
@@ -288,8 +288,8 @@ class MyDB(MySQL):
         slen = len(langs)
         ids = list(range(100000, 110000))
         stds = [ 0 for n in range(20) ] + [1]
-        self.multi('LANG_ITEM(ID, TPC, STD)', [f'({id}, "OT", {random.choice(stds)})' for id in ids], insert=True)
-        self.multi('LANG_ELEM', [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
+        self.multi('TTL(ID, TPC, STD)', [f'({id}, "OT", {random.choice(stds)})' for id in ids], insert=True)
+        self.multi('TTL_ELEM', [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
         debug('random articles / objects')
         offset = 2000
         sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]

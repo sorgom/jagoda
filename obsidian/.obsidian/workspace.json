@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/json.md",
+                "file": "Jagoda/Object-Model.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "MySQL/json.md",
+                "file": "Jagoda/Object-Model.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "MySQL/json.md",
+                "file": "Jagoda/Object-Model.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "MySQL/json.md"
+                "file": "Jagoda/Object-Model.md"
               }
             }
           }
@@ -138,15 +138,15 @@
   },
   "active": "9f758a587f67daa4",
   "lastOpenFiles": [
+    "Jagoda/Language-Object-Model.md",
+    "Jagoda/Object-Model.md",
+    "MySQL/json.md",
     "MySQL/indexing.md",
     "Python/FrequentlyForgotten.md",
     "Python/google_translate.md",
     "Python/arrays.md",
     "Python/use_variable_in_regex.md",
     "MySQL/Role Assignement.md",
-    "MySQL/MySQL_cursor.md",
-    "MySQL/json.md",
-    "MySQL/CLI with Password.md",
-    "HTML/references.md"
+    "MySQL/MySQL_cursor.md"
   ]
 }
