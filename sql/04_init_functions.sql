@@ -63,6 +63,12 @@ BEGIN
     insert into ENT(ID) values (pID);
     insert into TTL(ID, TPC) values (pID, pTPC);
 END :)
+create procedure addObj(pID bigint, pTTL bigint)
+BEGIN
+    insert into ENT(ID) values (pID);
+    insert into OBJ(ID, TTL) values (pID, pTTL);
+END :)
+
 -- set title standard
 create procedure setTtlStd(pID bigint, pSTD tinyint)
 BEGIN
