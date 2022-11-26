@@ -109,7 +109,6 @@ CREATE TABLE CAP_ELEM (
 -- ============================================================
 -- ## content elements
 -- ============================================================
-
 -- physical objects
 DROP TABLE IF EXISTS OBJ;
 CREATE TABLE OBJ (
@@ -145,6 +144,27 @@ CREATE TABLE CON (
     PRIMARY KEY (OBJ),
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
 );
+-- ============================================================
+-- ## object grouping
+-- ============================================================
+DROP TABLE IF EXISTS GRP;
+CREATE TABLE GRP (
+    ID BIGINT NOT NULL,
+    TTL BIGINT NOT NULL,
+    PRIMARY KEY (ID), 
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS GRP_OBJ;
+CREATE TABLE GRP_OBJ (
+    GRP BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
+    PRIMARY KEY (GRP, OBJ), 
+    FOREIGN KEY (GRP) REFERENCES GRP(ID) ON DELETE CASCADE,
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
+);
+
 -- ============================================================
 -- ## person / institution / location / exhibition
 -- ============================================================
@@ -316,62 +336,67 @@ create table USR_ENT (
 -- ## Assigned Database Users
 -- ============================================================
 DELIMITER ;
+SET foreign_key_checks = 1;
 
 DROP USER IF EXISTS 'aut'@'%';
 CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 grant select on jagoda.* to 'aut'@'%';
 
 -- GENERATED GRANT>
-grant select, insert, delete         on test.ENT                  to 'aut'@'%';
-grant select                         on test.LANG                 to 'aut'@'%';
-grant select                         on test.TTP                  to 'aut'@'%';
-grant select, insert, delete         on test.TTL                  to 'aut'@'%';
-grant select, insert, delete         on test.TTL_ELEM             to 'aut'@'%';
-grant select, insert, delete         on test.TXT                  to 'aut'@'%';
-grant select, insert, delete         on test.TXT_ELEM             to 'aut'@'%';
-grant select, insert, delete         on test.CAP                  to 'aut'@'%';
-grant select, insert, delete         on test.CAP_ELEM             to 'aut'@'%';
-grant select, insert, delete         on test.OBJ                  to 'aut'@'%';
-grant select, insert, delete         on test.ART                  to 'aut'@'%';
-grant select, insert, delete         on test.CON                  to 'aut'@'%';
-grant select, insert, delete         on test.PER                  to 'aut'@'%';
-grant select, insert, delete         on test.LOC                  to 'aut'@'%';
-grant select, insert, delete         on test.EXH                  to 'aut'@'%';
-grant select, insert, delete         on test.LOC_ENT              to 'aut'@'%';
-grant select, insert, delete         on test.LOC_OBJ              to 'aut'@'%';
-grant select, insert, delete         on test.AUT_OBJ              to 'aut'@'%';
-grant select, insert, delete         on test.OWN_OBJ              to 'aut'@'%';
-grant select, insert, delete         on test.EXH_PER              to 'aut'@'%';
-grant select, insert, delete         on test.EXH_OBJ              to 'aut'@'%';
-grant select, insert, delete         on test.IMG                  to 'aut'@'%';
-grant select, insert, delete         on test.ENT_IMG              to 'aut'@'%';
-grant select, insert, delete         on test.SEQ                  to 'aut'@'%';
-grant select                         on test.ROLE                 to 'aut'@'%';
-grant select, insert, delete         on test.USR                  to 'aut'@'%';
-grant select, insert, delete         on test.USR_ENT              to 'aut'@'%';
-grant update (TST                                     ) on test.ENT                  to 'aut'@'%';
-grant update (LABEL, ORD                              ) on test.LANG                 to 'aut'@'%';
-grant update (LABEL                                   ) on test.TTP                  to 'aut'@'%';
-grant update (STD                                     ) on test.TTL                  to 'aut'@'%';
-grant update (LABEL                                   ) on test.TTL_ELEM             to 'aut'@'%';
-grant update (CONT                                    ) on test.TXT_ELEM             to 'aut'@'%';
-grant update (CPC                                     ) on test.CAP                  to 'aut'@'%';
-grant update (CAP, LABEL                              ) on test.CAP_ELEM             to 'aut'@'%';
-grant update (TTL, DIM1, DIM2, DIM3                   ) on test.OBJ                  to 'aut'@'%';
-grant update (WHAT, CRDT, VAL, PUB                    ) on test.ART                  to 'aut'@'%';
-grant update (LABEL, INFO                             ) on test.PER                  to 'aut'@'%';
-grant update (LABEL, INFO                             ) on test.LOC                  to 'aut'@'%';
-grant update (TTL, BEG, END                           ) on test.EXH                  to 'aut'@'%';
-grant update (LOC, PRI                                ) on test.LOC_ENT              to 'aut'@'%';
-grant update (LOC, PCS                                ) on test.LOC_OBJ              to 'aut'@'%';
-grant update (PER                                     ) on test.AUT_OBJ              to 'aut'@'%';
-grant update (PER, PCS                                ) on test.OWN_OBJ              to 'aut'@'%';
-grant update (EXH, PER, ORD                           ) on test.EXH_PER              to 'aut'@'%';
-grant update (EXH                                     ) on test.EXH_OBJ              to 'aut'@'%';
-grant update (ORD                                     ) on test.ENT_IMG              to 'aut'@'%';
-grant update (NUM                                     ) on test.SEQ                  to 'aut'@'%';
-grant update (RC, LABEL                               ) on test.ROLE                 to 'aut'@'%';
-grant update (NAME, PASS, RC                          ) on test.USR                  to 'aut'@'%';
-grant update (TST                                     ) on test.USR_ENT              to 'aut'@'%';
+grant select, insert, delete         on jagoda.ENT                  to 'aut'@'%';
+grant select                         on jagoda.LANG                 to 'aut'@'%';
+grant select                         on jagoda.TTP                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.TTL                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.TTL_ELEM             to 'aut'@'%';
+grant select, insert, delete         on jagoda.TXT                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.TXT_ELEM             to 'aut'@'%';
+grant select, insert, delete         on jagoda.CAP                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.CAP_ELEM             to 'aut'@'%';
+grant select, insert, delete         on jagoda.OBJ                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.ART                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.CON                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.GRP                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.GRP_OBJ              to 'aut'@'%';
+grant select, insert, delete         on jagoda.PER                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.LOC                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.EXH                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.LOC_ENT              to 'aut'@'%';
+grant select, insert, delete         on jagoda.LOC_OBJ              to 'aut'@'%';
+grant select, insert, delete         on jagoda.AUT_OBJ              to 'aut'@'%';
+grant select, insert, delete         on jagoda.OWN_OBJ              to 'aut'@'%';
+grant select, insert, delete         on jagoda.EXH_PER              to 'aut'@'%';
+grant select, insert, delete         on jagoda.EXH_OBJ              to 'aut'@'%';
+grant select, insert, delete         on jagoda.IMG                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.ENT_IMG              to 'aut'@'%';
+grant select, insert, delete         on jagoda.SEQ                  to 'aut'@'%';
+grant select                         on jagoda.ROLE                 to 'aut'@'%';
+grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.USR_ENT              to 'aut'@'%';
+grant update (TST                                     ) on jagoda.ENT                  to 'aut'@'%';
+grant update (LABEL, ORD                              ) on jagoda.LANG                 to 'aut'@'%';
+grant update (LABEL                                   ) on jagoda.TTP                  to 'aut'@'%';
+grant update (STD                                     ) on jagoda.TTL                  to 'aut'@'%';
+grant update (LABEL                                   ) on jagoda.TTL_ELEM             to 'aut'@'%';
+grant update (CONT                                    ) on jagoda.TXT_ELEM             to 'aut'@'%';
+grant update (CPC                                     ) on jagoda.CAP                  to 'aut'@'%';
+grant update (CAP, LABEL                              ) on jagoda.CAP_ELEM             to 'aut'@'%';
+grant update (TTL, DIM1, DIM2, DIM3                   ) on jagoda.OBJ                  to 'aut'@'%';
+grant update (WHAT, CRDT, VAL, PUB                    ) on jagoda.ART                  to 'aut'@'%';
+grant update (TTL                                     ) on jagoda.GRP                  to 'aut'@'%';
+grant update (GRP                                     ) on jagoda.GRP_OBJ              to 'aut'@'%';
+grant update (LABEL, INFO                             ) on jagoda.PER                  to 'aut'@'%';
+grant update (LABEL, INFO                             ) on jagoda.LOC                  to 'aut'@'%';
+grant update (TTL, BEG, END                           ) on jagoda.EXH                  to 'aut'@'%';
+grant update (LOC, PRI                                ) on jagoda.LOC_ENT              to 'aut'@'%';
+grant update (LOC, PCS                                ) on jagoda.LOC_OBJ              to 'aut'@'%';
+grant update (PER                                     ) on jagoda.AUT_OBJ              to 'aut'@'%';
+grant update (PER, PCS                                ) on jagoda.OWN_OBJ              to 'aut'@'%';
+grant update (EXH, PER, ORD                           ) on jagoda.EXH_PER              to 'aut'@'%';
+grant update (EXH                                     ) on jagoda.EXH_OBJ              to 'aut'@'%';
+grant update (ORD                                     ) on jagoda.ENT_IMG              to 'aut'@'%';
+grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';
+grant update (RC, LABEL                               ) on jagoda.ROLE                 to 'aut'@'%';
+grant update (NAME, PASS, RC                          ) on jagoda.USR                  to 'aut'@'%';
+grant update (TST                                     ) on jagoda.USR_ENT              to 'aut'@'%';
 -- <GENERATED GRANT
 

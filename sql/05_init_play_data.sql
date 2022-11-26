@@ -8,75 +8,87 @@ REPLACE INTO LANG VALUES
     ('en', 'English',  0),
     ('de', 'Deutsch',  1),
     ('fr', 'Français', 2),
-    ('hr', 'Hrvatski', 3)
+    ('hr', 'Hrvatski', 3),
+    ('ko', '한국인', 4)
 ;
 
 -- Language element types
-REPLACE INTO TTL_TYPE VALUES
+REPLACE INTO TTP VALUES
     ('OT', 'Object Titles', 1),
     ('CA', 'Website Captions', 0),
     ('TQ', 'Artpiece Techniques', 0)
 ;
 
 -- Captions
-REPLACE INTO TTL(ID, TPC) VALUES
-    (1, 'CA'),
-    (2, 'CA'),
-    (3, 'CA'),
-    (4, 'CA'),
-    (5, 'CA'),
-    (6, 'CA'),
-    (7, 'CA'),
-    (8, 'CA')
-;
+-- REPLACE INTO TTL(ID, TPC) VALUES
+--     (1, 'CA'),
+--     (2, 'CA'),
+--     (3, 'CA'),
+--     (4, 'CA'),
+--     (5, 'CA'),
+--     (6, 'CA'),
+--     (7, 'CA'),
+--     (8, 'CA')
+-- ;
 
-REPLACE INTO TTL_ELEM VALUES
-    (1, 'en', 'Year'),
-    (2, 'en', 'Exhibitions'),
-    (3, 'en', 'Location'),
-    (4, 'en', 'Owner'),
-    (5, 'en', 'Artifact'),
-    (6, 'en', 'Price'),
-    (7, 'en', 'Search'),
-    (8, 'en', 'Technique')
-;
+-- REPLACE INTO TTL_ELEM VALUES
+--     (1, 'en', 'Year'),
+--     (2, 'en', 'Exhibitions'),
+--     (3, 'en', 'Location'),
+--     (4, 'en', 'Owner'),
+--     (5, 'en', 'Artifact'),
+--     (6, 'en', 'Price'),
+--     (7, 'en', 'Search'),
+--     (8, 'en', 'Technique')
+-- ;
 
-REPLACE INTO TTL(ID, TPC) VALUES
-    (20, 'CA'),
-    (21, 'CA'),
-    (22, 'CA'),
-    (23, 'CA'),
-    (24, 'CA'),
-    (25, 'CA')
-;
+-- REPLACE INTO TTL(ID, TPC) VALUES
+--     (20, 'CA'),
+--     (21, 'CA'),
+--     (22, 'CA'),
+--     (23, 'CA'),
+--     (24, 'CA'),
+--     (25, 'CA')
+-- ;
 
-REPLACE INTO TTL_ELEM VALUES
-    (20, 'en', 'File'),
-    (20, 'fr', 'Fiche'),
-    (20, 'de', 'Datei'),
-    (21, 'fr', 'Fántastique'),
-    (22, 'en', 'This is a longer one in Englisch: let us see if it fits'),
-    (23, 'de', 'This is a longer one in Deutsch: let us see if it fits'),
-    (24, 'fr', 'This is a longer one in Français: let us see if it fits'),
-    (25, 'hr', 'This is a longer one in Hrvatski: let us see if it fits')
-;
+-- REPLACE INTO TTL_ELEM VALUES
+--     (20, 'en', 'File'),
+--     (20, 'fr', 'Fiche'),
+--     (20, 'de', 'Datei'),
+--     (21, 'fr', 'Fántastique'),
+--     (22, 'en', 'This is a longer one in Englisch: let us see if it fits'),
+--     (23, 'de', 'This is a longer one in Deutsch: let us see if it fits'),
+--     (24, 'fr', 'This is a longer one in Français: let us see if it fits'),
+--     (25, 'hr', 'This is a longer one in Hrvatski: let us see if it fits')
+-- ;
 
 -- Make
-REPLACE INTO TTL(ID, TPC) VALUES
-    (30, 'TQ'),
-    (31, 'TQ'),
-    (32, 'TQ'),
-    (33, 'TQ'),
-    (34, 'TQ'),
-    (35, 'TQ'),
-    (36, 'TQ'),
-    (37, 'TQ'),
-    (38, 'TQ'),
-    (39, 'TQ')
-;
+call addTtl(30, 'TQ');
+call addTtl(31, 'TQ');
+call addTtl(32, 'TQ');
+call addTtl(33, 'TQ');
+call addTtl(34, 'TQ');
+call addTtl(35, 'TQ');
+call addTtl(36, 'TQ');
+call addTtl(37, 'TQ');
+call addTtl(38, 'TQ');
+call addTtl(39, 'TQ');
+
+-- REPLACE INTO TTL(ID, TPC) VALUES
+--     (30, 'TQ'),
+--     (31, 'TQ'),
+--     (32, 'TQ'),
+--     (33, 'TQ'),
+--     (34, 'TQ'),
+--     (35, 'TQ'),
+--     (36, 'TQ'),
+--     (37, 'TQ'),
+--     (38, 'TQ'),
+--     (39, 'TQ')
+-- ;
 
 REPLACE INTO TTL_ELEM VALUES
-    (31, 'en', 'Sheet of Paper'),
+    (30, 'en', 'Sheet of Paper'),
     (31, 'en', 'Book'),
     (32, 'en', 'Print'),
     (33, 'en', 'Skulpture'),

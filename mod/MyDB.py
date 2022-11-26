@@ -56,8 +56,8 @@ class MyDB(MySQL):
         return self.newLangItem(id, 'OT')
 
     # get table fo lang items of given type
-    def getLangItems(self, tpc:str):
-        return self.get(f'call getLangItems("{tpc}");')
+    def getTtls(self, tpc:str):
+        return self.get(f'call getTtls("{tpc}");')
 
     # get elements of a lang item
     # list of [ilc, label]
@@ -81,9 +81,9 @@ class MyDB(MySQL):
         self.call(f'update TTL set TST = CURRENT_TIMESTAMP where ID = {id};')
     
     # change lang item standard flag
-    def setLangItemStd(self, id:int, std:int):
+    def setTtlStd(self, id:int, std:int):
         debug(id, std)
-        self.call(f'call setLangItemStd({id}, {1 if std else 0});')
+        self.call(f'call setTtlStd({id}, {1 if std else 0});')
 
     #   get listing of standard titles
     def getStdTtls(self):
@@ -185,8 +185,8 @@ class MyDB(MySQL):
         self.touchObj(objId)
     
     ##  images
-    def addObjectImg(self, objId:int, imgId:int):
-        self.call(f'call addObjectImg({objId}, {imgId});')
+    def addEntImg(self, objId:int, imgId:int):
+        self.call(f'call addEntImg({objId}, {imgId});')
         self.touchObj(objId)
 
     def addImg(self, imgId:int):

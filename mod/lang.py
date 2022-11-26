@@ -29,9 +29,9 @@ def langItems():
     getLangs()
     return TTLS
 
-def getLangItems(tpc:str):
+def getTtls(tpc:str):
     getLangs()
-    data = db().getLangItems(tpc)
+    data = db().getTtls(tpc)
     fnd = {}
     for (id, ilc, label) in data:
         fnd.setdefault(id, {})[ilc] = label
@@ -45,7 +45,7 @@ def getLangItems(tpc:str):
 def langItems(tpc:str):
     title = db().getLangItemTypeLabel(tpc)
     if not title: return redirect('/')
-    return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getLangItems(tpc))
+    return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getTtls(tpc))
 
 #   ============================================================
 #   API
@@ -55,7 +55,7 @@ def saveLangItem(id:int):
     getLangs()
     db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
     if rf('stdable'):
-        db().setLangItemStd(id, rf('std'))
+        db().setTtlStd(id, rf('std'))
 
 def getLangItem(id:int):
     getLangs()
@@ -72,7 +72,7 @@ def renderBase(template:str, **args):
 #   listing of all lang items of a type
 def _langItems(tpc:str):
     if not loggedIn(): return ERR_AUTH
-    return renderBase('_lang_items.htm', tpc=tpc, items=getLangItems(tpc))
+    return renderBase('_lang_items.htm', tpc=tpc, items=getTtls(tpc))
 
 #   lising of elements of a lang item
 def _langItem(id:int):
@@ -92,7 +92,7 @@ def _setLangItem(id:int):
     # getLangs()
     # db().setLangItem(id, [[ilc, rf(ilc)] for ilc in ILCS])
     # if rf('stdable'):
-    #     db().setLangItemStd(id, rf('std'))
+    #     db().setTtlStd(id, rf('std'))
     return _langItems(tpc)
 
 #   ajax get: new language entry form
