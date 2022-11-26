@@ -30,13 +30,29 @@ CREATE TABLE LANG ( -- ROOT
     UNIQUE(ORD)
 );
 
+-- title type
+DROP TABLE IF EXISTS TTP;
+CREATE TABLE TTP ( -- ROOT
+    TPC CHAR(2) NOT NULL,
+    LABEL VARCHAR(128) NOT NULL,
+    STDABLE TINYINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (TPC)
+);
+INSERT INTO TTP VALUES
+    ('OT', 'Object Titles', 1),
+    ('TQ', 'Kinds of Objects', 0),
+    ('GT', 'General Titles', 0)
+;
+
 -- title / object caption
 DROP TABLE IF EXISTS TTL;
 CREATE TABLE TTL (
-    ENT BIGINT NOT NULL,
+    ID BIGINT NOT NULL,
+    TPC CHAR(2) NOT NULL,
     STD TINYINT NOT NULL DEFAULT 0,
-    PRIMARY KEY (ENT),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TPC) REFERENCES TTP(TPC) ON DELETE CASCADE
 );
 
 -- TTL element for all languages
@@ -45,47 +61,47 @@ CREATE TABLE TTL_ELEM (
     TTL BIGINT NOT NULL, -- FIX
     ILC CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
-    PRIMARY KEY (TNT, ILC),
-    FOREIGN KEY (TNT) REFERENCES TTL(ENT) ON DELETE CASCADE,
+    PRIMARY KEY (TTL, ILC),
+    FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
 );
 
 -- long text descriptions
 DROP TABLE IF EXISTS TXT;
 CREATE TABLE TXT (
-    ENT BIGINT NOT NULL,
-    PRIMARY KEY (ENT),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+    ID BIGINT NOT NULL,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
 );
 
 -- TXT element for all languages
 DROP TABLE IF EXISTS TXT_ELEM;
 CREATE TABLE TXT_ELEM (
-    ENT BIGINT NOT NULL,
+    TXT BIGINT NOT NULL, -- FIX
     ILC CHAR(2) NOT NULL,
     CONT LONGTEXT,
-    PRIMARY KEY (ENT, ILC),
-    FOREIGN KEY (ENT) REFERENCES TXT(ENT) ON DELETE CASCADE,
+    PRIMARY KEY (TXT, ILC),
+    FOREIGN KEY (TXT) REFERENCES TXT(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
 );
 
 -- website captions
 DROP TABLE IF EXISTS CAP;
 CREATE TABLE CAP (
-    ENT BIGINT NOT NULL,
+    ID BIGINT NOT NULL,
     CPC VARCHAR(16) NOT NULL,
-    PRIMARY KEY (ENT),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
 );
 
 -- CAP element for all languages
 DROP TABLE IF EXISTS CAP_ELEM;
 CREATE TABLE CAP_ELEM (
-    ENT BIGINT NOT NULL,
+    CAP BIGINT NOT NULL,
     ILC CHAR(2) NOT NULL,
     LABEL VARCHAR(128) NOT NULL,
-    PRIMARY KEY (ENT, ILC),
-    FOREIGN KEY (ENT) REFERENCES CAP(ENT) ON DELETE CASCADE,
+    PRIMARY KEY (CAP, ILC),
+    FOREIGN KEY (CAP) REFERENCES CAP(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
 );
 
@@ -97,17 +113,16 @@ CREATE TABLE CAP_ELEM (
 -- physical objects
 DROP TABLE IF EXISTS OBJ;
 CREATE TABLE OBJ (
-    ENT BIGINT NOT NULL,
+    ID BIGINT NOT NULL,
     TTL BIGINT NOT NULL,
+    NRD TINYINT(1) NOT NULL DEFAULT 0, -- FIX
     -- dimensions in micrometers
     DIM1 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM2 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM3 DECIMAL(8,1) NOT NULL DEFAULT 0,
-    CNT BIGINT,
-    NRD JSON,
-    PRIMARY KEY (ENT), 
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
-    FOREIGN KEY (TTL) REFERENCES TTL(ENT) ON DELETE CASCADE
+    PRIMARY KEY (ID), 
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE
 );
 
 -- article / artifact
@@ -115,12 +130,12 @@ DROP TABLE IF EXISTS ART;
 CREATE TABLE ART (
     OBJ BIGINT NOT NULL,
     WHAT BIGINT,
-    CREA DATE not null default (CURRENT_DATE),
+    CRDT DATE not null default (CURRENT_DATE),
     VAL TINYINT(1) DEFAULT 0,
     PUB TINYINT(1) DEFAULT 0,
     PRIMARY KEY (OBJ),
-    FOREIGN KEY (OBJ)  REFERENCES OBJ(ENT) ON DELETE CASCADE,
-    FOREIGN KEY (WHAT) REFERENCES TTL(ENT) ON DELETE CASCADE
+    FOREIGN KEY (OBJ)  REFERENCES OBJ(ID) ON DELETE CASCADE,
+    FOREIGN KEY (WHAT) REFERENCES TTL(ID) ON DELETE CASCADE
 );
 
 -- article / artifact
@@ -128,7 +143,7 @@ DROP TABLE IF EXISTS CON;
 CREATE TABLE CON (
     OBJ BIGINT NOT NULL,
     PRIMARY KEY (OBJ),
-    FOREIGN KEY (OBJ)  REFERENCES OBJ(ENT) ON DELETE CASCADE
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
 );
 -- ============================================================
 -- ## person / institution / location / exhibition
@@ -136,45 +151,79 @@ CREATE TABLE CON (
 -- person / institution
 DROP TABLE IF EXISTS PER;
 CREATE TABLE PER (
-    ENT BIGINT NOT NULL,
+    ID BIGINT NOT NULL,
     LABEL VARCHAR(64) NOT NULL,
     INFO  VARCHAR(128), 
-    PRIMARY KEY (ENT),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
 );
 -- location
 DROP TABLE IF EXISTS LOC;
 CREATE TABLE LOC (
-    ENT BIGINT NOT NULL,
+    ID BIGINT NOT NULL,
     LABEL VARCHAR(64) NOT NULL,
     INFO  VARCHAR(128), 
-    PRIMARY KEY (ENT),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
 );
 -- exhibition
 DROP TABLE IF EXISTS EXH;
 CREATE TABLE EXH (
-    ENT BIGINT NOT NULL,
+    ID BIGINT NOT NULL,
     TTL BIGINT NOT NULL,
     BEG DATE not null default (CURRENT_DATE),
     END DATE not null default (CURRENT_DATE),
-    PRIMARY KEY (ENT),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
-    FOREIGN KEY (TTL) REFERENCES TTL(ENT) ON DELETE CASCADE
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
+    FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE
 );
 
 -- person / institution - location
 -- exhibition - location
 -- via entity key
-DROP TABLE IF EXISTS ENT_LOC;
-CREATE TABLE ENT_LOC (
-    ENT BIGINT NOT NULL,
+DROP TABLE IF EXISTS LOC_ENT;
+CREATE TABLE LOC_ENT (
     LOC BIGINT NOT NULL,
+    ENT BIGINT NOT NULL,
     -- primary location
     PRI TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (ENT, LOC),
-    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
-    FOREIGN KEY (LOC) REFERENCES LOC(ENT) ON DELETE CASCADE
+    PRIMARY KEY (LOC, ENT),
+    FOREIGN KEY (LOC) REFERENCES LOC(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+);
+
+-- object location with object count / numbers
+DROP TABLE IF EXISTS LOC_OBJ;
+CREATE TABLE LOC_OBJ (
+    LOC BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
+    -- count or numbers ranges of pieces
+    PCS JSON NOT NULL,
+    PRIMARY KEY (LOC, OBJ),
+    FOREIGN KEY (LOC) REFERENCES LOC(ID) ON DELETE CASCADE,
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
+);
+
+-- authors of objects
+DROP TABLE IF EXISTS AUT_OBJ;
+CREATE TABLE AUT_OBJ (
+    PER BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
+    PRIMARY KEY (PER, OBJ),
+    FOREIGN KEY (PER) REFERENCES PER(ID) ON DELETE CASCADE,
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
+);
+
+-- owners of objects
+DROP TABLE IF EXISTS OWN_OBJ;
+CREATE TABLE OWN_OBJ (
+    PER BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
+    -- count or numbers ranges of pieces
+    PCS JSON NOT NULL,
+    PRIMARY KEY (PER, OBJ),
+    FOREIGN KEY (PER) REFERENCES PER(ID) ON DELETE CASCADE,
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
 );
 
 -- exhibition - person / institution
@@ -184,8 +233,17 @@ CREATE TABLE EXH_PER (
     PER BIGINT NOT NULL,
     ORD INT DEFAULT 0,
     PRIMARY KEY (EXH, PER),
-    FOREIGN KEY (EXH) REFERENCES EXH(ENT) ON DELETE CASCADE,
-    FOREIGN KEY (PER) REFERENCES PER(ENT) ON DELETE CASCADE
+    FOREIGN KEY (EXH) REFERENCES EXH(ID) ON DELETE CASCADE,
+    FOREIGN KEY (PER) REFERENCES PER(ID) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS EXH_OBJ;
+CREATE TABLE EXH_OBJ (
+    EXH BIGINT NOT NULL,
+    OBJ BIGINT NOT NULL,
+    PRIMARY KEY (EXH, OBJ),
+    FOREIGN KEY (EXH) REFERENCES EXH(ID) ON DELETE CASCADE,
+    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
 );
 
 -- ============================================================
@@ -254,7 +312,6 @@ create table USR_ENT (
     foreign key (ENT)  references ENT(ID) on delete cascade
 );
 
-
 -- ============================================================
 -- ## Assigned Database Users
 -- ============================================================
@@ -267,6 +324,7 @@ grant select on jagoda.* to 'aut'@'%';
 -- GENERATED GRANT>
 grant select, insert, delete         on test.ENT                  to 'aut'@'%';
 grant select                         on test.LANG                 to 'aut'@'%';
+grant select                         on test.TTP                  to 'aut'@'%';
 grant select, insert, delete         on test.TTL                  to 'aut'@'%';
 grant select, insert, delete         on test.TTL_ELEM             to 'aut'@'%';
 grant select, insert, delete         on test.TXT                  to 'aut'@'%';
@@ -279,8 +337,12 @@ grant select, insert, delete         on test.CON                  to 'aut'@'%';
 grant select, insert, delete         on test.PER                  to 'aut'@'%';
 grant select, insert, delete         on test.LOC                  to 'aut'@'%';
 grant select, insert, delete         on test.EXH                  to 'aut'@'%';
-grant select, insert, delete         on test.ENT_LOC              to 'aut'@'%';
+grant select, insert, delete         on test.LOC_ENT              to 'aut'@'%';
+grant select, insert, delete         on test.LOC_OBJ              to 'aut'@'%';
+grant select, insert, delete         on test.AUT_OBJ              to 'aut'@'%';
+grant select, insert, delete         on test.OWN_OBJ              to 'aut'@'%';
 grant select, insert, delete         on test.EXH_PER              to 'aut'@'%';
+grant select, insert, delete         on test.EXH_OBJ              to 'aut'@'%';
 grant select, insert, delete         on test.IMG                  to 'aut'@'%';
 grant select, insert, delete         on test.ENT_IMG              to 'aut'@'%';
 grant select, insert, delete         on test.SEQ                  to 'aut'@'%';
@@ -288,20 +350,27 @@ grant select                         on test.ROLE                 to 'aut'@'%';
 grant select, insert, delete         on test.USR                  to 'aut'@'%';
 grant select, insert, delete         on test.USR_ENT              to 'aut'@'%';
 grant update (TST                                     ) on test.ENT                  to 'aut'@'%';
+grant update (LABEL, ORD                              ) on test.LANG                 to 'aut'@'%';
+grant update (LABEL                                   ) on test.TTP                  to 'aut'@'%';
 grant update (STD                                     ) on test.TTL                  to 'aut'@'%';
 grant update (LABEL                                   ) on test.TTL_ELEM             to 'aut'@'%';
 grant update (CONT                                    ) on test.TXT_ELEM             to 'aut'@'%';
 grant update (CPC                                     ) on test.CAP                  to 'aut'@'%';
-grant update (LABEL                                   ) on test.CAP_ELEM             to 'aut'@'%';
-grant update (TTL, DIM1, DIM2, DIM3, CNT, NRD         ) on test.OBJ                  to 'aut'@'%';
-grant update (WHAT, CREA, VAL, PUB                    ) on test.ART                  to 'aut'@'%';
+grant update (CAP, LABEL                              ) on test.CAP_ELEM             to 'aut'@'%';
+grant update (TTL, DIM1, DIM2, DIM3                   ) on test.OBJ                  to 'aut'@'%';
+grant update (WHAT, CRDT, VAL, PUB                    ) on test.ART                  to 'aut'@'%';
 grant update (LABEL, INFO                             ) on test.PER                  to 'aut'@'%';
 grant update (LABEL, INFO                             ) on test.LOC                  to 'aut'@'%';
 grant update (TTL, BEG, END                           ) on test.EXH                  to 'aut'@'%';
-grant update (LOC, PRI                                ) on test.ENT_LOC              to 'aut'@'%';
+grant update (LOC, PRI                                ) on test.LOC_ENT              to 'aut'@'%';
+grant update (LOC, PCS                                ) on test.LOC_OBJ              to 'aut'@'%';
+grant update (PER                                     ) on test.AUT_OBJ              to 'aut'@'%';
+grant update (PER, PCS                                ) on test.OWN_OBJ              to 'aut'@'%';
 grant update (EXH, PER, ORD                           ) on test.EXH_PER              to 'aut'@'%';
+grant update (EXH                                     ) on test.EXH_OBJ              to 'aut'@'%';
 grant update (ORD                                     ) on test.ENT_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on test.SEQ                  to 'aut'@'%';
+grant update (RC, LABEL                               ) on test.ROLE                 to 'aut'@'%';
 grant update (NAME, PASS, RC                          ) on test.USR                  to 'aut'@'%';
 grant update (TST                                     ) on test.USR_ENT              to 'aut'@'%';
 -- <GENERATED GRANT

@@ -2,8 +2,8 @@ import re
 from replGenSql import replGenSql, USR, DB
 
 
-fixCols = 'ID ILC TPC STDABLE OBJ IMG UID TNT ENT USR'
-rxFix = re.compile('^(?:' +  '|'.join(fixCols.split()) + ')$')
+colsNoUpd = 'ID ILC TPC STDABLE OBJ IMG UID TNT ENT USR'
+rxNoUpd = re.compile('^(?:' +  '|'.join(colsNoUpd.split()) + ')$')
 rxRoot = re.compile('^\s*--\s+ROOT')
 
 grantAut = 'select, insert, delete'
@@ -11,20 +11,21 @@ grantMin = 'select'
 
 noCols = 'primary foreign unique'
 rxNo = re.compile('^(?:' +  '|'.join(noCols.split()) + ')$', re.I )
+rxFix = re.compile('-- *FIX\\b')
+
+
 
 
 rxCreate = re.compile('^ *create +table +(\w+)\s*\((.*?)\n\)', re.M | re.S | re.I)
 
-rxCol = re.compile('^ *(\w+).*(-- FIX)?', re.M)
+rxCol = re.compile('^ *(\w+)(.*)', re.M)
 
 tblFile = 'sql/01_init_tables.sql'
 
 def procUpdate(table, cont):
-    if rxRoot.search(cont):
-        return None
     cols = [
-        col for col, fix in rxCol.findall(cont)
-        if not (fix or rxFix.match(col) or rxNo.match(col))
+        col for col, rem in rxCol.findall(cont)
+        if not (rxFix.search(rem) or rxNoUpd.match(col) or rxNo.match(col))
     ]
     if not cols: return None 
     return "grant update (%-40s) on %s.%-20s to %s;" % (', '.join(cols), DB, table, USR)
