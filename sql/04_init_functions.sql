@@ -103,20 +103,20 @@ BEGIN
 
     REPLACE INTO IMG VALUES(pIMG); 
     
-    SELECT MAX(ORD) FROM OBJ_IMG
+    SELECT MAX(ORD) FROM ENT_IMG
     WHERE OBJ = pOBJ
     INTO @vORD;
 
     SET @vORD = IFNULL(@vORD, -1);
     SET @vORD = @vORD + 1;
 
-    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, @vORD);
+    REPLACE INTO ENT_IMG VALUES (pOBJ, pIMG, @vORD);
 END :)  
 -- retrieve all unassigned images
 CREATE PROCEDURE getUnusedImgs()
 BEGIN
     SELECT I.ID as id, imgFileMini(I.ID) as src, -1 as ord FROM IMG AS I
-    LEFT JOIN  OBJ_IMG AS OI 
+    LEFT JOIN  ENT_IMG AS OI 
     ON OI.IMG = I.ID
     WHERE OI.IMG IS NULL
     ORDER BY I.ID;

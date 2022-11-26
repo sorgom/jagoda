@@ -1,7 +1,8 @@
 import re
 
 USR = "'aut'@'%'"
-DB = 'jagoda'
+# DB = 'jagoda'
+DB = 'test'
 ROLE_AUT = "'author'"
 ROLE_ADM = "'admin'"
 

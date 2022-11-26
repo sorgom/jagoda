@@ -2,7 +2,7 @@ import re
 from replGenSql import replGenSql, USR, DB
 
 
-fixCols = 'ID ILC TPC STDABLE OBJ IMG UID TNT ENT'
+fixCols = 'ID ILC TPC STDABLE OBJ IMG UID TNT ENT USR'
 rxFix = re.compile('^(?:' +  '|'.join(fixCols.split()) + ')$')
 rxRoot = re.compile('^\s*--\s+ROOT')
 
@@ -15,7 +15,7 @@ rxNo = re.compile('^(?:' +  '|'.join(noCols.split()) + ')$', re.I )
 
 rxCreate = re.compile('^ *create +table +(\w+)\s*\((.*?)\n\)', re.M | re.S | re.I)
 
-rxCol = re.compile('^ *(\w+)', re.M)
+rxCol = re.compile('^ *(\w+).*(-- FIX)?', re.M)
 
 tblFile = 'sql/01_init_tables.sql'
 
@@ -23,8 +23,8 @@ def procUpdate(table, cont):
     if rxRoot.search(cont):
         return None
     cols = [
-        col for col in rxCol.findall(cont)
-        if not (rxFix.match(col) or rxNo.match(col))
+        col for col, fix in rxCol.findall(cont)
+        if not (fix or rxFix.match(col) or rxNo.match(col))
     ]
     if not cols: return None 
     return "grant update (%-40s) on %s.%-20s to %s;" % (', '.join(cols), DB, table, USR)

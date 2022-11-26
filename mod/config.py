@@ -3,7 +3,7 @@
 # Imaging
 # ============================================================
 # maximum number of images per object
-MAX_NUM_OBJ_IMGS = 8
+MAX_NUM_ENT_IMGS = 8
 
 # image max dimension (px) & quality: full
 IMG_SIZE_FULL = 800

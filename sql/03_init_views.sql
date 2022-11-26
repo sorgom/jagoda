@@ -9,19 +9,19 @@
 --  - all objects without image
 
 -- all objects with 1st image
-drop view if exists OBJ_IMG_1ST;
-create view OBJ_IMG_1ST as
-select T1.OBJ as ID, imgFileMini(T1.IMG) as SRC from OBJ_IMG as T1
+drop view if exists ENT_IMG_1ST;
+create view ENT_IMG_1ST as
+select T1.OBJ as ID, imgFileMini(T1.IMG) as SRC from ENT_IMG as T1
 inner join
-(select OBJ, min(ORD) as ORD2 from OBJ_IMG group by OBJ) as T2
+(select OBJ, min(ORD) as ORD2 from ENT_IMG group by OBJ) as T2
 ON T1.OBJ = T2.OBJ AND T1.ORD = T2.ORD2;
 
 --  all objects with assigend or default image
-drop view if exists OBJ_IMG_DEF;
-create view OBJ_IMG_DEF as
+drop view if exists ENT_IMG_DEF;
+create view ENT_IMG_DEF as
 select T1.*, coalesce(T2.SRC, imgFileMini(0)) as SRC from OBJ as T1
 left join
-OBJ_IMG_1ST as T2
+ENT_IMG_1ST as T2
 on T1.ID = T2.ID
 ;
 
@@ -53,10 +53,10 @@ on LI.ID = LE.ID;
 -- order by LI.TST desc, LE.ID;
 
 --  all objects with (default or first) image and label
-drop view if exists OBJ_IMG_LABEL;
-create view OBJ_IMG_LABEL as
+drop view if exists ENT_IMG_LABEL;
+create view ENT_IMG_LABEL as
 select T1.*, T2.LABEL, T2.STD, T2.STDABLE
-from OBJ_IMG_DEF as T1
+from ENT_IMG_DEF as T1
 inner join TTL_1ST as T2
 on T1.TTL = T2.ID
 ;
@@ -65,7 +65,7 @@ on T1.TTL = T2.ID
 drop view if exists ART_FULL;
 create view ART_FULL as
 select T1.*, T2.*, coalesce(T3.LABEL, '??') as WLABEL from ART as T1
-inner join OBJ_IMG_LABEL as T2
+inner join ENT_IMG_LABEL as T2
 on T1.OBJ = T2.ID
 left join TTL_1ST as T3
 on T1.WHAT = T3.ID

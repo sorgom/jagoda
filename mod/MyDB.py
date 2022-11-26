@@ -127,13 +127,13 @@ class MyDB(MySQL):
     # def getObj(self, objId:int):
     #     return self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
     def getObj(self, objId:int):
-        res = self.getOneDict(f'select * from OBJ_IMG_LABEL where ID = {objId} limit 1;')
+        res = self.getOneDict(f'select * from ENT_IMG_LABEL where ID = {objId} limit 1;')
         res['dims'] = MyDB.dimStrFromDict(res)
         return res
 
     #   title ID, STD, STDABLE
     def getObjTtl(self, objId:int):
-        return self.getOneDict(f'select TTL, STD, STDABLE from OBJ_IMG_LABEL where ID = {objId} limit 1;')
+        return self.getOneDict(f'select TTL, STD, STDABLE from ENT_IMG_LABEL where ID = {objId} limit 1;')
 
     def newObjTtl(self):
         id = self.getNextId()
@@ -146,7 +146,7 @@ class MyDB(MySQL):
         return self.getFirstLabel(ttlId)
 
     def getObjLabel(self, objId:int):
-        return self.getOne(f'select LABEL from OBJ_IMG_LABEL where ID = {objId} limit 1;')
+        return self.getOne(f'select LABEL from ENT_IMG_LABEL where ID = {objId} limit 1;')
 
     def addObj(self, objId:int, ttlId:int):
         self.call(f'insert into OBJ(ID, TTL) values ({objId}, {ttlId});')
@@ -157,7 +157,7 @@ class MyDB(MySQL):
         self.call(f'insert into ART(OBJ) values ({objId});')
 
     def getObjImgLabel(self, objId:int):
-        return self.getOneRow(f'select SRC, LABEL from OBJ_IMG_LABEL where ID = {objId} limit 1;')
+        return self.getOneRow(f'select SRC, LABEL from ENT_IMG_LABEL where ID = {objId} limit 1;')
 
     def setObjDims(self, objId:int, dims:list):
         self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
@@ -193,14 +193,14 @@ class MyDB(MySQL):
         self.call(f'replace into IMG(ID) values ({imgId});')
 
     def getObjectImgs(self, objId:int):
-        return self.getDict(f'select IMG as ID, ORD, imgFileMini(IMG) as SRC from OBJ_IMG where OBJ = {objId} order by ORD;')
+        return self.getDict(f'select IMG as ID, ORD, imgFileMini(IMG) as SRC from ENT_IMG where OBJ = {objId} order by ORD;')
     
     def setObjectImg(self, objId:int, imgId:int, ord:int):
-        self.call(f'replace into OBJ_IMG values ({objId}, {imgId}, {ord});')
+        self.call(f'replace into ENT_IMG values ({objId}, {imgId}, {ord});')
         self.touchObj(objId)
 
     def rmObjectImg(self, objId:int, imgId:int):
-        self.call(f'delete from OBJ_IMG where OBJ = {objId} and IMG = {imgId};')
+        self.call(f'delete from ENT_IMG where OBJ = {objId} and IMG = {imgId};')
         self.touchObj(objId)
 
     def getUnusedImgs(self):
