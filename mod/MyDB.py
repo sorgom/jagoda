@@ -1,8 +1,8 @@
 
-from ctypes.wintypes import CHAR
-from flask_mysqldb import MySQL
+import mysql.connector
 from hashlib import md5 as libmd5
 from mod.base import debug
+from mod.config import DB_CONFIG
 import random
 
 __mydb__ = None
@@ -10,10 +10,13 @@ __mydb__ = None
 DIM_FIELDS = [f'dim{n}' for n in range(1,4)]
 USR_RECORDS = 50
 
-class MyDB(MySQL):
-    def __init__(self, app, getUidFunc, *args):
+class MyDB(object):
+    def __init__(self, getUidFunc, config):
         self.getUid = getUidFunc
-        super().__init__(app, *args)
+        self.cnx = mysql.connector.connect(**config)
+
+    def __del__(self):
+        self.cnx.close()
 
     def getNextId(self):
         return self.getNum('select nextId();', commit=True)
@@ -32,71 +35,69 @@ class MyDB(MySQL):
 
     # get list of current languages
     # list of [icl, label]
-    def getLangTable(self):
+    def getLangs(self):
         return self.get('select ILC, LABEL from LANG order by ORD;')
 
     # get list of item types
     # list of [tpc, label]
-    def getLangItemTypeTable(self):
-        return self.get('select * from TTL_TYPE;')
+    def getTtps(self):
+        return self.get('select * from TTP;')
 
     # get label of given language type
-    def getLangItemTypeLabel(self, tpc:str):
-        return self.getOne(f'select LABEL from TTL_TYPE where TPC = "{tpc}" limit 1;')
+    def getTtpLabel(self, tpc:str):
+        return self.getOne(f'select LABEL from TTP where TPC = "{tpc}" limit 1;')
 
     # get lang item type of language entry by id
-    def getLangItemType(self, id:int):
+    def getTpc(self, id:int):
         return self.getOne(f'select TPC from TTL where ID = {id} limit 1;')
 
     # create new language item (head)
-    def newLangItem(self, id:int, tpc:str):
-        self.call(f'insert into TTL(ID, TPC) values ({id}, "{tpc}")')
+    def addTtl(self, id:int, tpc:str):
+        debug(id, tpc)
+        self.callProc('addTtl', id, tpc)
 
-    def newObjTtl(self, id:int):
-        return self.newLangItem(id, 'OT')
-
-    # get table fo lang items of given type
+    # get titles of given type
     def getTtls(self, tpc:str):
-        return self.get(f'call getTtls("{tpc}");')
+        return self.get(f'select TTL as ID, ILC, LABEL from TTL_ELEM_ORD where TPC = "{tpc}" order by TST desc, ORD;')
 
-    # get elements of a lang item
+    # get elements of a title
     # list of [ilc, label]
-    def getLangItem(self, id:int):
+    def getTtl(self, id:int):
         return self.get(f'select ILC, LABEL from TTL_ELEM_ORD where ID = {id} order by ORD;')
 
     # get head (info) of language item
-    def getLangItemInfo(self, id:int):
-        res = self.getOneDict(f'select * from TTL_STD where ID = {id} limit 1;')
+    def getTtlInfo(self, id:int):
+        res = self.getOneDict(f'select * from TTL_INFO where ID = {id} limit 1;')
         res['ttl'] = res['id']
         return res
 
     # get head (info) of for a new language item
-    def getNewLangItemInfo(self, tpc:str):
-        return self.getOneDict(f'select STDABLE, 0 as STD from TTL_TYPE where TPC = "{tpc}" limit 1;')
+    def getNewTtlInfo(self, tpc:str):
+        return self.getOneDict(f'select STDABLE, 0 as STD from TTP where TPC = "{tpc}" limit 1;')
 
     # set elements of a lang item
-    def setLangItem(self, id:int, data:list):
+    def setTtl(self, id:int, data:list):
+        debug(id)
         self.multi('TTL_ELEM', [f'({id}, \'{ilc}\', \'{self.mask(label)}\')' for ilc, label in data])
-        self.call(f"delete from TTL_ELEM where ID = {id} and LABEL = '';")
-        self.call(f'update TTL set TST = CURRENT_TIMESTAMP where ID = {id};')
+        self.call(f'delete from TTL_ELEM where TTL = {id} and LABEL = "";')
+        self.touchEnt(id)
     
     # change lang item standard flag
     def setTtlStd(self, id:int, std:int):
-        debug(id, std)
         self.call(f'call setTtlStd({id}, {1 if std else 0});')
 
     #   get listing of standard titles
     def getStdTtls(self):
         return self.get('select ID, LABEL from TTL_1ST where STD = 1 and TPC = "OT" order by TST desc;')
 
-    #   get first label of given lang item id
+    #   get first label of given title id
     def getFirstLabel(self, id:int):
         return self.getOne(f'select LABEL from TTL_1ST where ID = {id} limit 1;')
 
     def getWhats(self):
         return self.get('select ID, LABEL from TTL_1ST where TPC = "TQ" order by TST desc;')
 
-    def getLangElem1st(self, id:int):
+    def getTtl1st(self, id:int):
         return self.getOne(f'select LABEL from TTL_1ST where ID = {id} limit 1;')
 
     ## objects
@@ -108,21 +109,21 @@ class MyDB(MySQL):
     def dimStrFromDict(res):
         return MyDB.dimStrFromList([res[k] for k in DIM_FIELDS])
 
-    def recObj(self, objId:int):
-        uid = self.getUid()
-        if uid:
-            self.call(f'replace into OBJ_REC(OBJ, UID, TST) values ({objId}, {uid}, CURRENT_TIMESTAMP);')
+    def touchEnt(self, id:int):
+        self.call(f'replace into ENT values ({id}, CURRENT_TIMESTAMP);')
+        self.recEnt(id)
 
     def reduceObjRecs(self):
         uid = self.getUid()
         if uid:
-            recs = self.getFirstCol(f'select TST from OBJ_REC where UID = {uid} limit {USR_RECORDS};')
+            recs = self.getFirstCol(f'select TST from USR_ENT where USR = {uid} limit {USR_RECORDS};')
             if len(recs) == USR_RECORDS:
-                self.call(f'delete from OBJ_REC where UID = {uid} and TST < "{recs[-1]}";')
+                self.call(f'delete from USR_ENT where USR = {uid} and TST < "{recs[-1]}";')
 
-    def touchObj(self, objId:int):
-        self.call(f'update OBJ set TST = CURRENT_TIMESTAMP where ID = {objId};')
-        self.recObj(objId)
+    def recEnt(self, id:int):
+        uid = self.getUid()
+        if uid:
+            self.call(f'replace into USR_ENT(USR, ENT, TST) values ({uid}, {id}, CURRENT_TIMESTAMP);')
 
     # def getObj(self, objId:int):
     #     return self.getOneDict(f'select * from OBJ where ID = {objId} limit 1;')
@@ -135,24 +136,30 @@ class MyDB(MySQL):
     def getObjTtl(self, objId:int):
         return self.getOneDict(f'select TTL, STD, STDABLE from ENT_IMG_LABEL where ID = {objId} limit 1;')
 
+    def addObjTtl(self, id:int):
+        debug(id)
+        self.addTtl(id, 'OT')
+
     def newObjTtl(self):
         id = self.getNextId()
-        self.call(f'insert into TTL(ID, TPC) values ({id}, "OT");')
-        return self.getLangItemInfo(id)
+        self.addObjTtl(id)
+        return self.getTtlInfo(id)
 
     def setObjTtl(self, objId:int, ttlId:int):
         self.call(f'update OBJ set TTL = {ttlId} where ID = {objId};')
-        self.recObj(objId)
+        self.recEnt(objId)
         return self.getFirstLabel(ttlId)
 
     def getObjLabel(self, objId:int):
         return self.getOne(f'select LABEL from ENT_IMG_LABEL where ID = {objId} limit 1;')
 
     def addObj(self, objId:int, ttlId:int):
-        self.call(f'insert into OBJ(ID, TTL) values ({objId}, {ttlId});')
-        self.recObj(objId)
+        debug(objId, ttlId)
+        self.callProc('addObj', objId, ttlId)
+        self.recEnt(objId)
 
     def addArt(self, objId:int, ttlId:int):
+        debug(objId, ttlId)
         self.addObj(objId, ttlId)
         self.call(f'insert into ART(OBJ) values ({objId});')
 
@@ -161,7 +168,7 @@ class MyDB(MySQL):
 
     def setObjDims(self, objId:int, dims:list):
         self.call(f'update OBJ set DIM1 = {dims[0]}, DIM2 = {dims[1]}, DIM3 = {dims[2]} where ID = {objId};')
-        self.recObj(objId)
+        self.recEnt(objId)
 
     #   list of articles [id, img, label]
     #   TODO: reasonable limitation
@@ -182,26 +189,26 @@ class MyDB(MySQL):
 
     def setWhat(self, objId:int, wId:int):
         self.call(f'update ART set WHAT = {wId} where OBJ = {objId};')
-        self.touchObj(objId)
+        self.touchEnt(objId)
     
     ##  images
     def addEntImg(self, objId:int, imgId:int):
         self.call(f'call addEntImg({objId}, {imgId});')
-        self.touchObj(objId)
+        self.touchEnt(objId)
 
     def addImg(self, imgId:int):
         self.call(f'replace into IMG(ID) values ({imgId});')
 
-    def getObjectImgs(self, objId:int):
-        return self.getDict(f'select IMG as ID, ORD, imgFileMini(IMG) as SRC from ENT_IMG where OBJ = {objId} order by ORD;')
+    def getObjImgs(self, objId:int):
+        return self.getDict(f'select IMG as ID, ORD, imgFileMini(IMG) as SRC from ENT_IMG where ENT = {objId} order by ORD;')
     
-    def setObjectImg(self, objId:int, imgId:int, ord:int):
+    def setObjImg(self, objId:int, imgId:int, ord:int):
         self.call(f'replace into ENT_IMG values ({objId}, {imgId}, {ord});')
-        self.touchObj(objId)
+        self.touchEnt(objId)
 
-    def rmObjectImg(self, objId:int, imgId:int):
+    def rmObjImg(self, objId:int, imgId:int):
         self.call(f'delete from ENT_IMG where OBJ = {objId} and IMG = {imgId};')
-        self.touchObj(objId)
+        self.touchEnt(objId)
 
     def getUnusedImgs(self):
         return self.getDict('call getUnusedImgs();')
@@ -263,6 +270,13 @@ class MyDB(MySQL):
         cursor.execute(sql)
         cursor.close()
         self.connection.commit()
+    
+    def callProc(self, proc:str, *args):
+        debug(proc, *args)
+        cursor = self.connection.cursor()
+        cursor.callproc(proc, args)
+        cursor.close()
+        self.connection.commit()
 
     def md5(self, val:str):
         return libmd5(val.encode('utf-8')).hexdigest()
@@ -281,10 +295,10 @@ class MyDB(MySQL):
         userIdTest = 3
         self.call('delete from TTL where TPC = "OT";')
         self.call('delete from OBJ;')
-        self.call('delete from OBJ_REC;')
+        self.call('delete from USR_ENT;')
         random.seed()
         debug('random language elements')
-        langs = self.getLangTable()
+        langs = self.getLangs()
         slen = len(langs)
         ids = list(range(100000, 110000))
         stds = [ 0 for n in range(20) ] + [1]
@@ -296,7 +310,7 @@ class MyDB(MySQL):
         ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
         self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', ins, True)
         self.multi('ART(OBJ)', [f'({id + offset})' for id in ids])
-        self.multi('OBJ_REC(OBJ, UID, TST)', [f'({id + offset}, {userIdTest}, CURRENT_TIMESTAMP - INTERVAL {n} MINUTE)' for n, id in enumerate(ids)] )
+        self.multi('USR_ENT(OBJ, UID, TST)', [f'({id + offset}, {userIdTest}, CURRENT_TIMESTAMP - INTERVAL {n} MINUTE)' for n, id in enumerate(ids)] )
         self.call('call initSeq();')
 
 def setDB(app, getUidFunc, *args):

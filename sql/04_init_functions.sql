@@ -9,6 +9,7 @@ drop function  if exists nextId;
 drop procedure if exists initSeq;
 drop procedure if exists getTtls;
 drop procedure if exists addTtl;
+drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
@@ -16,6 +17,7 @@ drop procedure if exists addEntImg;
 drop procedure if exists getUnusedImgs;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
+drop procedure if exists test;
 -- <GENERATED DROP
 -- sequences
 -- ============================================================
@@ -56,16 +58,21 @@ BEGIN
         on  T3.ID = T2.ID
     WHERE T2.TPC = pTPC
     ORDER BY T3.TST desc, T1.ORD;
-END :)  
+END :)
+
 -- add new title
 create procedure addTtl(pID bigint, pTPC CHAR(2))
 BEGIN
+    set autocommit = 1;
     insert into ENT(ID) values (pID);
     insert into TTL(ID, TPC) values (pID, pTPC);
 END :)
+-- add new object
 create procedure addObj(pID bigint, pTTL bigint)
 BEGIN
+    set autocommit = 1;
     insert into ENT(ID) values (pID);
+    commit;
     insert into OBJ(ID, TTL) values (pID, pTTL);
 END :)
 
@@ -148,15 +155,25 @@ BEGIN
     SELECT ID FROM USR WHERE (NAME = LOWER(pNAME) AND PASS = pMD5) INTO @vID; 
     RETURN @vID;
 END :)  
--- -- ============================================================
--- -- ## Assigned Database Users
--- -- ============================================================
+-- ============================================================
+-- TEST
+-- ============================================================
+create procedure test()
+begin
+    select * from ENT;
+end :)
+
+
+-- ============================================================
+-- ## Assigned Database Users
+-- ============================================================
 DELIMITER ;
 -- GENERATED GRANT>
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
 grant execute on procedure jagoda.getTtls                to 'aut'@'%';
 grant execute on procedure jagoda.addTtl                 to 'aut'@'%';
+grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
@@ -164,5 +181,6 @@ grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
 grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
+grant execute on procedure jagoda.test                   to 'aut'@'%';
 -- <GENERATED GRANT
 

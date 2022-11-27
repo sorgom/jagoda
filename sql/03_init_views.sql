@@ -36,20 +36,23 @@ on T1.TPC = T2.TPC;
 -- all assigned title elements with order
 drop view if exists TTL_ELEM_ORD;
 create view TTL_ELEM_ORD as
-select T1.*, T2.ORD from TTL_ELEM as T1
+select T1.*, T2.ORD, T3.TST, T4.* 
+from TTL_ELEM as T1
 inner join LANG as T2
 on T1.ILC = T2.ILC
+inner join ENT as T3
+on T3.ID = T1.TTL
+inner join TTL_INFO as T4
+on T1.TTL = T4.ID
 ;
 
 -- first available language element
 drop view if exists TTL_1ST;
 create view TTL_1ST as
-select T1.*, T3.*  from TTL_ELEM_ORD as T1
+select T1.* from TTL_ELEM_ORD as T1
 inner join (select TTL, min(ORD) as MINORD from TTL_ELEM_ORD group by TTL) as T2
 on T1.TTL = T2.TTL and T1.ORD = T2.MINORD
-inner join TTL_INFO as T3
-on T1.TTL = T3.ID; 
--- order by LI.TST desc, LE.ID;
+;
 
 --  all objects with (default or first) image and title
 drop view if exists OBJ_IMG_TTL;

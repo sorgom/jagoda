@@ -47,11 +47,11 @@ route('/pwd',                           login.pwd,          methods=BOTH)
 route('/_loggedIn',                     login._loggedIn                 )
 
 # language authoring
-route('/langItems/<tpc>',               lang.langItems                  )
-route('/_langItem/<int:id>',            lang._langItem                  )
-route('/_setLangItem/<int:id>',         lang._setLangItem,  methods=POST)
-route('/_newLangItem/<tpc>',            lang._newLangItem               )
-route('/_addLangItem/<tpc>/<int:id>',   lang._addLangItem,  methods=POST)
+route('/ttls/<tpc>',                    lang.ttls                  )
+route('/_ttl/<int:id>',                 lang._ttl                  )
+route('/_setTtl/<int:id>',              lang._setTtl,  methods=POST)
+route('/_newTtl/<tpc>',                 lang._newTtl               )
+route('/_addTtl/<tpc>/<int:id>',        lang._addTtl,  methods=POST)
 route('/_label/<int:id>',               lang._label                     )
 route('/_google',                       lang._google,       methods=POST)
 
