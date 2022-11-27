@@ -3,9 +3,9 @@ import mysql.connector
 config = {
   'user': 'aut',
   'password': 'aa',
-  'host': '127.0.0.1',
+#   'host': '127.0.0.1',
   'database': 'jagoda',
-  'raise_on_warnings': False
+  'autocommit': True
 }
 
 cnx = mysql.connector.connect(**config)
@@ -23,45 +23,59 @@ data = cursor.fetchall()
 cursor.close()
 
 
-# print('... >>')
+print('... >>')
+cursor = cnx.cursor()
+cursor.execute('select nextId()', ())
+next = cursor.fetchone()[0]
+print('next', next)
 # cursor = cnx.cursor()
-# stmt0 = 'insert into ENT(ID) values (%s);'
-# data0 = [202]
-# stmt1 = 'insert into TTL(ID, TPC) values (%s, %s);'
-# data1 = (202, 'OT')
-# print(0)
-# cursor.execute(stmt0, data0)
-# print(1)
-# cursor.execute(stmt1, data1)
-# cursor.close()
+stmt0 = 'insert into ENT(ID) values (%s)'
+data0 = (next,)
+stmt1 = 'insert into TTL(ID, TPC) values (%s, %s)'
+data1 = (next, 'OT')
+print(0)
+cursor.execute(stmt0, data0)
+print(1)
+cursor.execute(stmt1, data1)
+cursor.close()
 # cnx.commit()
-# print('<< ...')
+print('<< ...')
+
+sql = 'select * from ENT'
+params = ()
+cursor = cnx.cursor(dictionary=True)
+cursor.execute(sql, params)
+data = cursor.fetchall()
+cursor.close()
+
+print('len:', len(data))
+
 
 # cursor = cnx.cursor()
-# stmt = 'select nextId();'
-# cursor.execute(stmt)
-# res = cursor.fetchone()
+# stmt = 'select nextId()'
+# cursor.execute(stmt, ())
+# res = cursor.fetchone()[0]
 # cursor.close()
 # print('next:', res)
 
 # # print(data)
 
-# cursor = cnx.cursor()
-# res = cursor.callproc('test')
-# # data = cursor.fetchall()
-# cursor.close()
+# # cursor = cnx.cursor()
+# # res = cursor.callproc('test')
+# # # data = cursor.fetchall()
+# # cursor.close()
 
 # print(res)
 
 # cnx.close()
 
 
-class MyDB(object):
-    def __init__(self, getUidFunc, config):
-        self.getUid = getUidFunc
-        self.cnx = mysql.connector.connect(**config)
+# class MyDB(object):
+#     def __init__(self, getUidFunc, config):
+#         self.getUid = getUidFunc
+#         self.cnx = mysql.connector.connect(**config)
 
-    def __del__(self):
-        self.cnx.close()
+#     def __del__(self):
+#         self.cnx.close()
 
-db = MyDB('wumpel', config)
+# # db = MyDB('wumpel', config)

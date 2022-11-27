@@ -2,7 +2,8 @@
 -- ### PROCEDURES & FUNCTIONS
 -- ============================================================
 -- enables funtions / procedures that don't acces any tables:
-SET GLOBAL log_bin_trust_function_creators = 1;
+set global log_bin_trust_function_creators = 1;
+set global autocommit = 1;
 -- ============================================================
 -- GENERATED DROP>
 drop function  if exists nextId;
@@ -63,16 +64,13 @@ END :)
 -- add new title
 create procedure addTtl(pID bigint, pTPC CHAR(2))
 BEGIN
-    set autocommit = 1;
     insert into ENT(ID) values (pID);
     insert into TTL(ID, TPC) values (pID, pTPC);
 END :)
 -- add new object
 create procedure addObj(pID bigint, pTTL bigint)
 BEGIN
-    set autocommit = 1;
     insert into ENT(ID) values (pID);
-    commit;
     insert into OBJ(ID, TTL) values (pID, pTTL);
 END :)
 

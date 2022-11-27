@@ -1,5 +1,5 @@
 
-import mysql.connector
+from flask_mysqldb import MySQL
 from hashlib import md5 as libmd5
 from mod.base import debug
 from mod.config import DB_CONFIG
@@ -10,13 +10,10 @@ __mydb__ = None
 DIM_FIELDS = [f'dim{n}' for n in range(1,4)]
 USR_RECORDS = 50
 
-class MyDB(object):
-    def __init__(self, getUidFunc, config):
+class MyDB(MySQL):
+    def __init__(self, app, getUidFunc, *args):
         self.getUid = getUidFunc
-        self.cnx = mysql.connector.connect(**config)
-
-    def __del__(self):
-        self.cnx.close()
+        super().__init__(app, *args)
 
     def getNextId(self):
         return self.getNum('select nextId();', commit=True)
