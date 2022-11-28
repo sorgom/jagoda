@@ -4,17 +4,17 @@
 
 {% block content %}
     <!-- <h1>Object no. <span id="objId">{{objId}}</span></h1> -->
-    <h1>"<a id="objTitle" onclick="popup('/_objTtl/{{objId}}')">{{obj['label']}}</a>"</h1>
-    <!-- <p id="objWhat">{{obj['wlabel']}}</p>
-    <p id="objDims">{{obj['dim1']}} X {{obj['dim2']}} X {{obj['dim3']}}</p> -->
+    <h1>"<a id="objTitle" onclick="popup('/_objTtl/{{objId}}')">{{obj['LABEL']}}</a>"</h1>
+    <!-- <p id="objWhat">{{obj['WLABEL']}}</p>
+    <p id="objDims">{{obj['DIM1']}} X {{obj['DIM2']}} X {{obj['DIM3']}}</p> -->
     <p>
-        <a id="objYear">{{obj['year']}}</a>,
-        <a id="objWhat" onclick="popup('/_objSelWhat/{{objId}}', true)">{{obj['wlabel']}}</a>,
-        <a id="objDims" onclick="popup('/_objDims/{{objId}}', true)">{{obj['dims']}}</a>
+        <a id="objCrdt">{{obj['CRDT']}}</a>,
+        <a id="objWhat" onclick="popup('/_objSelWhat/{{objId}}', true)">{{obj['WLABEL']}}</a>,
+        <a id="objDims" onclick="popup('/_objDims/{{objId}}', true)">{{obj['DIMS']}}</a>
     </p>
     <div id="obj_top">
         <div class="img objImg">
-            <img src="{{obj['src']}}" alt="object {{objId}}" id="objImg"/>
+            <img src="{{obj['SRC']}}" alt="object {{objId}}" id="objImg"/>
         </div>
         <div>
             <ul>

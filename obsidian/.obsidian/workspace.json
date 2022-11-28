@@ -138,6 +138,8 @@
   },
   "active": "9f758a587f67daa4",
   "lastOpenFiles": [
+    "VSCode/Memos.md",
+    "MySQL/MySQL_cursor.md",
     "Jagoda/Object-Model.md",
     "Jagoda/Language-Object-Model.md",
     "MySQL/json.md",
@@ -145,8 +147,6 @@
     "Python/FrequentlyForgotten.md",
     "Python/google_translate.md",
     "Python/arrays.md",
-    "Python/use_variable_in_regex.md",
-    "MySQL/Role Assignement.md",
-    "MySQL/MySQL_cursor.md"
+    "Python/use_variable_in_regex.md"
   ]
 }

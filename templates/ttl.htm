@@ -12,10 +12,10 @@
         {% endfor %}
     </table>
     <input type="hidden" name="tpc"     value="{{tpc}}">
-    <input type="hidden" name="stdable" value="{{item['stdable']}}">
+    <input type="hidden" name="stdable" value="{{item['STDABLE']}}">
     <input type="hidden" name="objId"   value="{{objId}}">
-    {% if item['stdable'] %}
-        <input type="checkbox" id="std" name="std" {{ 'checked' if item['std'] else '' }}>
+    {% if item['STDABLE'] %}
+        <input type="checkbox" id="std" name="std" {{ 'checked' if item['STD'] else '' }}>
         <label for="std">Use as standard title</label>
     {% endif %}
     <!-- <div class="buttons">

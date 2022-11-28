@@ -88,19 +88,19 @@ def _edUsrArtList():
 def _objTtl(objId:int):
     ttl = db().getObjTtl(objId)
     if post():
-        saveTtl(ttl['ttl'])
+        saveTtl(ttl['TTL'])
         db().touchObj(objId)
         return db().getObjLabel(objId)
-    data = getTtl(ttl['ttl'])
+    data = getTtl(ttl['TTL'])
     return render_template('_obj_titel.htm', objId=objId, data=data, ttl=ttl, submit=f'_objTtl/{objId}', field='objTitle')
 
 def _objOwnTtl(objId:int):
     if post():
-        ttlId = rf('ttl')
+        ttlId = rf('TTL')
         saveTtl(ttlId)
         return db().setObjTtl(objId, ttlId)
     ttl = db().newObjTtl()
     debug(ttl)
-    data = getTtl(ttl['ttl'])
+    data = getTtl(ttl['TTL'])
     return render_template('_obj_titel.htm', objId=objId, data=data, ttl=ttl, submit=f'_objOwnTtl/{objId}', field='objTitle')
 

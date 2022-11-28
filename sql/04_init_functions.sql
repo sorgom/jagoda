@@ -8,17 +8,15 @@ set global autocommit = 1;
 -- GENERATED DROP>
 drop function  if exists nextId;
 drop procedure if exists initSeq;
-drop procedure if exists getTtls;
 drop procedure if exists addTtl;
 drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
-drop procedure if exists addEntImg;
+drop procedure if exists addObjImg;
 drop procedure if exists getUnusedImgs;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
-drop procedure if exists test;
 -- <GENERATED DROP
 -- sequences
 -- ============================================================
@@ -38,9 +36,14 @@ CREATE PROCEDURE initSeq()
 BEGIN
     DECLARE num BIGINT;
     SELECT GREATEST(
-    -- entity
-         IFNULL((SELECT MAX(ID) FROM ENT), 0),
-    -- image
+         IFNULL((SELECT MAX(ID) FROM TTL), 0),
+         IFNULL((SELECT MAX(ID) FROM TXT), 0),
+         IFNULL((SELECT MAX(ID) FROM CAP), 0),
+         IFNULL((SELECT MAX(ID) FROM OBJ), 0),
+         IFNULL((SELECT MAX(ID) FROM GRP), 0),
+         IFNULL((SELECT MAX(ID) FROM PER), 0),
+         IFNULL((SELECT MAX(ID) FROM LOC), 0),
+         IFNULL((SELECT MAX(ID) FROM EXH), 0),
          IFNULL((SELECT MAX(ID) FROM IMG), 0)
     ) INTO @num;
     REPLACE INTO SEQ VALUES(1, @num);
@@ -49,29 +52,28 @@ END :)
 -- language support
 -- ============================================================
 -- retrieve all titles of a type 
-CREATE PROCEDURE getTtls(pTPC CHAR(2))  
-BEGIN
-    SELECT T1.TTL as ID, T1.ILC, T2.LABEL 
-    FROM TTL_ELEM_ORD as T1
-        INNER JOIN TTL as T2
-        ON T1.TTL = T2.ID
-        inner join ENT as T3
-        on  T3.ID = T2.ID
-    WHERE T2.TPC = pTPC
-    ORDER BY T3.TST desc, T1.ORD;
-END :)
+-- CREATE PROCEDURE getTtls(pTPC CHAR(2))  
+-- BEGIN
+--     SELECT T1.TTL as ID, T1.ILC, T2.LABEL 
+--     FROM TTL_ELEM_ORD as T1
+--         INNER JOIN TTL as T2
+--         ON T1.TTL = T2.ID
+--         inner join ENT as T3
+--         on  T3.ID = T2.ID
+--     WHERE T2.TPC = pTPC
+--     ORDER BY T3.TST desc, T1.ORD;
+-- END :)
 
 -- add new title
 create procedure addTtl(pID bigint, pTPC CHAR(2))
 BEGIN
-    insert into ENT(ID) values (pID);
     insert into TTL(ID, TPC) values (pID, pTPC);
 END :)
 -- add new object
 create procedure addObj(pID bigint, pTTL bigint)
 BEGIN
-    insert into ENT(ID) values (pID);
     insert into OBJ(ID, TTL) values (pID, pTTL);
+    commit;
 END :)
 
 -- set title standard
@@ -102,36 +104,38 @@ END :)
 create procedure getUsrArticles(pUSR BIGINT)
 begin
     select ID, SRC, LABEL, WLABEL from ART_FULL
-    inner join USR_ENT
-    on USR_ENT.ENT = ART_FULL.ID and USR_ENT.USR = pUSR
-    order by USR_ENT.TST desc
+    inner join USR_OBJ
+    on USR_OBJ.OBJ = ART_FULL.ID and USR_OBJ.USR = pUSR
+    order by USR_OBJ.TST desc
     limit 50;
 end :)
 
 -- ============================================================
 -- images
 -- ============================================================
+
+
 -- create new objet image assignment
-CREATE PROCEDURE addEntImg(pENT BIGINT, pIMG BIGINT)
+CREATE PROCEDURE addObjImg(pOBJ BIGINT, pIMG BIGINT)
 BEGIN
     DECLARE vORD INT;
 
     REPLACE INTO IMG VALUES(pIMG); 
     
-    SELECT MAX(ORD) FROM ENT_IMG
-    WHERE ENT = pENT
+    SELECT MAX(ORD) FROM OBJ_IMG
+    WHERE OBJ = pOBJ
     INTO @vORD;
 
     SET @vORD = IFNULL(@vORD, -1);
     SET @vORD = @vORD + 1;
 
-    REPLACE INTO ENT_IMG VALUES (pENT, pIMG, @vORD);
+    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, @vORD);
 END :)  
 -- retrieve all unassigned images
 CREATE PROCEDURE getUnusedImgs()
 BEGIN
     SELECT T1.ID, imgFileMini(T1.ID) as SRC, -1 as ORD FROM IMG AS T1
-    LEFT JOIN  ENT_IMG AS T2 
+    LEFT JOIN  OBJ_IMG AS T2 
     ON T2.IMG = T1.ID
     WHERE T2.IMG IS NULL
     ORDER BY T1.ID;
@@ -156,11 +160,6 @@ END :)
 -- ============================================================
 -- TEST
 -- ============================================================
-create procedure test()
-begin
-    select * from ENT;
-end :)
-
 
 -- ============================================================
 -- ## Assigned Database Users
@@ -169,16 +168,14 @@ DELIMITER ;
 -- GENERATED GRANT>
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
-grant execute on procedure jagoda.getTtls                to 'aut'@'%';
 grant execute on procedure jagoda.addTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
-grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
+grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
 grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
-grant execute on procedure jagoda.test                   to 'aut'@'%';
 -- <GENERATED GRANT
 

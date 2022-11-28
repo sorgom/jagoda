@@ -15,10 +15,11 @@ app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
 # secret string for session cooky
 app.secret_key = 'ein Hund kam in die Kueche'
 
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_USER'] = 'aut'
-app.config['MYSQL_PASSWORD'] = 'aa'
-app.config['MYSQL_DB'] = 'jagoda'
+app.config['MYSQL_HOST']        = '127.0.0.1'
+app.config['MYSQL_USER']        = 'aut'
+app.config['MYSQL_PASSWORD']    = 'aa'
+app.config['MYSQL_DB']          = 'jagoda'
+app.config['MYSQL_AUTOCOMMIT']  = 1
 
 setDB(app, login.getUid)
 
@@ -78,9 +79,9 @@ route('/_objSelWhat/<int:objId>',           art._objSelWhat)
 route('/_objSetWhat/<int:objId>/<int:wId>', art._objSetWhat)
 
 route('/_objImg/<int:objId>',               art._objImg)
-route('/_objDims/<int:objId>',              art._objDims,  methods=BOTH)
-route('/_objTtl/<int:objId>',               art._objTtl,   methods=BOTH)
-route('/_objOwnTtl/<int:objId>',            art._objOwnTtl,   methods=BOTH)
+route('/_objDims/<int:objId>',              art._objDims,   methods=BOTH)
+route('/_objTtl/<int:objId>',               art._objTtl,    methods=BOTH)
+route('/_objOwnTtl/<int:objId>',            art._objOwnTtl, methods=BOTH)
 
 # general
 route('/_qrc_view/<int:id>/<what>',         qrc._qrc_view)

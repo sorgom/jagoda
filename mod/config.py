@@ -5,8 +5,7 @@ DB_CONFIG = {
   'user': 'aut',
   'password': 'aa',
   'host': '127.0.0.1',
-  'database': 'jagoda',
-  'raise_on_warnings': False
+  'database': 'jagoda'
 }
 
 # ============================================================

@@ -4,23 +4,24 @@ config = {
   'user': 'aut',
   'password': 'aa',
 #   'host': '127.0.0.1',
-  'database': 'jagoda',
-  'autocommit': True
+  'database': 'jagoda'
 }
 
-cnx = mysql.connector.connect(**config)
-
-try:
-    cursor = cnx.cursor()
-    cursor.callproc('addTtl', [103, 'OT'])
-    cursor.close()
-except:
-    pass
+cnx = mysql.connector.connect(autocommit=True, **config)
 
 cursor = cnx.cursor(dictionary=True)
-cursor.execute('select * from ENT;')
+cursor.execute('select * from ENT;', ())
 data = cursor.fetchall()
 cursor.close()
+
+print('data', len(data))
+
+cursor = cnx.cursor(dictionary=True)
+cursor.execute('select * from ENT limit 1', ())
+data = cursor.fetchone()
+cursor.close()
+
+print('data', data)
 
 
 print('... >>')
@@ -50,6 +51,42 @@ cursor.close()
 
 print('len:', len(data))
 
+def wumpel(sql, *args):
+  print('sql', sql, *args)
+  cursor = cnx.cursor(dictionary=True)
+  cursor.execute(sql, args)
+  data = cursor.fetchall()
+  cursor.close()
+  print('len:', len(data))
+
+wumpel('select * from ENT where ID > %s', 10)
+
+print('named_tuple >>>')
+sql = 'select * from ENT'
+params = ()
+cursor = cnx.cursor(named_tuple=True)
+cursor.execute(sql, params)
+data = cursor.fetchall()
+cursor.close()
+
+print(data)
+
+print('ERROR >>>')
+sql = 'select * from WUMPEL'
+params = ()
+cursor = cnx.cursor(named_tuple=True)
+try:
+  cursor.execute(sql, params)
+  data = cursor.fetchall()
+except Exception as err:
+  print(err)
+finally:    
+  cursor.close()
+
+print('add ttl')
+cursor = cnx.cursor(named_tuple=True)
+cursor.callproc('addTtl', (100, 'OT'))
+cursor.close()
 
 # cursor = cnx.cursor()
 # stmt = 'select nextId()'

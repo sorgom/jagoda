@@ -1,7 +1,7 @@
 <!--
     title editor
 -->
-{% if ttl['std'] %}
+{% if ttl['STD'] %}
 <div class="buttons">
     <p>This is a standard title.</p>
     <button onclick="popup('/_objOwnTtl/{{objId}}');">Create individual title</button>
@@ -17,14 +17,14 @@
             </tr>
         {% endfor %}
     </table>
-    {% if ttl['std'] %}
+    {% if ttl['STD'] %}
         <input type="hidden" name="std" value="1">
     {% else %}
         <input type="checkbox" id="std" name="std"/>
         <label for="std">Use as standard title</label>
     {% endif %}
-    <input type="hidden" name="stdable" value="{{ttl['stdable']}}">
-    <input type="hidden" name="ttl" value="{{ttl['ttl']}}">
+    <input type="hidden" name="stdable" value="{{ttl['STDABLE']}}">
+    <input type="hidden" name="ttl" value="{{ttl['TTL']}}">
 </form>
 <div class="buttons">
     <button onclick="getGoogle()">google translate</button>
