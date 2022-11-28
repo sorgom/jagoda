@@ -18,15 +18,15 @@ refers:
 - language (ilc)
 attributes:
 - content VARCHAR(128)
-## Long descriptions
-### Description (DESC)
-A description
+## Long text
+### Text (TXT)
+A text
 attributes
 - time stamp of last change
-### Description element (DESC_ELEM)
+## Text element (TXT_ELEM)
 A description element defining the content of a description in one of the languages 
 refers:
-- description
+- text
 - language (ilc)
 attributes:
 - content LONGTEXT

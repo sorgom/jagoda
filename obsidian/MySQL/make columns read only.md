@@ -14,14 +14,14 @@ GRANT SELECT (col1), INSERT (col1, col2) ON mydb.mytbl TO 'someuser'@'somehost';
 It is possible to grant column wise.
 E.g.
 ```
-GRANT UPDATE (STD) ON jagoda.LANG_ITEM TO 'wumpel'@'%';
+GRANT UPDATE (STD) ON jagoda.TTL TO 'wumpel'@'%';
 ```
 
 It is NOT POSSIBLE to grant privileges table wise and then revoke column wise.
 E.g. this will not work:
 ```
-GRANT UPDATE ON jagoda.LANG_ITEM TO 'wumpel'@'%';
-REVOKE UPDATE (TPC) ON jagoda.LANG_ITEM FROM 'wumpel'@'%';
+GRANT UPDATE ON jagoda.TTL TO 'wumpel'@'%';
+REVOKE UPDATE (TPC) ON jagoda.TTL FROM 'wumpel'@'%';
 ```
 
 ### Update / Replace Into

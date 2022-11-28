@@ -1,7 +1,4 @@
 # Main object model
-## Entity (ENT)
-- can be owned
-- can be somewhere
 ## Object (OBJ)
 - inherits entity
 - has dimensions
@@ -9,43 +6,41 @@
 - has one or more images
 ## Article (ART)
 - inherits object
-	- has several article / art piece specific atributes
+	- has several article / art piece specific attributes
 - can be grouped
 ## Container (CON)
 - inherits object
 - can represent a standard container type
-## LE-Element (LEE)
-Element of a lilited edition
-- inherits entity
-- refers to article representing the limited edition
-
-## Person / Instititution (PER)
+## Person / institution (PER)
 - has
 	- a name
-	- telephone / cell phone
-	- e-mail
+	- additional information, e.g.
+		- telephone / cell phone
+		- e-mail
 - can have several locations
-	- one (e.g. first) of whitch is main address
+	- one (e.g. first) of witch is main address
 ## Location (LOC)
 - address
 - telephone
-## Person location (PER_LOC)
+## Person locations (PER_LOC)
 refers:
 - person / institution
 - location
-
-## Ownership (PER_ENT)
-unique relation of
-- person / institiution
-- entity
 additional attribute
-- amount
-## Placement (LOC_ENT)
+- order / main
+
+## Ownership (PER_OBJ)
+unique relation of
+- person / institution
+- object
+additional attribute
+- amount or numbers
+## Placement (LOC_OBJ)
 unique relation of
 - location
 - entity
 additional attribute
-- amount
+- amount or numbers
 ## Exhibition (EXH)
 refers:
 - person / institution
@@ -54,25 +49,24 @@ additional attributes
 - start date
 - end date
 - title
-## Assignment to exhibitions (EXH_ENT)
+## Assignment to exhibitions (EXH_OBJ)
 refers:
-- entity
+- object
 - exhibition
 additional attribute
-- amount
+- amount or numbers
 
 # Service object model
 ## User roles (ROL)
 attributes
 - role type
 - label
-TODO: label should become a caption
-## User roles (ROL)
+## User (USR)
 refers:
 - roles
 attributes
 - ID
-- usr name
+- user name
 - password md5
 
 ## Last changes to object (OBJ_REC)

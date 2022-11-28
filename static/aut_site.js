@@ -366,13 +366,12 @@ function makeImg(target, e, drop)
 {
     let d = document.createElement('div');
     if (drop) makeDrop(d);
-    // d.id = target.id + '_' + e['id'];
-    d.id = [target.id, e['id']].join('_');
-    d.imgId = e['id'];
-    d.ord = e['ord'];
-    debug('id:', d.id);
+    d.id = [target.id, e['ID']].join('_');
+    d.imgId = e['ID'];
+    d.ord = e['ORD'];
+    debug('ID:', d.id);
     let i = document.createElement('img');
-    i.src = e['src'];
+    i.src = e['SRC'];
     i.draggable = true;
     i.ondragstart = dragImg;
     i.onclick = imgInfo;
@@ -422,7 +421,7 @@ function upateImgs(target, json, drop)
         target.childNodes.forEach(cn => { cns.push(cn) });
         const data = ret['data'];
         data.forEach(e => {
-            let eId = e['id'];
+            let eId = e['ID'];
             while ((cns.length > 0) && (cns[0].imgId < eId))
             {
                 target.removeChild(cns.shift());

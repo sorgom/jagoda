@@ -1,6 +1,6 @@
 # processing of articles
 from flask import render_template, request, redirect, escape
-from mod.lang import renderBase, getLangItem, saveLangItem
+from mod.lang import renderBase, getTtl, saveTtl
 from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
@@ -28,16 +28,17 @@ def _newArtTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
-    item  = db().getNewLangItemInfo('OT')
-    return render_template('_lang_item.htm', objId=objId, id=ttlId, data=getLangItem(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
+    item  = db().getNewTtlInfo('OT')
+    return render_template('ttl.htm', objId=objId, id=ttlId, data=getTtl(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):
     if not loggedIn(): return ERR_AUTH
     if post():
         debug('POST', objId, ttlId)
-        db().newObjTtl(ttlId)
-        saveLangItem(ttlId)
+        db().addObjTtl(ttlId)
+        saveTtl(ttlId)
+        debug('call addArt', objId, ttlId)
         db().addArt(objId, ttlId)
     else:
         debug('GET', objId, ttlId)
@@ -69,7 +70,7 @@ def _objSelWhat(objId:int):
 
 def _objSetWhat(objId:int, wId:int):
     db().setWhat(objId, wId)
-    ret = db().getLangElem1st(wId)
+    ret = db().getTtl1st(wId)
     debug(ret)
     return ret
 
@@ -87,19 +88,19 @@ def _edUsrArtList():
 def _objTtl(objId:int):
     ttl = db().getObjTtl(objId)
     if post():
-        saveLangItem(ttl['ttl'])
+        saveTtl(ttl['TTL'])
         db().touchObj(objId)
         return db().getObjLabel(objId)
-    data = getLangItem(ttl['ttl'])
+    data = getTtl(ttl['TTL'])
     return render_template('_obj_titel.htm', objId=objId, data=data, ttl=ttl, submit=f'_objTtl/{objId}', field='objTitle')
 
 def _objOwnTtl(objId:int):
     if post():
-        ttlId = rf('ttl')
-        saveLangItem(ttlId)
+        ttlId = rf('TTL')
+        saveTtl(ttlId)
         return db().setObjTtl(objId, ttlId)
     ttl = db().newObjTtl()
     debug(ttl)
-    data = getLangItem(ttl['ttl'])
+    data = getTtl(ttl['TTL'])
     return render_template('_obj_titel.htm', objId=objId, data=data, ttl=ttl, submit=f'_objOwnTtl/{objId}', field='objTitle')
 

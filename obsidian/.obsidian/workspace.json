@@ -4,47 +4,22 @@
     "type": "split",
     "children": [
       {
-        "id": "59c0a693d4580d5e",
+        "id": "bb3d940ff08308a1",
         "type": "tabs",
         "children": [
           {
-            "id": "4e40ddf04a092763",
+            "id": "9f758a587f67daa4",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Jagoda/Object-Model.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "f6c563156772916f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Jagoda/Language-Object-Model.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "67ff911266d873c6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "JS/FrequentlyForgotten.md",
+                "file": "MySQL/MySQL_cursor.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -110,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Jagoda/Language-Object-Model.md",
+                "file": "MySQL/MySQL_cursor.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Jagoda/Language-Object-Model.md",
+                "file": "MySQL/MySQL_cursor.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Jagoda/Language-Object-Model.md"
+                "file": "MySQL/MySQL_cursor.md"
               }
             }
           }
@@ -161,17 +136,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "d01f8f8dae45d04b",
+  "active": "9f758a587f67daa4",
   "lastOpenFiles": [
+    "VSCode/Memos.md",
+    "MySQL/MySQL_cursor.md",
     "Jagoda/Object-Model.md",
-    "git/FrequentlyForgotten.md",
-    "Jagoda/Features.md",
-    "Python/google_translate.md",
-    "HTML/forms.md",
-    "HTML/references.md",
+    "Jagoda/Language-Object-Model.md",
+    "MySQL/json.md",
+    "MySQL/indexing.md",
     "Python/FrequentlyForgotten.md",
-    "Jagoda/Handling_limited_editions.md",
-    "Jagoda/Grouping.md",
-    "general/Unt.md"
+    "Python/google_translate.md",
+    "Python/arrays.md",
+    "Python/use_variable_in_regex.md"
   ]
 }

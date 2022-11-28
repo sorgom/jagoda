@@ -2,16 +2,18 @@
 -- ### PROCEDURES & FUNCTIONS
 -- ============================================================
 -- enables funtions / procedures that don't acces any tables:
-SET GLOBAL log_bin_trust_function_creators = 1;
+set global log_bin_trust_function_creators = 1;
+set global autocommit = 1;
 -- ============================================================
 -- GENERATED DROP>
 drop function  if exists nextId;
 drop procedure if exists initSeq;
-drop procedure if exists getLangItems;
-drop procedure if exists setLangItemStd;
-drop procedure if exists setLangElem;
+drop procedure if exists addTtl;
+drop procedure if exists addObj;
+drop procedure if exists setTtlStd;
+drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
-drop procedure if exists addObjectImg;
+drop procedure if exists addObjImg;
 drop procedure if exists getUnusedImgs;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
@@ -34,70 +36,87 @@ CREATE PROCEDURE initSeq()
 BEGIN
     DECLARE num BIGINT;
     SELECT GREATEST(
-    -- OBJ.ID
+         IFNULL((SELECT MAX(ID) FROM TTL), 0),
+         IFNULL((SELECT MAX(ID) FROM TXT), 0),
+         IFNULL((SELECT MAX(ID) FROM CAP), 0),
          IFNULL((SELECT MAX(ID) FROM OBJ), 0),
-    -- LANG_ITEM.ID
-         IFNULL((SELECT MAX(ID) FROM LANG_ITEM), 0),
-    -- IMG.ID
+         IFNULL((SELECT MAX(ID) FROM GRP), 0),
+         IFNULL((SELECT MAX(ID) FROM PER), 0),
+         IFNULL((SELECT MAX(ID) FROM LOC), 0),
+         IFNULL((SELECT MAX(ID) FROM EXH), 0),
          IFNULL((SELECT MAX(ID) FROM IMG), 0)
-    --  TODO
-        -- CONT.ID
-        -- GRP.ID
     ) INTO @num;
     REPLACE INTO SEQ VALUES(1, @num);
 END :)  
 -- ============================================================
 -- language support
 -- ============================================================
--- retrieve all language items of a type 
-CREATE PROCEDURE getLangItems(pTPC CHAR(2))  
+-- retrieve all titles of a type 
+-- CREATE PROCEDURE getTtls(pTPC CHAR(2))  
+-- BEGIN
+--     SELECT T1.TTL as ID, T1.ILC, T2.LABEL 
+--     FROM TTL_ELEM_ORD as T1
+--         INNER JOIN TTL as T2
+--         ON T1.TTL = T2.ID
+--         inner join ENT as T3
+--         on  T3.ID = T2.ID
+--     WHERE T2.TPC = pTPC
+--     ORDER BY T3.TST desc, T1.ORD;
+-- END :)
+
+-- add new title
+create procedure addTtl(pID bigint, pTPC CHAR(2))
 BEGIN
-    SELECT E.ID, E.ILC, E.LABEL 
-    FROM LANG_ELEM_ORD as E
-        INNER JOIN LANG_ITEM as I
-        ON E.ID = I.ID 
-    WHERE I.TPC = pTPC
-    ORDER BY I.TST desc, E.ORD;
-END :)  
--- set language item standard
-create procedure setLangItemStd(pID bigint, pSTD tinyint)
+    insert into TTL(ID, TPC) values (pID, pTPC);
+END :)
+-- add new object
+create procedure addObj(pID bigint, pTTL bigint)
+BEGIN
+    insert into OBJ(ID, TTL) values (pID, pTTL);
+    commit;
+END :)
+
+-- set title standard
+create procedure setTtlStd(pID bigint, pSTD tinyint)
 BEGIN
     declare vOK TINYINT;
-    select STDABLE from LANG_ITEM_STD where ID = pID into @vOK;
+    select STDABLE from TTL_INFO where ID = pID into @vOK;
     if @vOK THEN
-        UPDATE LANG_ITEM set STD = pSTD where ID = pID;
+        UPDATE TTL set STD = pSTD where ID = pID;
     end if;
 END :)
 -- set language element
-CREATE PROCEDURE setLangElem(
-    pID BIGINT, 
+CREATE PROCEDURE setTtl(
+    pTTL BIGINT, 
     pILC CHAR(2), 
     pLABEL VARCHAR(128)) 
 BEGIN
     IF pLABEL = '' THEN
-        DELETE FROM LANG_ELEM WHERE ID = pID AND ILC = pILC;
+        DELETE FROM TTL_ELEM WHERE TTL = pTTL AND ILC = pILC;
     ELSE
-        REPLACE INTO LANG_ELEM VALUES (pID, pILC, pLABEL);
+        REPLACE INTO TTL_ELEM VALUES (pTTL, pILC, pLABEL);
     END IF;
 END :)  
--- ============================================================
--- objects
--- ============================================================
---  get last objects of user
-create procedure getUsrArticles(pUID int)
+-- -- ============================================================
+-- -- objects
+-- -- ============================================================
+--  get last articles of user
+create procedure getUsrArticles(pUSR BIGINT)
 begin
     select ID, SRC, LABEL, WLABEL from ART_FULL
-    inner join OBJ_REC
-    on OBJ_REC.OBJ = ART_FULL.ID and OBJ_REC.UID = pUID
-    order by OBJ_REC.TST desc
+    inner join USR_OBJ
+    on USR_OBJ.OBJ = ART_FULL.ID and USR_OBJ.USR = pUSR
+    order by USR_OBJ.TST desc
     limit 50;
 end :)
 
 -- ============================================================
 -- images
 -- ============================================================
+
+
 -- create new objet image assignment
-CREATE PROCEDURE addObjectImg(pOBJ BIGINT, pIMG BIGINT)
+CREATE PROCEDURE addObjImg(pOBJ BIGINT, pIMG BIGINT)
 BEGIN
     DECLARE vORD INT;
 
@@ -115,11 +134,11 @@ END :)
 -- retrieve all unassigned images
 CREATE PROCEDURE getUnusedImgs()
 BEGIN
-    SELECT I.ID as id, imgFileMini(I.ID) as src, -1 as ord FROM IMG AS I
-    LEFT JOIN  OBJ_IMG AS OI 
-    ON OI.IMG = I.ID
-    WHERE OI.IMG IS NULL
-    ORDER BY I.ID;
+    SELECT T1.ID, imgFileMini(T1.ID) as SRC, -1 as ORD FROM IMG AS T1
+    LEFT JOIN  OBJ_IMG AS T2 
+    ON T2.IMG = T1.ID
+    WHERE T2.IMG IS NULL
+    ORDER BY T1.ID;
 END :)  
 -- ============================================================
 -- authors / users
@@ -139,17 +158,22 @@ BEGIN
     RETURN @vID;
 END :)  
 -- ============================================================
+-- TEST
+-- ============================================================
+
+-- ============================================================
 -- ## Assigned Database Users
 -- ============================================================
 DELIMITER ;
 -- GENERATED GRANT>
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
-grant execute on procedure jagoda.getLangItems           to 'aut'@'%';
-grant execute on procedure jagoda.setLangItemStd         to 'aut'@'%';
-grant execute on procedure jagoda.setLangElem            to 'aut'@'%';
+grant execute on procedure jagoda.addTtl                 to 'aut'@'%';
+grant execute on procedure jagoda.addObj                 to 'aut'@'%';
+grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
+grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
-grant execute on procedure jagoda.addObjectImg           to 'aut'@'%';
+grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
 grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';

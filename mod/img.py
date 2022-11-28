@@ -12,7 +12,7 @@ def mkJson(data, withMax:bool=False):
 
 def _objImgs(objId:int):
     debug(objId)
-    res = db().getObjectImgs(objId)
+    res = db().getObjImgs(objId)
     debug('res', res)
     return mkJson(res, True)
 
@@ -28,14 +28,14 @@ def _orderObjImgs(objId:int):
         debug(objId)
         for imgId, ord in getJson():
             debug(objId, imgId, ord)
-            db().setObjectImg(objId, imgId, ord)
+            db().setObjImg(objId, imgId, ord)
         db().touchObj(objId)
         return 'DONE'
 
 def _rmObjImg():
     if (loggedIn()):
         debug()
-        db().rmObjectImg(rf('objId'), rf('imgId'))
+        db().rmObjImg(rf('objId'), rf('imgId'))
         return 'DONE'
 
 def _unusedImgs():
