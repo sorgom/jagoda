@@ -89,6 +89,10 @@ class MyDB(MySQL):
     def getNextId(self):
         return self.getNum('select nextId()')
 
+    def nextWumpel(self):
+        id = self.getNextId()
+        self.callProc('addWumpel', id, 'XY')
+
     def getUsrId(self, usr:str, pwd:str):
         res = self.getNum('select getUsrId(%s, %s)', self.mask(usr), self.md5(pwd))
         debug(res)

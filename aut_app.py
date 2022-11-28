@@ -41,6 +41,11 @@ def testData():
     db().testData()
     return redirect('/')
 
+@app.route('/w')
+def testWumpel():
+    db().nextWumpel()
+    return redirect('/')
+
 # login
 route('/login',                         login.login,        methods=BOTH)
 route('/logout',                        login.logout                    )
