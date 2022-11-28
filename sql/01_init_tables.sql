@@ -14,6 +14,13 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 -- ============================================================
 
 -- 
+DROP TABLE IF EXISTS ENT;
+CREATE TABLE ENT (
+    ID BIGINT NOT NULL,
+    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID)
+) ENGINE=INNODB;
+
 -- language definitions
 -- ILC, ISO Language Codes acc. to 
 -- https://www.w3schools.com/tags/ref_language_codes.asp
@@ -24,7 +31,7 @@ CREATE TABLE LANG ( -- ROOT
     ORD INT NOT NULL,
     PRIMARY KEY (ILC),
     UNIQUE(ORD)
-);
+) ENGINE=INNODB;
 
 -- title type
 DROP TABLE IF EXISTS TTP;
@@ -33,7 +40,8 @@ CREATE TABLE TTP ( -- ROOT
     LABEL VARCHAR(128) NOT NULL,
     STDABLE TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (TPC)
-);
+) ENGINE=INNODB;
+
 INSERT INTO TTP VALUES
     ('OT', 'Object Titles', 1),
     ('TQ', 'Kinds of Objects', 0),
@@ -46,10 +54,10 @@ CREATE TABLE TTL (
     ID BIGINT NOT NULL,
     TPC CHAR(2) NOT NULL,
     STD TINYINT NOT NULL DEFAULT 0,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
     FOREIGN KEY (TPC) REFERENCES TTP(TPC) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- TTL element for all languages
 DROP TABLE IF EXISTS TTL_ELEM;
@@ -60,15 +68,15 @@ CREATE TABLE TTL_ELEM (
     PRIMARY KEY (TTL, ILC),
     FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- long text descriptions
 DROP TABLE IF EXISTS TXT;
 CREATE TABLE TXT (
     ID BIGINT NOT NULL,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    PRIMARY KEY (ID)
-);
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
+) ENGINE=INNODB;
 
 -- TXT element for all languages
 DROP TABLE IF EXISTS TXT_ELEM;
@@ -79,16 +87,16 @@ CREATE TABLE TXT_ELEM (
     PRIMARY KEY (TXT, ILC),
     FOREIGN KEY (TXT) REFERENCES TXT(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- website captions
 DROP TABLE IF EXISTS CAP;
 CREATE TABLE CAP (
     ID BIGINT NOT NULL,
     CPC VARCHAR(16) NOT NULL,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    PRIMARY KEY (ID)
-);
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
+) ENGINE=INNODB;
 
 -- CAP element for all languages
 DROP TABLE IF EXISTS CAP_ELEM;
@@ -99,8 +107,7 @@ CREATE TABLE CAP_ELEM (
     PRIMARY KEY (CAP, ILC),
     FOREIGN KEY (CAP) REFERENCES CAP(ID) ON DELETE CASCADE,
     FOREIGN KEY (ILC) REFERENCES LANG(ILC) ON DELETE CASCADE
-);
-
+) ENGINE=INNODB;
 
 -- ============================================================
 -- ## content elements
@@ -115,10 +122,10 @@ CREATE TABLE OBJ (
     DIM1 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM2 DECIMAL(8,1) NOT NULL DEFAULT 0,
     DIM3 DECIMAL(8,1) NOT NULL DEFAULT 0,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID), 
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
     FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- article / artifact
 DROP TABLE IF EXISTS ART;
@@ -131,7 +138,7 @@ CREATE TABLE ART (
     PRIMARY KEY (OBJ),
     FOREIGN KEY (OBJ)  REFERENCES OBJ(ID) ON DELETE CASCADE,
     FOREIGN KEY (WHAT) REFERENCES TTL(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- article / artifact
 DROP TABLE IF EXISTS CON;
@@ -139,7 +146,7 @@ CREATE TABLE CON (
     OBJ BIGINT NOT NULL,
     PRIMARY KEY (OBJ),
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 -- ============================================================
 -- ## object grouping
 -- ============================================================
@@ -147,10 +154,10 @@ DROP TABLE IF EXISTS GRP;
 CREATE TABLE GRP (
     ID BIGINT NOT NULL,
     TTL BIGINT NOT NULL,
-    TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID), 
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
     FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 DROP TABLE IF EXISTS GRP_OBJ;
 CREATE TABLE GRP_OBJ (
@@ -159,7 +166,7 @@ CREATE TABLE GRP_OBJ (
     PRIMARY KEY (GRP, OBJ), 
     FOREIGN KEY (GRP) REFERENCES GRP(ID) ON DELETE CASCADE,
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- ============================================================
 -- ## person / institution / location / exhibition
@@ -170,16 +177,18 @@ CREATE TABLE PER (
     ID BIGINT NOT NULL,
     LABEL VARCHAR(64) NOT NULL,
     INFO  VARCHAR(128), 
-    PRIMARY KEY (ID)
-);
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
+) ENGINE=INNODB;
 -- location
 DROP TABLE IF EXISTS LOC;
 CREATE TABLE LOC (
     ID BIGINT NOT NULL,
     LABEL VARCHAR(64) NOT NULL,
     INFO  VARCHAR(128), 
-    PRIMARY KEY (ID)
-);
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE
+) ENGINE=INNODB;
 -- exhibition
 DROP TABLE IF EXISTS EXH;
 CREATE TABLE EXH (
@@ -188,8 +197,23 @@ CREATE TABLE EXH (
     BEG DATE not null default (CURRENT_DATE),
     END DATE not null default (CURRENT_DATE),
     PRIMARY KEY (ID),
+    FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
     FOREIGN KEY (TTL) REFERENCES TTL(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
+
+-- person / institution - location
+-- exhibition - location
+-- via entity key
+DROP TABLE IF EXISTS LOC_ENT;
+CREATE TABLE LOC_ENT (
+    LOC BIGINT NOT NULL,
+    ENT BIGINT NOT NULL,
+    -- primary location
+    PRI TINYINT(1) DEFAULT 0,
+    PRIMARY KEY (LOC, ENT),
+    FOREIGN KEY (LOC) REFERENCES LOC(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE
+) ENGINE=INNODB;
 
 -- object location with object count / numbers
 DROP TABLE IF EXISTS LOC_OBJ;
@@ -201,7 +225,7 @@ CREATE TABLE LOC_OBJ (
     PRIMARY KEY (LOC, OBJ),
     FOREIGN KEY (LOC) REFERENCES LOC(ID) ON DELETE CASCADE,
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- authors of objects
 DROP TABLE IF EXISTS AUT_OBJ;
@@ -211,7 +235,7 @@ CREATE TABLE AUT_OBJ (
     PRIMARY KEY (PER, OBJ),
     FOREIGN KEY (PER) REFERENCES PER(ID) ON DELETE CASCADE,
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- owners of objects
 DROP TABLE IF EXISTS OWN_OBJ;
@@ -223,7 +247,7 @@ CREATE TABLE OWN_OBJ (
     PRIMARY KEY (PER, OBJ),
     FOREIGN KEY (PER) REFERENCES PER(ID) ON DELETE CASCADE,
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- exhibition - person / institution
 DROP TABLE IF EXISTS EXH_PER;
@@ -234,7 +258,7 @@ CREATE TABLE EXH_PER (
     PRIMARY KEY (EXH, PER),
     FOREIGN KEY (EXH) REFERENCES EXH(ID) ON DELETE CASCADE,
     FOREIGN KEY (PER) REFERENCES PER(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 DROP TABLE IF EXISTS EXH_OBJ;
 CREATE TABLE EXH_OBJ (
@@ -243,7 +267,7 @@ CREATE TABLE EXH_OBJ (
     PRIMARY KEY (EXH, OBJ),
     FOREIGN KEY (EXH) REFERENCES EXH(ID) ON DELETE CASCADE,
     FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 
 -- ============================================================
 -- ## images
@@ -253,18 +277,18 @@ DROP TABLE IF EXISTS IMG;
 CREATE TABLE IMG (
     ID BIGINT NOT NULL,
     PRIMARY KEY (ID)
-);
+) ENGINE=INNODB;
 
 -- object image assignment
-DROP TABLE IF EXISTS OBJ_IMG;
-CREATE TABLE OBJ_IMG (
-    OBJ BIGINT NOT NULL,
+DROP TABLE IF EXISTS ENT_IMG;
+CREATE TABLE ENT_IMG (
+    ENT BIGINT NOT NULL,
     IMG BIGINT NOT NULL,
     ORD INT NOT NULL DEFAULT 1,
-    PRIMARY KEY (OBJ, IMG),
-    FOREIGN KEY (OBJ) REFERENCES OBJ(ID) ON DELETE CASCADE,
+    PRIMARY KEY (ENT, IMG),
+    FOREIGN KEY (ENT) REFERENCES ENT(ID) ON DELETE CASCADE,
     FOREIGN KEY (IMG) REFERENCES IMG(ID) ON DELETE CASCADE
-);
+) ENGINE=INNODB;
 -- ============================================================
 -- ## sequences
 -- ============================================================
@@ -273,8 +297,8 @@ CREATE TABLE SEQ (
     ID TINYINT NOT NULL,
     NUM BIGINT NOT NULL,
     PRIMARY KEY (ID)
-);
-INSERT INTO SEQ VALUES(1, 0);
+) ENGINE=INNODB;
+INSERT INTO SEQ VALUES(1, 0) ENGINE=INNODB;
 -- ============================================================
 -- ## users
 -- ============================================================
@@ -301,15 +325,15 @@ CREATE TABLE USR
     FOREIGN KEY (RC) REFERENCES ROLE(RC) ON DELETE CASCADE 
 ) CHARACTER SET latin1;
 
-drop table if exists USR_OBJ;
-create table USR_OBJ (
+drop table if exists USR_ENT;
+create table USR_ENT (
     USR BIGINT not null,
-    OBJ BIGINT not null,
+    ENT BIGINT not null,
     TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key (OBJ, USR),
+    primary key (ENT, USR),
     foreign key (USR)  references USR(ID) on delete cascade,
-    foreign key (OBJ)  references OBJ(ID) on delete cascade
-);
+    foreign key (ENT)  references ENT(ID) on delete cascade
+) ENGINE=INNODB;
 
 -- ============================================================
 -- ## Assigned Database Users
@@ -322,6 +346,7 @@ CREATE USER 'aut'@'%' IDENTIFIED BY 'aa';
 grant select on jagoda.* to 'aut'@'%';
 
 -- GENERATED GRANT>
+grant select, insert, delete         on jagoda.ENT                  to 'aut'@'%';
 grant select                         on jagoda.LANG                 to 'aut'@'%';
 grant select                         on jagoda.TTP                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.TTL                  to 'aut'@'%';
@@ -338,41 +363,43 @@ grant select, insert, delete         on jagoda.GRP_OBJ              to 'aut'@'%'
 grant select, insert, delete         on jagoda.PER                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.LOC                  to 'aut'@'%';
 grant select, insert, delete         on jagoda.EXH                  to 'aut'@'%';
+grant select, insert, delete         on jagoda.LOC_ENT              to 'aut'@'%';
 grant select, insert, delete         on jagoda.LOC_OBJ              to 'aut'@'%';
 grant select, insert, delete         on jagoda.AUT_OBJ              to 'aut'@'%';
 grant select, insert, delete         on jagoda.OWN_OBJ              to 'aut'@'%';
 grant select, insert, delete         on jagoda.EXH_PER              to 'aut'@'%';
 grant select, insert, delete         on jagoda.EXH_OBJ              to 'aut'@'%';
 grant select, insert, delete         on jagoda.IMG                  to 'aut'@'%';
-grant select, insert, delete         on jagoda.OBJ_IMG              to 'aut'@'%';
+grant select, insert, delete         on jagoda.ENT_IMG              to 'aut'@'%';
 grant select, insert, delete         on jagoda.SEQ                  to 'aut'@'%';
 grant select                         on jagoda.ROLE                 to 'aut'@'%';
 grant select, insert, delete         on jagoda.USR                  to 'aut'@'%';
-grant select, insert, delete         on jagoda.USR_OBJ              to 'aut'@'%';
+grant select, insert, delete         on jagoda.USR_ENT              to 'aut'@'%';
+grant update (TST                                     ) on jagoda.ENT                  to 'aut'@'%';
 grant update (LABEL, ORD                              ) on jagoda.LANG                 to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.TTP                  to 'aut'@'%';
-grant update (STD, TST                                ) on jagoda.TTL                  to 'aut'@'%';
+grant update (STD                                     ) on jagoda.TTL                  to 'aut'@'%';
 grant update (LABEL                                   ) on jagoda.TTL_ELEM             to 'aut'@'%';
-grant update (TST                                     ) on jagoda.TXT                  to 'aut'@'%';
 grant update (CONT                                    ) on jagoda.TXT_ELEM             to 'aut'@'%';
-grant update (CPC, TST                                ) on jagoda.CAP                  to 'aut'@'%';
+grant update (CPC                                     ) on jagoda.CAP                  to 'aut'@'%';
 grant update (CAP, LABEL                              ) on jagoda.CAP_ELEM             to 'aut'@'%';
-grant update (TTL, DIM1, DIM2, DIM3, TST              ) on jagoda.OBJ                  to 'aut'@'%';
+grant update (TTL, DIM1, DIM2, DIM3                   ) on jagoda.OBJ                  to 'aut'@'%';
 grant update (WHAT, CRDT, VAL, PUB                    ) on jagoda.ART                  to 'aut'@'%';
-grant update (TTL, TST                                ) on jagoda.GRP                  to 'aut'@'%';
+grant update (TTL                                     ) on jagoda.GRP                  to 'aut'@'%';
 grant update (GRP                                     ) on jagoda.GRP_OBJ              to 'aut'@'%';
 grant update (LABEL, INFO                             ) on jagoda.PER                  to 'aut'@'%';
 grant update (LABEL, INFO                             ) on jagoda.LOC                  to 'aut'@'%';
 grant update (TTL, BEG, END                           ) on jagoda.EXH                  to 'aut'@'%';
+grant update (LOC, PRI                                ) on jagoda.LOC_ENT              to 'aut'@'%';
 grant update (LOC, PCS                                ) on jagoda.LOC_OBJ              to 'aut'@'%';
 grant update (PER                                     ) on jagoda.AUT_OBJ              to 'aut'@'%';
 grant update (PER, PCS                                ) on jagoda.OWN_OBJ              to 'aut'@'%';
 grant update (EXH, PER, ORD                           ) on jagoda.EXH_PER              to 'aut'@'%';
 grant update (EXH                                     ) on jagoda.EXH_OBJ              to 'aut'@'%';
-grant update (ORD                                     ) on jagoda.OBJ_IMG              to 'aut'@'%';
+grant update (ORD                                     ) on jagoda.ENT_IMG              to 'aut'@'%';
 grant update (NUM                                     ) on jagoda.SEQ                  to 'aut'@'%';
 grant update (RC, LABEL                               ) on jagoda.ROLE                 to 'aut'@'%';
 grant update (NAME, PASS, RC                          ) on jagoda.USR                  to 'aut'@'%';
-grant update (TST                                     ) on jagoda.USR_OBJ              to 'aut'@'%';
+grant update (TST                                     ) on jagoda.USR_ENT              to 'aut'@'%';
 -- <GENERATED GRANT
 
