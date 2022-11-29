@@ -59,7 +59,7 @@ def saveImg(file, objId=None):
         if objId is None:
             db().addImg(id)
         else:
-            db().addObjImg(objId, id)
+            db().addEntImg(objId, id)
         return id
 
 def checkImgFolders():

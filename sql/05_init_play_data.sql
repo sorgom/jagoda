@@ -3,6 +3,8 @@
 -- ============================================================
 SET foreign_key_checks = 1;
 
+delete from ENT;
+
 -- Languages
 REPLACE INTO LANG VALUES
     ('en', 'English',  0),

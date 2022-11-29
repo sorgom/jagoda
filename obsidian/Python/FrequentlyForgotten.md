@@ -12,6 +12,8 @@ last element of list
 >>> data = [10, 2, 3, 8]                                                                                                                   >>> data[-1]                                                                                                                               8                                                                                                                                          >>> 
 ```
 
+## json
 
+[W3C Python JSON](https://www.w3schools.com/python/python_json.asp)
 
-
+[ JSON encoder and decoder](https://docs.python.org/3/library/json.html)

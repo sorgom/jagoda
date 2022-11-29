@@ -17,7 +17,7 @@ def login():
         if id > 0:
             session['ID']  = id
             session['USR'] = usr
-            db().reduceObjRecs()
+            db().reduceEntRecs()
             return redirect('/')
     return render_template('aut_login.htm')
 

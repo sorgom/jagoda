@@ -9,26 +9,26 @@
 --  - all objects without image
 
 -- all objects with 1st image
-drop view if exists OBJ_IMG_1ST;
-create view OBJ_IMG_1ST as
-select T1.OBJ, imgFileMini(T1.IMG) as SRC from OBJ_IMG as T1
+drop view if exists ENT_IMG_1ST;
+create view ENT_IMG_1ST as
+select T1.ENT, imgFileMini(T1.IMG) as SRC from ENT_IMG as T1
 inner join
-(select OBJ, min(ORD) as MINORD from OBJ_IMG group by OBJ) as T2
-ON T1.OBJ = T2.OBJ AND T1.ORD = T2.MINORD;
+(select ENT, min(ORD) as MINORD from ENT_IMG group by ENT) as T2
+ON T1.ENT = T2.ENT AND T1.ORD = T2.MINORD;
 
 --  all objects with assigend or default image
 drop view if exists OBJ_IMG_DEF;
 create view OBJ_IMG_DEF as
 select T1.ID as OBJ, coalesce(T2.SRC, imgFileMini(0)) as SRC 
 from OBJ as T1
-left join OBJ_IMG_1ST as T2
-on T1.ID = T2.OBJ
+left join ENT_IMG_1ST as T2
+on T1.ID = T2.ENT
 ;
 
 drop view if exists UNUSED_IMGS;
 create view UNUSED_IMGS as
 SELECT T1.ID, imgFileMini(T1.ID) as SRC, -1 as ORD FROM IMG AS T1
-LEFT JOIN  OBJ_IMG AS T2 
+LEFT JOIN  ENT_IMG AS T2 
 ON T2.IMG = T1.ID
 WHERE T2.IMG IS NULL
 ORDER BY T1.ID;
@@ -44,12 +44,14 @@ on T1.TPC = T2.TPC;
 -- all assigned title elements with order
 drop view if exists TTL_ELEM_ORD;
 create view TTL_ELEM_ORD as
-select T1.*, T2.ORD, T3.* 
+select T1.*, T2.ORD, T3.*, T4.TST 
 from TTL_ELEM as T1
 inner join LANG as T2
 on T1.ILC = T2.ILC
 inner join TTL_INFO as T3
 on T1.TTL = T3.ID
+inner join ENT as T4
+on T4.ID = T1.TTL
 ;
 
 -- first available language element
@@ -63,12 +65,14 @@ on T1.TTL = T2.TTL and T1.ORD = T2.MINORD
 --  all objects with (default or first) image and title
 drop view if exists OBJ_IMG_TTL;
 create view OBJ_IMG_TTL as
-select T1.*, T2.LABEL, T2.STD, T2.STDABLE, T3.SRC
+select T1.*, T2.LABEL, T2.STD, T2.STDABLE, T3.SRC, T4.TST
 from OBJ as T1
 inner join TTL_1ST as T2
 on T1.TTL = T2.TTL
 inner join OBJ_IMG_DEF as T3
 on T3.OBJ = T1.ID
+inner join ENT as T4
+on T4.ID = T1.ID
 ;
 
 --  all articles with (default or first) image and label

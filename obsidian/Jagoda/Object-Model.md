@@ -13,14 +13,14 @@
 - can represent a standard container type
 ## Person / institution (PER)
 - has
-	- a name
+	- a name (can be different in different languages)
 	- additional information, e.g.
 		- telephone / cell phone
 		- e-mail
 - can have several locations
 	- one (e.g. first) of witch is main address
 ## Location (LOC)
-- address
+- address (can be different by language)
 - telephone
 ## Person locations (PER_LOC)
 refers:

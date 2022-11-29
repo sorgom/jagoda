@@ -13,8 +13,7 @@ drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
-drop procedure if exists addObjImg;
-drop procedure if exists getUnusedImgs;
+drop procedure if exists addEntImg;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
 -- <GENERATED DROP
@@ -36,14 +35,7 @@ CREATE PROCEDURE initSeq()
 BEGIN
     DECLARE num BIGINT;
     SELECT GREATEST(
-         IFNULL((SELECT MAX(ID) FROM TTL), 0),
-         IFNULL((SELECT MAX(ID) FROM TXT), 0),
-         IFNULL((SELECT MAX(ID) FROM CAP), 0),
-         IFNULL((SELECT MAX(ID) FROM OBJ), 0),
-         IFNULL((SELECT MAX(ID) FROM GRP), 0),
-         IFNULL((SELECT MAX(ID) FROM PER), 0),
-         IFNULL((SELECT MAX(ID) FROM LOC), 0),
-         IFNULL((SELECT MAX(ID) FROM EXH), 0),
+         IFNULL((SELECT MAX(ID) FROM ENT), 0),
          IFNULL((SELECT MAX(ID) FROM IMG), 0)
     ) INTO @num;
     REPLACE INTO SEQ VALUES(1, @num);
@@ -67,13 +59,14 @@ END :)
 -- add new title
 create procedure addTtl(pID bigint, pTPC CHAR(2))
 BEGIN
+    insert into ENT(ID) values (pID);
     insert into TTL(ID, TPC) values (pID, pTPC);
 END :)
 -- add new object
 create procedure addObj(pID bigint, pTTL bigint)
 BEGIN
+    insert into ENT(ID) values (pID);
     insert into OBJ(ID, TTL) values (pID, pTTL);
-    commit;
 END :)
 
 -- set title standard
@@ -104,41 +97,30 @@ END :)
 create procedure getUsrArticles(pUSR BIGINT)
 begin
     select ID, SRC, LABEL, WLABEL from ART_FULL
-    inner join USR_OBJ
-    on USR_OBJ.OBJ = ART_FULL.ID and USR_OBJ.USR = pUSR
-    order by USR_OBJ.TST desc
-    limit 50;
+    inner join USR_ENT
+    on USR_ENT.ENT = ART_FULL.ID and USR_ENT.USR = pUSR
+    order by USR_ENT.TST desc;
 end :)
 
 -- ============================================================
 -- images
 -- ============================================================
 
-
 -- create new objet image assignment
-CREATE PROCEDURE addObjImg(pOBJ BIGINT, pIMG BIGINT)
+CREATE PROCEDURE addEntImg(pEnt BIGINT, pIMG BIGINT)
 BEGIN
     DECLARE vORD INT;
 
     REPLACE INTO IMG VALUES(pIMG); 
     
-    SELECT MAX(ORD) FROM OBJ_IMG
-    WHERE OBJ = pOBJ
+    SELECT MAX(ORD) FROM ENT_IMG
+    WHERE ENT = pEnt
     INTO @vORD;
 
     SET @vORD = IFNULL(@vORD, -1);
     SET @vORD = @vORD + 1;
 
-    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, @vORD);
-END :)  
--- retrieve all unassigned images
-CREATE PROCEDURE getUnusedImgs()
-BEGIN
-    SELECT T1.ID, imgFileMini(T1.ID) as SRC, -1 as ORD FROM IMG AS T1
-    LEFT JOIN  OBJ_IMG AS T2 
-    ON T2.IMG = T1.ID
-    WHERE T2.IMG IS NULL
-    ORDER BY T1.ID;
+    REPLACE INTO ENT_IMG VALUES (pEnt, pIMG, @vORD);
 END :)  
 -- ============================================================
 -- authors / users
@@ -173,8 +155,7 @@ grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
-grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
-grant execute on procedure jagoda.getUnusedImgs          to 'aut'@'%';
+grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
 -- <GENERATED GRANT

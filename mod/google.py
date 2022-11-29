@@ -13,10 +13,13 @@ def getTr():
 
 def translate(src:str, dest:str, text:str) -> str:
     debug(src, dest, text)
-    res = getTr().translate(text, src=src, dest=dest)
-    debug('done')
-    if res:
-        return res.text
-    return ''
-
+    try:
+        res = getTr().translate(text, src=src, dest=dest)
+        debug('done')
+        if res:
+            return res.text
+        return ''
+    except:
+        return ''
+    
 
