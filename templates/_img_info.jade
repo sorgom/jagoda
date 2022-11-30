@@ -1,0 +1,8 @@
+.imgInfo
+    .exifData
+        {% for tag, val in data %}
+        div
+            span {{tag}}
+            span {{val}}
+        {% endfor %}
+    img(src="{{src}}", alt="Image {{id}}")

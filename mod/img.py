@@ -47,5 +47,5 @@ def _imgInfo(id:int):
     src  = db().getImgFileFull(id)
     data = getExif(id)
     if src and data:
-        return render_template('_img_info.htm', id=id, src=src, data=data)
+        return render_template('_img_info.jade', id=id, src=src, data=data)
     return ERR_DATA
