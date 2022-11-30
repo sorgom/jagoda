@@ -1,0 +1,6 @@
+{% if info['STD'] %}
+.buttons
+    p This is a standard title.
+    button(onclick="popup('/_objOwnTtl/{{objId}}')") Create individual title
+{% endif %}
+include _ttl.jade

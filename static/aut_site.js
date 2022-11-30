@@ -62,17 +62,15 @@ function getAjax(route, func)
 function checkLogin()
 {
     debug('checkLogin');
-    if (!document.loggedIn) location.replace('/login');
-    document.loggedIn = false;
+    // if (!document.loggedIn) location.replace('/login');
     getAjax('/_loggedIn', rt => {
-        if (rt === 'YES') document.loggedIn = true; 
-        else location.replace('/login');
+        if (rt !== 'YES') location.replace('/login'); 
     })
 }
 
 function whatchLogin()
 {
-    document.loggedIn = true;
+    debug('whatchLogin')
     setInterval(checkLogin, 10000);
 }
 
@@ -607,3 +605,4 @@ function printContent(content)
     pri.print();
     pri.onafterprint = () => { document.body.removeChild(ifr); }
 }
+

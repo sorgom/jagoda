@@ -1,0 +1,12 @@
+mixin iframe(name)
+    iframe(src='{{ name }}', onload="this.style.visibility = 'visible';")
+mixin link(href, name)
+    li: a(href='http://{{ href }}', target='_blank') {{ name }}
+mixin meta(name, content)
+    meta(name=name, content=content)
+mixin script0(name)
+    script(src='/static/js/{{ name }}.js')
+mixin script(name)
+    script(src='/static/{{ name }}.js')
+mixin style(name)
+    link(rel='stylesheet', href='/static/{{ name }}.css')

@@ -1,9 +1,11 @@
 from flask import session, redirect, render_template
-from mod.base import post, rf
+from mod.base import post, rf, debug
 from mod.MyDB import db
 
 def getUid() -> int:
-    return session.get('ID', 0)
+    id = session.get('ID', 0)
+    debug(id)
+    return id
 
 def loggedIn():
     return getUid() != 0
@@ -15,6 +17,8 @@ def login():
         usr = rf('USR')
         id = db().getUsrId(usr, rf('PWD'))
         if id > 0:
+            debug(id)
+            debug(usr)
             session['ID']  = id
             session['USR'] = usr
             db().reduceEntRecs()
@@ -41,4 +45,4 @@ def logout():
     return relogin()
 
 def _loggedIn():
-    return 'YES' if loggedIn() else 'NO'    
+    return 'YES' if loggedIn() else ''    

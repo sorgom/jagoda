@@ -204,6 +204,7 @@ class MyDB(MySQL):
 
     #   title ID, STD, STDABLE
     def getObjTtl(self, objId:int):
+        debug(id)
         return self.getOneDict('select TTL, STD, STDABLE from OBJ_IMG_TTL where ID = %s limit 1', objId)
 
     def addObjTtl(self, id:int):

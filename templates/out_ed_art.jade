@@ -1,0 +1,37 @@
+{% extends 'aut_base.jade' %}
+block content
+    #obj_top
+        #obj_display
+            .img.objImg
+                img#objImg(src="{{obj['SRC']}}", alt="object {{objId}}")
+            p#objTitle {{obj['LABEL']}}
+            p#objWhat {{obj['WLABEL']}}
+            p#objYear {{obj['YEAR']}}
+            p#objDims {{obj['DIMS']}}
+        #obj_ed
+            ul
+                li QRCode
+                ul
+                    li: a(onclick="popup('/_qrc_view/{{objId}}/{{what}}', true)") view
+                    li: a(onclick="printAjax('/_qrc_print/{{objId}}/{{what}}')") print
+                li Edit
+                ul 
+                    li: a(onclick="popup('/_objSelWhat/{{objId}}', true)") What it is
+                    li: a(onclick="popup('/_objDims/{{objId}}', true)") Dimensions
+                    li: a(onclick="popup('/_objTtl/{{objId}}')") Title  
+    .clr         
+    span#objId(style="visibility: hidden;") {{objId}}
+    h2 Images of object
+    p.label Upload image files for object from your PC (klick or drag here):
+    input.dropZone(type="file", multiple=true, onchange="uploadImgs(this, 'objImgs', {{objId}});", accept="{{acceptImgTypes}}") 
+    p.label Re-order images of object:
+    .imgDisplayFrame
+        #objImgs.imgDisplay.objImgs
+        .imgDisplayEnd 
+    p.label Unassigned images (drag up to assign):
+    .imgDisplayFrame
+        #freeImgs.imgDisplay.imgDisplayFix
+        .imgDisplayEnd 
+    script 
+        | document.body.onload = () => { loadObjImgs('objImgs', {{objId}}); loadUnusedImgs('freeImgs'); }
+         

@@ -1,0 +1,38 @@
+{% from 'mixins.jade' import meta, script, style %}
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        block css
+            +style('aut_site')
+    body
+        #popup.modal
+            #popup_head
+                h3#popup_title
+                button(onclick="closePopup()") Close / ESC
+            #popup_content
+        #cover.modal.wumpel
+        #menu
+            .menu
+                #usr
+                    h3 Author
+                    ul
+                        li Login: {{ session['USR'] }}
+                        li: a(href="/logout") Logout
+                        li: a(href="/pwd") Change Password
+                        li: a(href="/") Top
+                #art
+                    h3 Articles
+                    ul
+                        li: a(href="/newArt") New Article
+                        li: a(onclick="popup('/_edArtList')") Edit Article
+                        li: a(onclick="popup('/_edUsrArtList')") My recent Articles
+        .clr
+        div 
+            h2 {{title}} {{"#%d" % id if id}} 
+            #content
+                block content 
+        +script('aut_site')
+    script 
+        | document.onload = whatchLogin();

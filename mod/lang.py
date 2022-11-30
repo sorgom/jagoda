@@ -54,8 +54,8 @@ def saveTtl(id:int):
     debug(id)
     getLangs()
     db().setTtl(id, [[ilc, rf(ilc)] for ilc in ILCS])
-    if rf('stdable'):
-        db().setTtlStd(id, rf('std'))
+    if rf('STDABLE'):
+        db().setTtlStd(id, rf('STD'))
 
 def getTtl(id:int):
     getLangs()
@@ -74,15 +74,15 @@ def _ttls(tpc:str):
     if not loggedIn(): return ERR_AUTH
     return renderBase('_lang_items.htm', tpc=tpc, items=getTtls(tpc))
 
-#   lising of elements of a lang item
+#   lising of elements of a title
 def _ttl(id:int):
     debug(id)
     if not loggedIn(): return ERR_AUTH
-    item = db().getTtlInfo(id)
-    debug('item:', item)
-    return render_template('ttl.htm', itemId=id, data=getTtl(id), item=item, submit=f'_setTtl/{id}')
+    info = db().getTtlInfo(id)
+    debug('info:', info)
+    return debugTemplate('_ttl.jade', itemId=id, data=getTtl(id), info=info, submit=f'_setTtl/{id}')
 
-#   set language item element data
+#   set title element data
 #   return language table of element type
 def _setTtl(id:int):
     if not loggedIn(): return ERR_AUTH
@@ -96,9 +96,9 @@ def _newTtl(tpc:str):
     debug(tpc)
     if not loggedIn(): return ERR_AUTH
     id = db().getNextId()
-    item = db().getNewTtlInfo(tpc)
+    info = db().getNewTtlInfo(tpc)
     debug('new id:', id)
-    return render_template('ttl.htm', id=id, data=getTtl(id), item=item, submit=f'_addTtl/{tpc}/{id}')
+    return debugTemplate('_ttl.jade', id=id, data=getTtl(id), info=info, submit=f'_addTtl/{tpc}/{id}')
 
 #   ajax post: new language entry
 def _addTtl(tpc:str, id:int):

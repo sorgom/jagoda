@@ -22,4 +22,5 @@ def debug(*args):
     print(f'## {_getframe(1).f_code.co_name}>', *args)
 
 def debugTemplate(template:str, **args):
+    debug(template)
     return escape(render_template(template, **args))

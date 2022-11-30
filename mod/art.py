@@ -28,8 +28,9 @@ def _newArtTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
-    item  = db().getNewTtlInfo('OT')
-    return render_template('ttl.htm', objId=objId, id=ttlId, data=getTtl(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
+    info  = db().getNewTtlInfo('OT')
+    return render_template('_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
+    # return debugTemplate('_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):
@@ -62,7 +63,7 @@ def _objDims(objId:int):
     return render_template('_obj_dims.htm', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
 
 def edArt(objId:int):
-    return renderArt(objId, 'aut_obj_imgs.htm')
+    return renderArt(objId, 'out_ed_art.jade')
 
 def _objSelWhat(objId:int):
     items = db().getWhats()
@@ -86,21 +87,22 @@ def _edUsrArtList():
 
 
 def _objTtl(objId:int):
-    ttl = db().getObjTtl(objId)
+    info = db().getObjTtl(objId)
+    debug(info)
     if post():
-        saveTtl(ttl['TTL'])
-        db().touchObj(objId)
+        saveTtl(info['TTL'])
+        db().touchEnt(objId)
         return db().getObjLabel(objId)
-    data = getTtl(ttl['TTL'])
-    return render_template('_obj_titel.htm', objId=objId, data=data, ttl=ttl, submit=f'_objTtl/{objId}', field='objTitle')
+    data = getTtl(info['TTL'])
+    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, submit=f'_objTtl/{objId}', field='objTitle')
 
 def _objOwnTtl(objId:int):
     if post():
         ttlId = rf('TTL')
         saveTtl(ttlId)
         return db().setObjTtl(objId, ttlId)
-    ttl = db().newObjTtl()
-    debug(ttl)
-    data = getTtl(ttl['TTL'])
-    return render_template('_obj_titel.htm', objId=objId, data=data, ttl=ttl, submit=f'_objOwnTtl/{objId}', field='objTitle')
+    info = db().newObjTtl()
+    debug(info)
+    data = getTtl(info['TTL'])
+    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, submit=f'_objOwnTtl/{objId}', field='objTitle')
 

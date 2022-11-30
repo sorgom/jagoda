@@ -6,11 +6,15 @@ from mod.base import *
 from mod import img, login, lang, saveImg, art, qrc
 from mod.config import *
 
+from flask_compress import Compress
+
+
 #   industrial run:
 # from gevent.pywsgi import WSGIServer
 
 
 app = Flask(__name__, template_folder=TEMPLATES_FOLDER)
+app.jinja_env.add_extension('pyjade.ext.jinja.PyJadeExtension')
 
 # secret string for session cooky
 app.secret_key = 'ein Hund kam in die Kueche'
@@ -22,6 +26,8 @@ app.config['MYSQL_DB']          = 'jagoda'
 app.config['MYSQL_AUTOCOMMIT']  = 1
 
 setDB(app, login.getUid)
+
+Compress(app)
 
 def route(route:str, meth, **opts):
     app.add_url_rule(route, view_func=meth, **opts)
@@ -36,10 +42,9 @@ def index():
     else:
         return redirect('/login')
 
-@app.route('/t')
-def testData():
-    db().testData()
-    return redirect('/')
+@app.route('/a')
+def arno():
+    return render_template('aut_base.jade')
 
 @app.route('/w')
 def testWumpel():

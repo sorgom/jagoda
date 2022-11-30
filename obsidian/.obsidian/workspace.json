@@ -42,9 +42,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "dd2823e54fc7ac9d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Python/venv_and pip_requiremts_txt.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -110,7 +122,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/FrequentlyForgotten.md",
+                "file": "Python/venv_and pip_requiremts_txt.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +139,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/FrequentlyForgotten.md",
+                "file": "Python/venv_and pip_requiremts_txt.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +162,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/FrequentlyForgotten.md"
+                "file": "Python/venv_and pip_requiremts_txt.md"
               }
             }
           }
@@ -161,12 +173,12 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "8cd3a192c1d9e65f",
+  "active": "d01f8f8dae45d04b",
   "lastOpenFiles": [
+    "Python/FrequentlyForgotten.md",
     "Jagoda/Language-Object-Model.md",
     "Python/unicode_utf8.md",
     "Jagoda/UseCases_01.md",
-    "Python/FrequentlyForgotten.md",
     "Jagoda/Object-Model.md",
     "general/md_file_ syntax.md",
     "MySQL/MySQL_cursor.md",
