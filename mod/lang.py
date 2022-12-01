@@ -4,7 +4,7 @@ from mod.MyDB import db
 from mod.login import loggedIn 
 from mod.base import *
 from mod.google import translate
-
+from mod.popups import *
 
 LANGS = None
 ILCS  = None
@@ -72,7 +72,7 @@ def renderBase(template:str, **args):
 #   listing of all lang items of a type
 def _ttls(tpc:str):
     if not loggedIn(): return ERR_AUTH
-    return renderBase('_lang_items.htm', tpc=tpc, items=getTtls(tpc))
+    return renderBase('_ttls.jade', tpc=tpc, items=getTtls(tpc))
 
 #   lising of elements of a title
 def _ttl(id:int):
@@ -80,7 +80,7 @@ def _ttl(id:int):
     if not loggedIn(): return ERR_AUTH
     info = db().getTtlInfo(id)
     debug('info:', info)
-    return debugTemplate('_ttl.jade', itemId=id, data=getTtl(id), info=info, submit=f'_setTtl/{id}')
+    return debugTemplate('_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setTtl/{id}'))
 
 #   set title element data
 #   return language table of element type
@@ -98,7 +98,7 @@ def _newTtl(tpc:str):
     id = db().getNextId()
     info = db().getNewTtlInfo(tpc)
     debug('new id:', id)
-    return debugTemplate('_ttl.jade', id=id, data=getTtl(id), info=info, submit=f'_addTtl/{tpc}/{id}')
+    return debugTemplate('_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_addTtl/{tpc}/{id}'))
 
 #   ajax post: new language entry
 def _addTtl(tpc:str, id:int):

@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 from hashlib import md5 as libmd5
 from mod.base import debug
 import random
+from mod.format import formatDims
 
 __mydb__ = None
 
@@ -173,13 +174,8 @@ class MyDB(MySQL):
 
     ## objects
     @staticmethod
-    def dimStrFromList(vals:list):
-        return ' x '.join(map(str, vals))
-
-    @staticmethod
     def dimStrFromDict(res):
-        print(res)
-        return MyDB.dimStrFromList([res[k] for k in DIM_FIELDS])
+        return formatDims([res[k] for k in DIM_FIELDS])
 
     def touchEnt(self, id:int):
         self.call('update ENT set TST = CURRENT_TIMESTAMP where ID = %s', id)

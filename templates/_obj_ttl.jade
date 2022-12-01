@@ -4,3 +4,26 @@
     button(onclick="popup('/_objOwnTtl/{{objId}}')") Create individual title
 {% endif %}
 include _ttl.jade
+//- form#popup_form(method="post", onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;")
+//-     table.lel
+//-         {% for ilc, label, value in data %}
+//-         tr
+//-             td {{label}}
+//-             td 
+//-                 textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}
+//-         {% endfor %}
+//-     {% if info['STD'] %}
+//-     input(type="hidden", name="STD", value="1")
+//-     {% else %}
+//-     input(type="checkbox", id="STD", name="STD")
+//-     label(for="STD") Use as standard title
+//-     {% endif %} 
+//-     input(type="hidden", name="tpc", value="{{tpc}}")
+//-     input(type="hidden", name="STDABLE", value="{{info['STDABLE']}}")
+//-     input(type="hidden", name="objId", value="{{objId}}")
+//-     input(type="hidden", name="TTL", value="{{info['TTL']}}")
+//- .buttons
+//-     button(onclick="getGoogle()") google translate
+//-     input(type="submit", form="popup_form", value="Save Changes")
+//-     p#popup_info
+

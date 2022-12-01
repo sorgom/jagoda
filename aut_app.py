@@ -42,13 +42,9 @@ def index():
     else:
         return redirect('/login')
 
-@app.route('/a')
-def arno():
-    return render_template('aut_base.jade')
-
-@app.route('/w')
-def testWumpel():
-    db().nextWumpel()
+@app.route('/t')
+def testData():
+    db().testData()
     return redirect('/')
 
 # login

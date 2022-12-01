@@ -15,11 +15,11 @@ DB_CONFIG = {
 MAX_NUM_ENT_IMGS = 8
 
 # image max dimension (px) & quality: full
-IMG_SIZE_FULL = 800
+IMG_SIZE_FULL = 2000
 IMG_QUALITY_FULL = 80
 
 # mage max dimension (px) & quality: miniature
-IMG_SIZE_MINI = 160
+IMG_SIZE_MINI = 400
 IMG_QUALITY_MINI = 80
 
 # accepted image types (input accept)
@@ -34,6 +34,14 @@ RELEVANT_EXIF_TAGS = [
     ['Make', '271'],
     ['Model', '272']
 ]
+
+CONFIG = {
+  'IMG': {
+    'FULL': {'SIZE': 1600, 'QUALITY': 80},
+    'MINI': {'SIZE': 300,  'QUALITY': 80},
+    'ACCEPTED': 'image/jpeg'
+  }
+}
 
 # ============================================================
 # web site

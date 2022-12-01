@@ -3,6 +3,7 @@
 doctype html
 html(lang='en')
     head
+        title Authors Side - {{title}}
         meta(charset='UTF-8')
         block css
             +style('aut_site')
@@ -34,5 +35,5 @@ html(lang='en')
             #content
                 block content 
         +script('aut_site')
-    script 
-        | document.onload = whatchLogin();
+    //- script 
+    //-     | document.onload = whatchLogin();

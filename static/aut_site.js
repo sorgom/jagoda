@@ -233,6 +233,7 @@ function repRoute(route)
 {
     debug('repRoute', route);
     location.replace(route);
+    location.reload(); 
 }
 
 function setContent(html)

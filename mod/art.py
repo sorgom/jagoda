@@ -4,6 +4,7 @@ from mod.lang import renderBase, getTtl, saveTtl
 from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
+from mod.popups import *
 
 def renderArt(objId:int, template:str, what='art', **args):
     art = db().getArt(objId)
@@ -29,8 +30,7 @@ def _newArtTtl(objId:int):
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
     info  = db().getNewTtlInfo('OT')
-    return render_template('_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
-    # return debugTemplate('_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), item=item, submit=f'_newArt2/{objId}/{ttlId}', replace=f'/edArt/{objId}')
+    return render_template('_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):
@@ -94,7 +94,7 @@ def _objTtl(objId:int):
         db().touchEnt(objId)
         return db().getObjLabel(objId)
     data = getTtl(info['TTL'])
-    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, submit=f'_objTtl/{objId}', field='objTitle')
+    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objTtl/{objId}', 'objTitle'))
 
 def _objOwnTtl(objId:int):
     if post():
@@ -104,5 +104,5 @@ def _objOwnTtl(objId:int):
     info = db().newObjTtl()
     debug(info)
     data = getTtl(info['TTL'])
-    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, submit=f'_objOwnTtl/{objId}', field='objTitle')
+    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objOwnTtl/{objId}', 'objTitle'))
 

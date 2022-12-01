@@ -1,4 +1,4 @@
-form#popup_form(method="post", onsubmit="submitPopup('/{{submit}}', '{{replace}}');return false;")
+form#popup_form(method="post", onsubmit="{{onsubmit}};return false;")
     table.lel
         {% for ilc, label, value in data %}
         tr
