@@ -16,4 +16,4 @@ for fp in glob(path.join(tpldir, '_*.jade')):
     print(int, pop, fpop)
     with open(fpop, 'w') as fh:
         fh.write(text.replace('<<>>', int))
-        # replaceTemplates(old, new, False)
+        replaceTemplates(int, pop, False)

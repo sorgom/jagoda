@@ -101,10 +101,13 @@ function showPopup(small=false)
 {
     debug('showPopup');
     let cover = geti('cover');
+    let popup = geti('popup');
+
+    if (!(cover && popup)) return;
+
     cover.style.height = document.documentElement.scrollHeight + 'px';
     cover.style.visibility = 'visible';
-
-    let popup =  geti('popup');
+    
     let ih = window.innerHeight
     let h = Math.round(ih * 0.9);
     let s = Math.round(window.scrollY + ih * 0.03);
@@ -123,11 +126,7 @@ function showPopup(small=false)
         popup.style.width = '95%';
     }
 
-    let cont = geti('popup_content');
-    cont.scrollTop = 0; 
-
     document.body.style.overflow = 'hidden';
-
     document.addEventListener('keydown', escHandler);
 }
 
@@ -157,11 +156,13 @@ function popup(route, small=false)
 {
     debug('popup: ' + route);
     getAjax(route, rt => {
-        let pc = geti('popup_content');
-        if (pc)
+        let pop = geti('popup');
+        if (pop)
         {
-            pc.innerHTML = rt;
+            pop.innerHTML = rt;
             showPopup(small)
+            let cont = geti('popup_content');
+            if (cont) cont.scrollTop = 0; 
             let pf = geti('popup_form');
             if (pf) focusForm(pf);
         }

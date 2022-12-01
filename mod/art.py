@@ -23,14 +23,14 @@ def _newArtStdTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     items = db().getStdTtls()
-    return render_template('_title_selector.jade', items=items, submit=f'_newArt2/{objId}', replace=f'/edArt/{objId}')
+    return render_template('popup_title_selector.jade', items=items, submit=f'_newArt2/{objId}', replace=f'/edArt/{objId}')
 
 def _newArtTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
     info  = db().getNewTtlInfo('OT')
-    return render_template('_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
+    return render_template('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):
@@ -59,15 +59,15 @@ def _objDims(objId:int):
         db().setObjDims(objId, rdims)
         return db().getObjDims(objId)
     
-    # return escape(render_template('_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims'))
-    return render_template('_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
+    # return escape(render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims'))
+    return render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
 
 def edArt(objId:int):
     return renderArt(objId, 'out_ed_art.jade')
 
 def _objSelWhat(objId:int):
     items = db().getWhats()
-    return render_template('_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='objWhat', items=items)
+    return render_template('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='objWhat', items=items)
 
 def _objSetWhat(objId:int, wId:int):
     db().setWhat(objId, wId)
@@ -80,10 +80,10 @@ def _objImg(objId:int):
 
 #   article listing for popups
 def _edArtList():
-    return render_template('_obj_selector.jade', items=db().getArtList(), action='edArt')
+    return render_template('popup_obj_selector.jade', items=db().getArtList(), action='edArt')
 
 def _edUsrArtList():
-    return render_template('_obj_selector.jade', items=db().getUsrArtList(), action='edArt')
+    return render_template('popup_obj_selector.jade', items=db().getUsrArtList(), action='edArt')
 
 
 def _objTtl(objId:int):
@@ -94,7 +94,7 @@ def _objTtl(objId:int):
         db().touchEnt(objId)
         return db().getObjLabel(objId)
     data = getTtl(info['TTL'])
-    return debugTemplate('popup_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objTtl/{objId}', 'objTitle'))
+    return render_template('popup_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objTtl/{objId}', 'objTitle'))
 
 def _objOwnTtl(objId:int):
     if post():
@@ -104,5 +104,5 @@ def _objOwnTtl(objId:int):
     info = db().newObjTtl()
     debug(info)
     data = getTtl(info['TTL'])
-    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objOwnTtl/{objId}', 'objTitle'))
+    return render_template('popup_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objOwnTtl/{objId}', 'objTitle'))
 

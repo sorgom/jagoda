@@ -1,7 +1,6 @@
 from flask import Flask, request, redirect, render_template
 
 from mod.MyDB import setDB, db
-from mod.genTemplates import TEMPLATES_FOLDER, genTemplates
 from mod.base import *
 from mod import img, login, lang, saveImg, art, qrc
 from mod.config import *
@@ -33,7 +32,7 @@ def route(route:str, meth, **opts):
     app.add_url_rule(route, view_func=meth, **opts)
 
 def preStart():
-    genTemplates()
+    pass
 
 @app.route('/')
 def index():
