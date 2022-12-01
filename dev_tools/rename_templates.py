@@ -27,18 +27,29 @@ def substSrc(fpath:str, rx:re.Pattern, new:str) -> bool:
             return True
     return False
 
-if len(argv) > 2:
-    old, new = list(map(path.basename, argv[1:3]))
+def _bnames(pOld, pNew):
+    return list(map(path.basename, [pOld, pNew]))
 
+def _replaceTemplates(old, new, inTempales=True):
+    rx = re.compile(r'\b' + re.escape(old) + r'\b')
+    for fpath in glob(f'{moddir}/*.py'):
+        substSrc(fpath, rx, new)
+    if inTempales:    
+        for fpath in glob(f'{tpldir}/*.jade'):
+            substSrc(fpath, rx, new)
+
+def replaceTemplates(pOld, pNew):
+    _replaceTemplates(*_bnames(pOld, pNew))
+
+def renameTemplates(pOld, pNew):
+    old, new = list(map(path.basename, [pOld, pNew]))
     oldp = path.join(tpldir, old)
     newp = path.join(tpldir, new)
 
-    if path.exists(oldp) and not path.exists(newp):
-        rx = re.compile('\\b(GEN)?' + re.escape(old) + '\\b')
-        for fpath in glob(f'{moddir}/*.py'):
-            substSrc(fpath, rx, new)
+    if path.exists(oldp) or path.exists(newp):
+        _replaceTemplates(old, new)
+        if not path.exists(newp):
+            renGit(oldp, newp)
 
-        for fpath in glob(f'{tpldir}/*.htm'):
-            substSrc(fpath, rx, new)
-
-        renGit(oldp, newp)
+if __name__ == '__main__' and len(argv) > 2:
+    renameTemplates(argv[1:3])

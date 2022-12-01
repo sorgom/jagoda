@@ -94,7 +94,7 @@ def _objTtl(objId:int):
         db().touchEnt(objId)
         return db().getObjLabel(objId)
     data = getTtl(info['TTL'])
-    return render_template('_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objTtl/{objId}', 'objTitle'))
+    return debugTemplate('popup_obj_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objTtl/{objId}', 'objTitle'))
 
 def _objOwnTtl(objId:int):
     if post():

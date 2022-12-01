@@ -47,6 +47,10 @@ def testData():
     db().testData()
     return redirect('/')
 
+@app.route('/p')
+def pop():
+    return render_template('popup_ttl.jade')
+
 # login
 route('/login',                         login.login,        methods=BOTH)
 route('/logout',                        login.logout                    )
