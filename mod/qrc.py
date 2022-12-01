@@ -17,7 +17,7 @@ def _renderQrc(template:str, id:int, what:str):
     return render_template(template, id=id, what=what, url=url, b64=b64)
 
 def _qrc_view(id:int, what:str='art'):
-    return _renderQrc('_qrcode_view.htm', id, what)
+    return _renderQrc('_qrcode_view.jade', id, what)
 
 def _qrc_print(id:int, what:str='art'):
-    return _renderQrc('_qrcode_print.htm', id, what)
+    return _renderQrc('_qrcode_print.jade', id, what)

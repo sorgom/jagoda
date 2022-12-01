@@ -54,9 +54,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "3d329063d9573ded",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Flask/Flask_servers.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -122,7 +134,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Python/venv_and pip_requiremts_txt.md",
+                "file": "Flask/Flask_servers.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -139,7 +151,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Python/venv_and pip_requiremts_txt.md",
+                "file": "Flask/Flask_servers.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -162,7 +174,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Python/venv_and pip_requiremts_txt.md"
+                "file": "Flask/Flask_servers.md"
               }
             }
           }
@@ -175,15 +187,15 @@
   },
   "active": "d01f8f8dae45d04b",
   "lastOpenFiles": [
+    "Python/venv_and pip_requiremts_txt.md",
+    "MySQL/MySQL_cursor.md",
     "Python/FrequentlyForgotten.md",
     "Jagoda/Language-Object-Model.md",
     "Python/unicode_utf8.md",
     "Jagoda/UseCases_01.md",
     "Jagoda/Object-Model.md",
     "general/md_file_ syntax.md",
-    "MySQL/MySQL_cursor.md",
     "VSCode/Memos.md",
-    "MySQL/json.md",
-    "MySQL/indexing.md"
+    "MySQL/json.md"
   ]
 }
