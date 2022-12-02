@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "MySQL/MySQL_cursor.md",
+                "file": "Python/arrays_and_sets.md",
                 "mode": "source",
                 "source": false
               }
@@ -67,8 +67,7 @@
               }
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -134,7 +133,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Flask/Flask_servers.md",
+                "file": "Python/arrays_and_sets.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +150,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Flask/Flask_servers.md",
+                "file": "Python/arrays_and_sets.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +173,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Flask/Flask_servers.md"
+                "file": "Python/arrays_and_sets.md"
               }
             }
           }
@@ -185,10 +184,10 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "d01f8f8dae45d04b",
+  "active": "9f758a587f67daa4",
   "lastOpenFiles": [
-    "Python/venv_and pip_requiremts_txt.md",
     "MySQL/MySQL_cursor.md",
+    "Python/venv_and pip_requiremts_txt.md",
     "Python/FrequentlyForgotten.md",
     "Jagoda/Language-Object-Model.md",
     "Python/unicode_utf8.md",

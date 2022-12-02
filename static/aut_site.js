@@ -34,10 +34,36 @@ function postAjax(fdata, route, func)
     xhr.send(fdata);
 }
 
+function postAjaxForm(form, route, func)
+{
+    postAjax(new FormData(form), route, func);
+}
+
+function getElementsPost(form, route)
+{
+    postAjaxForm(form, route, setLementsFromJson)
+}
+
+function getElementsGet(route)
+{
+    getAjax(route, setLementsFromJson)
+}
+
+function setLementsFromJson(json)
+{
+    debug('setLementsFromJson');
+    data = JSON.parse(rt);
+    debug(data);
+    Object.keys(hash).forEach( key => {
+        elem = geti(key);
+        if (elem) elem.textContent = data[key];
+    });
+}
+
 function postJson(data, route, func)
 {
     const js = JSON.stringify(data);
-    debug('json: ' + js);
+    debug('json:', js);
     let fd = new FormData();
     fd.set('json', js);
     postAjax(fd, route, func);
@@ -248,6 +274,8 @@ function setContent(html)
     }
     closePopup();   
 }
+
+
 
 function getGoogle()
 {

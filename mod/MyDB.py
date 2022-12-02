@@ -5,6 +5,8 @@ from mod.base import debug
 import random
 from mod.format import formatDims
 
+from datetime import timedelta, datetime
+
 __mydb__ = None
 
 DIM_FIELDS = [f'DIM{n}' for n in range(1,4)]
@@ -61,11 +63,15 @@ class MyDB(MySQL):
     def getFirstCol(self, sql:str, *args):
         return [ r[0] for r in self.get(sql, *args)]
 
+    def getDesc(self, table:str):
+        return self.getFirstCol(f'desc {table}')
+
     def call(self, sql:str, *args, commit=False):
         debug(sql, *args)
         cur = self.cursor()
         cur.execute(sql, args)
         self.commit(commit)
+        cur.close()
     
     def callProc(self, proc:str, *args, commit=False):
         debug(proc, *args)
@@ -81,7 +87,16 @@ class MyDB(MySQL):
     def mask(self, val:str):
         return val.replace('\\', '\\\\').replace('\'', '\\\'')
 
-    def multi(self, tablefields:str, ins:list, insert:bool=False):
+    def multi(self, tablefields:str, data:list, insert:bool=False):
+        if data:
+            cl = f"({','.join(['%s' for v in data[0]])})"
+            cins = f"{','.join([cl for x in range(len(data))])}"
+            vals = [val for l in data for val in l]
+            cir = 'insert' if insert else 'replace'
+            sql = f'{cir} into {tablefields} values {cins}'
+            self.call(sql, *vals) 
+
+    def multi_old(self, tablefields:str, ins:list, insert:bool=False):
         cir = 'insert' if insert else 'replace'
         head = f'{cir} into {tablefields} values'
         sql  = '\n'.join([head, ','.join(ins)])
@@ -117,7 +132,7 @@ class MyDB(MySQL):
     def getTtpLabel(self, tpc:str):
         return self.getOne('select LABEL from TTP where TPC = %s limit 1', tpc)
 
-    # get lang item type of language entry by id
+    # get titel type of language entry by id
     def getTpc(self, id:int):
         return self.getOne('select TPC from TTL where ID = %s limit 1', id)
 
@@ -147,14 +162,14 @@ class MyDB(MySQL):
     def getNewTtlInfo(self, tpc:str):
         return self.getOneDict('select STDABLE, 0 as STD from TTP where TPC = %s limit 1', tpc)
 
-    # set elements of a lang item
+    # set elements of a titel
     def setTtl(self, id:int, data:list):
         debug(id)
-        self.multi('TTL_ELEM', [f'({id}, \'{ilc}\', \'{self.mask(label)}\')' for ilc, label in data])
+        self.multi('TTL_ELEM', [[id, ilc, label] for ilc, label in data])
         self.call('delete from TTL_ELEM where TTL = %s and LABEL = ""', id)
         # self.touchEnt(id)
     
-    # change lang item standard flag
+    # change titel standard flag
     def setTtlStd(self, id:int, std:int):
         self.callProc('setTtlStd', id, 1 if std else 0)
 
@@ -237,6 +252,27 @@ class MyDB(MySQL):
         self.call('update OBJ set DIM1 = %s, DIM2 = %s, DIM3 = %s where ID = %s', dims[0], dims[1], dims[2], objId)
         self.recEnt(objId)
 
+    def updObj(self, objId:int, data:dict):
+        self.updTable('OBJ', 'ID', objId, data)
+
+    def updArt(self, objId:int, data:dict, withObj=True):
+        self.updTable('ART', 'OBJ', objId, data)
+        if withObj: self.updObj(objId, data)
+ 
+    def updTable(self, table:str, idKey:str, id:int, data):
+        keys = self.getDesc(table)
+        keys.pop(0)
+        sets = []
+        vals = []
+        for key, val in data.items():
+            if key in keys:
+                sets.append(f'{key}=%s')
+                vals.append(val)
+        if sets:
+            vals.append(id)
+            sql = f'update {table} set ' + ','.join(sets) + f' where {idKey}=%s'
+            self.call(sql, *vals)
+
     #   list of articles [id, img, label]
     #   TODO: reasonable limitation
     def getArtList(self, limit:int=1000):
@@ -304,18 +340,19 @@ class MyDB(MySQL):
         slen = len(langs)
         ids = list(range(100000, 110000))
         stds = [ 0 for n in range(20) ] + [1]
-        self.multi('ENT(ID)', [f'({id})' for id in ids], insert=True)
-        self.multi('TTL(ID, TPC, STD)', [f'({id}, "OT", {random.choice(stds)})' for id in ids], insert=True)
-        self.multi('TTL_ELEM', [f'({id}, "{ilc}", "LE {id} {label}")' for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
+        self.multi('ENT(ID)', [[id] for id in ids], insert=True)
+        self.multi('TTL(ID, TPC, STD)', [[id, 'OT', random.choice(stds)] for id in ids], insert=True)
+        self.multi('TTL_ELEM', [[id, ilc, f'LE {id} {label}'] for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
         debug('random articles / objects')
         offset = 100000
         sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]
         
-        self.multi('ENT(ID)', [f'({id + offset})' for id in ids], insert=True)
-        ins = [f'({id + offset}, {id}, {random.choice(sizes)}, {random.choice(sizes)}, {random.choice(sizes)})' for id in ids]
-        self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', ins, True)
-        self.multi('ART(OBJ)', [f'({id + offset})' for id in ids])
-        self.multi('USR_ENT(ENT, USR, TST)', [f'({id + offset}, {userIdTest}, CURRENT_TIMESTAMP - INTERVAL {n} MINUTE)' for n, id in enumerate(ids)] )
+        self.multi('ENT(ID)', [[id + offset] for id in ids], insert=True)
+        data = [[id + offset, id, random.choice(sizes), random.choice(sizes), random.choice(sizes)] for id in ids]
+        self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', data, insert=True)
+        self.multi('ART(OBJ)', [[id + offset] for id in ids])
+        dtn = datetime.now()
+        self.multi('USR_ENT(ENT, USR, TST)', [[id + offset, userIdTest, dtn -  timedelta(minutes=n)] for n, id in enumerate(ids)],insert=True)
         self.callProc('initSeq')
 
 def setDB(app, getUidFunc, *args):

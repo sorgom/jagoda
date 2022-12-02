@@ -45,10 +45,10 @@ def index():
 def testData():
     db().testData()
     return redirect('/')
-
-@app.route('/p')
-def pop():
-    return render_template('popup_ttl.jade')
+@app.route('/d')
+def d():
+    debug(db().getDesc('ART'))
+    return redirect('/')
 
 # login
 route('/login',                         login.login,        methods=BOTH)
@@ -91,6 +91,8 @@ route('/_objImg/<int:objId>',               art._objImg)
 route('/_objDims/<int:objId>',              art._objDims,   methods=BOTH)
 route('/_objTtl/<int:objId>',               art._objTtl,    methods=BOTH)
 route('/_objOwnTtl/<int:objId>',            art._objOwnTtl, methods=BOTH)
+
+route('/_updArt/<int:objId>',               art._updArt,    methods=BOTH)
 
 # general
 route('/_qrc_view/<int:id>/<what>',         qrc._qrc_view)

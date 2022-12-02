@@ -1,12 +1,6 @@
 .center
     form#popup_form(method="post", onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;")
-        .dims
-            input(type="text", name="DIM1", value="{{obj['DIM1']}}", pattern="\d+(?:[.,]\d+)?", autofocus=true, onfocus="this.select()") 
-            |  x
-            input(type="text", name="DIM2", value="{{obj['DIM2']}}", pattern="\d+(?:[.,]\d+)?") 
-            |  x
-            input(type="text", name="DIM3", value="{{obj['DIM3']}}", pattern="\d+(?:[.,]\d+)?") 
-            |  cm
+        include _obj_dim_inputs.jade
         .buttons 
             input(type="submit", value="Submit")
             

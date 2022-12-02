@@ -1,5 +1,6 @@
 # processing of articles
 from flask import render_template, request, redirect, escape
+import json
 from mod.lang import renderBase, getTtl, saveTtl
 from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
@@ -12,6 +13,11 @@ def renderArt(objId:int, template:str, what='art', **args):
     # objImg, objTitel = db().getObjImgLabel(objId)
     # debug(objImg, objTitel)
     return renderBase(template, obj=art, objId=objId, what='art', title=f'Object no. {objId}', **args)
+
+def _updArt(objId:int):
+    if post():
+        db().updArt(objId, dict(request.form))
+    return json.dumps(db().getArt(objId))
 
 def newArt():
     return redirect(f'/newArtTtl/{db().getNextId()}')
@@ -47,17 +53,19 @@ def _newArt2(objId:int, ttlId:int):
         db().addArt(objId, ttlId)
     return 'DONE'
 
+def _setObjDims(objId:int, data:dict):
+    db().updObj(objId, data)
+    # factor = 2.54 if data.get('unit') == 'inch' else 1.0
+    # rdims = [
+    #     float((data[d] or '0').replace(',', '.')) * factor
+    #     for d in DIM_FIELDS
+    # ]
+    # debug('rdims', rdims)
+    # db().setObjDims(objId, rdims)
 
 def _objDims(objId:int):
     if post():
-        data = dict(request.form)
-        factor = 2.54 if data.get('unit') == 'inch' else 1.0
-        rdims = [
-            float((data[d] or '0').replace(',', '.')) * factor
-            for d in DIM_FIELDS
-        ]
-        debug('rdims', rdims)
-        db().setObjDims(objId, rdims)
+        _setObjDims(objId, dict(request.form))
         return db().getObjDims(objId)
     
     # return escape(render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims'))
