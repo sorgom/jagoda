@@ -5,4 +5,5 @@
             span {{tag}}
             span {{val}}
         {% endfor %}
-    img(src="{{src}}", alt="Image {{id}}")
+    a(target='_blank', href='{{src}}', title='view in separate tab')    
+        img(src="{{src}}", alt="Image {{id}}")
