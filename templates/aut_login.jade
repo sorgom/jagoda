@@ -1,0 +1,20 @@
+{% from 'mixins.jade' import meta, script, style %}
+
+doctype html
+html(lang='en')
+    head
+        title Authors Side - {{title}}
+        meta(charset='ISO-8859-1')
+        block css
+            +style('aut_site')
+        link(rel="shortcut icon", type="image/x-icon", href="static/favicon.ico")
+    body
+        .center
+            div
+                h3 Login
+                form.login(action="/login" method="post")
+                    p.label User 
+                    input(type="text", placeholder="Enter Name", name="USR", lang="en", autofocus=true, required=true)
+                    p.label Password 
+                    input(type="password", placeholder="Enter Password", name="PWD", required=true)
+                    button(type="submit") Login 

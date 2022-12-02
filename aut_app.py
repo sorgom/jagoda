@@ -37,7 +37,7 @@ def preStart():
 @app.route('/')
 def index():
     if login.loggedIn():
-        return lang.renderBase('aut_base.htm')
+        return lang.renderBase('aut_base.jade')
     else:
         return redirect('/login')
 
@@ -57,7 +57,7 @@ route('/pwd',                           login.pwd,          methods=BOTH)
 route('/_loggedIn',                     login._loggedIn                 )
 
 # language authoring
-route('/ttls/<tpc>',                    lang.ttls                  )
+# route('/ttls/<tpc>',                    lang.ttls                  )
 route('/_ttl/<int:id>',                 lang._ttl                  )
 route('/_setTtl/<int:id>',              lang._setTtl,  methods=POST)
 route('/_newTtl/<tpc>',                 lang._newTtl               )

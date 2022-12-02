@@ -23,7 +23,7 @@ def login():
             session['USR'] = usr
             db().reduceEntRecs()
             return redirect('/')
-    return render_template('aut_login.htm')
+    return render_template('aut_login.jade')
 
 def checkLogin():
     return None if loggedIn() else relogin()
@@ -37,7 +37,7 @@ def pwd():
     if post():
         if db().setPwd(session['ID'], rf('PWD1'), rf('PWD2')):
             return redirect('/')
-    return render_template('aut_pwd.htm', title='Change Password')
+    return render_template('aut_pwd.jade', title='Change Password')
 
 def logout():
     session.pop('ID', None)

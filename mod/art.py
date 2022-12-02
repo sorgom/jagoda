@@ -17,7 +17,7 @@ def newArt():
     return redirect(f'/newArtTtl/{db().getNextId()}')
 
 def newArtTtl(objId:int):
-    return renderBase('aut_new_art_1.htm', objId=objId, title='New Article')
+    return renderBase('aut_new_art_1.jade', objId=objId, title='New Article')
 
 def _newArtStdTtl(objId:int):
     debug(objId)
@@ -31,6 +31,7 @@ def _newArtTtl(objId:int):
     ttlId = db().getNextId()
     info  = db().getNewTtlInfo('OT')
     return render_template('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
+    # return debugTemplate('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):

@@ -1,4 +1,6 @@
 # current
+- improve _multi_ statement MyDB
+- json reply on form [[key, value ] ] from db
 - locations, persons / institution, addresses
 
 # remeber

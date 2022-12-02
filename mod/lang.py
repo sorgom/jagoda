@@ -41,10 +41,10 @@ def getTtls(tpc:str):
 #   CALLS
 #   ============================================================
 #   listing of all title elements of a type
-def ttls(tpc:str):
-    title = db().getTtpLabel(tpc)
-    if not title: return redirect('/')
-    return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getTtls(tpc))
+# def ttls(tpc:str):
+#     title = db().getTtpLabel(tpc)
+#     if not title: return redirect('/')
+#     return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getTtls(tpc))
 
 #   ============================================================
 #   API
