@@ -41,15 +41,13 @@ form.login > label {
     ## popup & cover 
     ===================================================*/
 .modal {
-    position: absolute;
-    top: 0;
+    /* position: absolute; */
+    position: fixed;
     visibility: hidden;
 }
 
 #popup {
-    left: 2%;
     z-index: 9;
-    width: 95%;
     background-color: white;
     padding: 1%;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
@@ -244,7 +242,7 @@ div.buttons {
 /*  ===================================================
     ## objects
     ===================================================*/
-#objTitle { font-style: italic; }
+#LABEL { font-style: italic; font-size: 120%;}
 
 div.titles > a {
     display: block;

@@ -52,9 +52,9 @@ function getElementsGet(route)
 function setLementsFromJson(json)
 {
     debug('setLementsFromJson');
-    data = JSON.parse(rt);
+    data = JSON.parse(json);
     debug(data);
-    Object.keys(hash).forEach( key => {
+    Object.keys(data).forEach( key => {
         elem = geti(key);
         if (elem) elem.textContent = data[key];
     });
@@ -113,33 +113,52 @@ function escHandler(ev)
     }
 }
 
+function closeX(id)
+{
+    elem = geti(id)
+    if (elem)
+    {
+        clean(elem);
+        elem.style.visibility = 'hidden';
+        // elem.style.height = '0';
+        // elem.style.top = '0';
+    }
+}
+
 function closePopup()
 {
     debug('closePopup');
-    geti('popup').style.visibility = 'hidden';
-    geti('cover').style.visibility = 'hidden';
+    closeX('cover');
+    closeX('popup');
     document.body.style.overflow = 'auto';
-
     document.removeEventListener('keydown', escHandler);
 }
 
 function showPopup(small=false)
 {
     debug('showPopup');
-    let cover = geti('cover');
-    let popup = geti('popup');
+    const cover = geti('cover');
+    const popup = geti('popup');
 
     if (!(cover && popup)) return;
 
-    cover.style.height = document.documentElement.scrollHeight + 'px';
-    cover.style.visibility = 'visible';
-    
+    document.body.style.overflow = 'hidden';
+
+    // debug('window.innerHeight', window.innerHeight)
+    // debug('window.scrollY', window.scrollY)
+    // debug('document.documentElement.scrollTop', document.documentElement.scrollTop )
+    // debug('document.documentElement.scrollHeight', document.documentElement.scrollHeight)
+
     let ih = window.innerHeight
     let h = Math.round(ih * 0.9);
-    let s = Math.round(window.scrollY + ih * 0.03);
+    let s = Math.round(ih * 0.03);
+
+    debug('s', s)
+
+    cover.style.height = '100%'; // document.documentElement.scrollHeight + 'px';
+
     popup.style.height = h + 'px';
     popup.style.top = s + 'px';
-    popup.style.visibility = 'visible';
 
     if (small)
     {
@@ -152,15 +171,26 @@ function showPopup(small=false)
         popup.style.width = '95%';
     }
 
-    document.body.style.overflow = 'hidden';
+    let scrollT = document.documentElement.scrollTop;
+    debug('document.documentElement.scrollTop', document.documentElement.scrollTop )
+
+    cover.style.visibility = 'visible';
+    popup.style.visibility = 'visible';
+
     document.addEventListener('keydown', escHandler);
+
+    let delta = document.documentElement.scrollTop - scrollT;
+    debug('delta', delta);
+    debug('document.documentElement.scrollTop', document.documentElement.scrollTop )
 }
 
-function focusForm(form)
+function focusForm(pop)
 {
     debug('focusForm');
-    const it = form.querySelector('input[type="text"]');
+    let form = pop.querySelector('form') 
+    if (!form) return;
 
+    const it = form.querySelector('input[type="text"]');
     if (it) 
     {
         debug('input found:', it);
@@ -181,19 +211,17 @@ function focusForm(form)
 function popup(route, small=false)
 {
     debug('popup: ' + route);
-    getAjax(route, rt => {
-        let pop = geti('popup');
-        if (pop)
-        {
+    let pop = geti('popup');
+    if (pop)
+    {
+        getAjax(route, rt => {
             pop.innerHTML = rt;
             showPopup(small)
             let cont = geti('popup_content');
-            if (cont) cont.scrollTop = 0; 
-            let pf = geti('popup_form');
-            if (pf) focusForm(pf);
-        }
-        else debug('pc not found.')
-    });
+            if (cont) cont.scrollTop = 0;
+            focusForm(pop);
+        });
+    }
 }
 
 function submitPopup(route, route2=false)

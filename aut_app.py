@@ -91,6 +91,7 @@ route('/_objImg/<int:objId>',               art._objImg)
 route('/_objDims/<int:objId>',              art._objDims,   methods=BOTH)
 route('/_objTtl/<int:objId>',               art._objTtl,    methods=BOTH)
 route('/_objOwnTtl/<int:objId>',            art._objOwnTtl, methods=BOTH)
+route('/_objWhichTtl/<int:objId>',          art._objWichTtl)
 
 route('/_updArt/<int:objId>',               art._updArt,    methods=BOTH)
 

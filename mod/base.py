@@ -24,3 +24,16 @@ def debug(*args):
 def debugTemplate(template:str, **args):
     debug(template)
     return escape(render_template(template, **args))
+
+def toJson(data:dict):
+    out = { key: str(val) for key, val in data.items() }
+    return json.dumps(out)
+
+def intify(data:dict, *args):
+    for a in args:
+        data[a] = 1 if data.get(a) else 0
+    
+def formDict(*args):
+    data = dict(request.form)
+    intify(data, *args)
+    return data

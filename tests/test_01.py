@@ -28,3 +28,13 @@ def wumpel(pOld, pNew):
     _wumpel(*_bnames(pOld, pNew))
 
 wumpel('D:/git/github/jagoda/tests/test_funtion_member.py', 'D:/git/github/jagoda/tests/test_mysql_connector.py')
+
+def intify(data:dict, *args):
+    for a in args:
+        data[a] = 1 if data.get(a) else 0
+
+data = { 'VAL':'on' }
+
+intify(data, 'VAL', 'PUB')
+
+print(data)

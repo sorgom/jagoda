@@ -4,21 +4,24 @@ block content
         #obj_display
             //- .img.objImg
             img#objImg(src="{{obj['SRC']}}", alt="object {{objId}}")
-            p#objTitle {{obj['LABEL']}}
-            p#objWhat {{obj['WLABEL']}}
-            p#objYear {{obj['YEAR']}}
-            p#objDims {{obj['DIMS']}}
+            p#LABEL {{obj['LABEL']}}
+            p#YEAR {{obj['YEAR']}}
+            p
+                span#WLABEL {{obj['WLABEL']}}
+                | ,  
+                span#DIMS {{obj['DIMS']}}
         #obj_ed
-            ul
-                li QRCode
-                ul
-                    li: a(onclick="popup('/_qrc_view/{{objId}}/{{what}}', true)") view
-                    li: a(onclick="printAjax('/_qrc_print/{{objId}}/{{what}}')") print
-                li Edit
-                ul 
-                    li: a(onclick="popup('/_objSelWhat/{{objId}}', true)") What it is
-                    li: a(onclick="popup('/_objDims/{{objId}}', true)") Dimensions
-                    li: a(onclick="popup('/_objTtl/{{objId}}')") Title  
+            include _art_values.jade
+            //- ul
+            //-     li QRCode
+            //-     ul
+            //-         li: a(onclick="popup('/_qrc_view/{{objId}}/{{what}}', true)") view
+            //-         li: a(onclick="printAjax('/_qrc_print/{{objId}}/{{what}}')") print
+            //-     li Edit
+            //-     ul 
+            //-         li: a(onclick="popup('/_objSelWhat/{{objId}}', true)") What it is
+            //-         li: a(onclick="popup('/_objDims/{{objId}}', true)") Dimensions
+            //-         li: a(onclick="popup('/_objTtl/{{objId}}')") Title  
     .clr         
     span#objId(style="visibility: hidden;") {{objId}}
     h2 Images of object

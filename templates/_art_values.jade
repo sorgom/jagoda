@@ -1,12 +1,26 @@
 .center
-    form#popup_form(method="post", onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;")
-        .dims
-            input(type="text", name="DIM1", value="{{obj['DIM1']}}", pattern="\d+(?:\.\d+)?", autofocus=true, onfocus="this.select()") 
-            |  x
-            input(type="text", name="DIM2", value="{{obj['DIM2']}}", pattern="\d+(?:\.\d+)?") 
-            |  x
-            input(type="text", name="DIM3", value="{{obj['DIM3']}}", pattern="\d+(?:\.\d+)?") 
-            |  cm
+    form(method="post", onsubmit="getElementsPost(this, '/_updArt/{{objId}}');return false;")
+        p dimensions
+        include _obj_dim_inputs.jade
+        p year 
+        input(type="text", name="YEAR", value="{{obj['YEAR']}}", pattern="\d{4}")
+        p
+            {% if obj['VAL'] %}
+            input#VAL(type="checkbox", name="VAL", checked=true)
+            {% else %}
+            input#VAL(type="checkbox", name="VAL", checked=false)
+            {% endif %}
+            label(for="VAL") confirmed 
+        p
+            {% if obj['PUB'] %}
+            input#PUB(type="checkbox", name="PUB", checked=true)
+            {% else %}
+            input#PUB(type="checkbox", name="PUB", checked=false)
+            {% endif %}
+            label(for="PUB") publish on website
         .buttons 
-            input(type="submit", value="Submit")
-            
+            button(type="submit") submit
+        p 
+            button(onclick="popup('/_objSelWhat/{{objId}}', true)") change kind of article 
+        p 
+            button(onclick="popup('/_objWhichTtl/{{objId}}', true)") edit title
