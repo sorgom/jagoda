@@ -45,10 +45,10 @@ def index():
 def testData():
     db().testData()
     return redirect('/')
+
 @app.route('/d')
 def d():
-    debug(db().getDesc('ART'))
-    return redirect('/')
+    return render_template('test_dropdown.htm')
 
 # login
 route('/login',                         login.login,        methods=BOTH)
@@ -62,8 +62,9 @@ route('/_ttl/<int:id>',                 lang._ttl                  )
 route('/_setTtl/<int:id>',              lang._setTtl,  methods=POST)
 route('/_newTtl/<tpc>',                 lang._newTtl               )
 route('/_addTtl/<tpc>/<int:id>',        lang._addTtl,  methods=POST)
-route('/_label/<int:id>',               lang._label                     )
-route('/_google',                       lang._google,       methods=POST)
+route('/_label/<int:id>',               lang._label                )
+route('/_google',                       lang._google,  methods=POST)
+route('/_stdTtls',                      lang._stdTtls              )
 
 # image ajax calls
 route('/_addObjImgs/<int:objId>',   img._addObjImgs,    methods=POST)

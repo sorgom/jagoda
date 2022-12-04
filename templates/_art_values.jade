@@ -20,7 +20,5 @@
             label(for="PUB") publish on website
         .buttons 
             button(type="submit") submit
-        p 
-            button(onclick="popup('/_objSelWhat/{{objId}}', true)") change kind of article 
-        p 
-            button(onclick="popup('/_objWhichTtl/{{objId}}', true)") edit title
+        a(onclick="popup('/_objSelWhat/{{objId}}', true)") select kind of article 
+        a(onclick="popup('/_objWhichTtl/{{objId}}', true)") edit title

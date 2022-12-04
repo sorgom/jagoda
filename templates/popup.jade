@@ -1,5 +1,5 @@
-#popup_head
-    h3#popup_title {{title}}
-    button(onclick="closePopup()") Close / ESC
-#popup_content
-    block content
+#popup_head {{title}}
+    a(onclick="closePopup()") close / ESC
+#popup_body
+    #popup_content
+        block content

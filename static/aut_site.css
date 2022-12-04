@@ -5,11 +5,17 @@ body {
 }
 * {font-size:14pt;font-family:Verdana,Helvetica,Sans-Serif,Arial;}
 a {
+    display: block;
     text-decoration: none;
-    color: blue;
+    color: black;
     outline: none;
     cursor: pointer;
+    background-color: #f1f1f1;
+    padding: 5px;
 }
+a:hover { background-color: #ddd;}
+
+
 /* a, a:visited,a:active,a:link {
     color: blue;
 } */
@@ -49,36 +55,119 @@ form.login > label {
 #popup {
     z-index: 9;
     background-color: white;
-    padding: 1%;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
-#popup_head { 
-    position: relative; 
-    min-height: 1em;
+#popup_head  { 
+    margin: 0;
+    position: relative;
+    padding: 16px;
 }
-#popup_head > button {
+
+#popup_head a {
     position: absolute;
-    top: -0.7em;
+    color: white;
+    top: 0;
     right: 0;
+    padding: 16px;
+    background-color: #3498DB;
+    display: block;
 }
+
+#popup_head a:hover {
+    background-color: #2980B9;
+}
+
+#popup_body {
+    position: relative;
+    height: 90%;
+    padding: 1%;
+}
+
+#popup_content {
+    position: relative;
+    height:90%;
+    overflow-y: auto;
+}
+
 
 #cover {
     left: 0;
     z-index: 3;
     width: 100%;
     height: 100%;
-    background-color: gray;
+    background-color: white;
     opacity: 0.6;
 }
 
-#popup_content {
-    position: relative;
-    overflow-y: auto;
-    height: 90%;
-}
 
 /*  ===================================================
+    ## dropdown
+    ===================================================*/
+body {
+    margin-top: 4em;
+}
+
+#popup_head,
+#menu { 
+    background-color: #3498DB;
+    color: white;
+}
+
+#menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 0 20px 0 gray;
+}
+
+.dropdown {
+    float: left;
+}
+
+
+.dropdown a {
+    display: block;
+}
+
+.dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 16px;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+.dropdown > div { 
+    position: relative;
+}
+
+.dropcont { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    visibility: hidden;
+    white-space: nowrap;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+.dropcont a,
+.dropcont p
+{ 
+    color: black;
+    padding: 12px 16px;
+}
+
+.show { visibility: visible }
+
+
+    /*  ===================================================
     ## content
     ===================================================*/
 #content {
@@ -96,11 +185,6 @@ div.clickSel,
 div.objSel {
     display: table;
     width: 100%;
-}
-
-div.clickSel a:hover,
-div.objSel a:hover {
-    background-color: lightblue;
 }
 
 div.clickSel > *,
@@ -122,9 +206,9 @@ div.objSel > a > div:nth-child(4) {
     font-style: italic;
 }
 
-div.clickSel > div {
+/* div.clickSel > div {
     background-color: cyan;
-}
+} */
 
 div.clickSel span 
 {
@@ -159,8 +243,6 @@ div.objSel > a > div > div > img
     max-height: 100%;
 }
 
-
-
 #obj_top > div {
     float: left;
 }
@@ -168,10 +250,27 @@ div.objSel > a > div > div > img
     margin-left: 2em;
 }
 
-
-#obj_top_end {
-    clear: both;
+    /*  ===================================================
+    ## titles
+    ===================================================*/
+.ttl {
+    display: table;
+    width: 100%;
 }
+.ttl > div{
+    display: table-row;
+}
+.ttl p, .ttl textarea {
+    display: table-cell;
+}
+.ttl p {
+    vertical-align: top;
+    padding: 0.5em;
+}
+.ttl textarea {
+    width: 90%;
+}
+
 
 table, th, td {
     border: 1px solid;
@@ -187,7 +286,7 @@ td {
 }
 
 thead {
-    background-color: cyan;
+    background-color: lightgray;
 }
 
 table {
@@ -206,16 +305,12 @@ td > a {
     padding: 3px;
 }
 
-td > a:hover {
-    background-color: orange;
-}
-
 table.ltb > tbody > tr > td {
     font-style: italic;
 }
 
 table.lel td:first-child {
-    background-color: cyan;
+    background-color: lightgray;
     width: 10em;
 }
 
@@ -245,12 +340,7 @@ div.buttons {
 #LABEL { font-style: italic; font-size: 120%;}
 
 div.titles > a {
-    display: block;
-    padding: 0.1em 0.1em 0.1em 2em;
-    font-style: italic;
-}
-div.titles > a:hover {
-    background-color: lightblue;
+    padding-left: 2em;
 }
 
 div.dims > input {
@@ -267,6 +357,10 @@ div.dims > input {
     ===================================================*/
 img {
     max-width: 100%;
+}
+
+.imgdisp {
+    padding: 0;
 }
 
 .label {
@@ -334,11 +428,6 @@ div.imgDisplay > div {
 }
 
 
-
-/* .imgDisplayFix {
-    height: 360px;
-} */
-
 div.imgDisplayEnd {
     clear: both;
 }
@@ -386,9 +475,6 @@ div.exifData {
 }
 div.exifData > div {
     display: table-row;
-}
-div.exifData > div:first-child {
-    font-weight: bold;
 }
 div.exifData > div > span {
     display: table-cell;

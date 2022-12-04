@@ -227,7 +227,7 @@ function popup(route, small=false)
 function submitPopup(route, route2=false)
 {
     debug('submitPopup:', route, route2);
-    let pf = geti('popup_form');
+    let pf = document.querySelector('#popup form');
     if (pf)
     {
         let ok = false;
@@ -303,12 +303,10 @@ function setContent(html)
     closePopup();   
 }
 
-
-
 function getGoogle()
 {
     debug('getGoogle');
-    let pf = geti('popup_form');
+    let pf = document.querySelector('#popup form');
     popupInfo('translating ...');
     if (pf) postAjax(new FormData(pf), '/_google', setGoogle);
 }

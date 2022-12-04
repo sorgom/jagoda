@@ -29,16 +29,15 @@ def newArtTtl(objId:int):
 def _newArtStdTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
-    items = db().getStdTtls()
-    return render_template('popup_title_selector.jade', items=items, submit=f'_newArt2/{objId}', replace=f'/edArt/{objId}')
+    items = db().getStdTtlsForSelect()
+    return render_template('popup_title_selector.jade', items=items, submit=f'_newArt2/{objId}', replace=f'/edArt/{objId}', title=f'select standard title for object {objId}')
 
 def _newArtTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
     info  = db().getNewTtlInfo('OT')
-    return render_template('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
-    # return debugTemplate('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'))
+    return render_template('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newArt2/{objId}/{ttlId}', f'/edArt/{objId}'), title=f'title of object {objId}')
 
 #   save article & title
 def _newArt2(objId:int, ttlId:int):
@@ -56,20 +55,11 @@ def _newArt2(objId:int, ttlId:int):
 
 def _setObjDims(objId:int, data:dict):
     db().updObj(objId, data)
-    # factor = 2.54 if data.get('unit') == 'inch' else 1.0
-    # rdims = [
-    #     float((data[d] or '0').replace(',', '.')) * factor
-    #     for d in DIM_FIELDS
-    # ]
-    # debug('rdims', rdims)
-    # db().setObjDims(objId, rdims)
 
 def _objDims(objId:int):
     if post():
         _setObjDims(objId, dict(request.form))
         return db().getObjDims(objId)
-    
-    # return escape(render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims'))
     return render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
 
 def edArt(objId:int):
@@ -90,17 +80,22 @@ def _objImg(objId:int):
 
 #   article listing for popups
 def _edArtList():
-    return render_template('popup_obj_selector.jade', items=db().getArtList(), action='edArt')
+    return render_template('popup_obj_selector.jade', items=db().getArtList(), action='edArt', title='recently edited articles')
 
 def _edUsrArtList():
-    return render_template('popup_obj_selector.jade', items=db().getUsrArtList(), action='edArt')
+    return render_template('popup_obj_selector.jade', items=db().getUsrArtList(), action='edArt', title='recently edited articles')
+
+def _renderObjTtl(objId:int, info:dict, route:str):
+    data = getTtl(info['TTL'])
+    title = f'title of object {objId}'
+    if info['STD'] == 1: title += ' (standard title)' 
+    return render_template('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/{route}/{objId}', 'LABEL'), title=title)
 
 def _objWichTtl(objId:int):
     info = db().getObjTtl(objId)
     if info['STD'] == 1:
         return render_template('popup_obj_which_ttl.jade', objId=objId, title='which title')
-    data = getTtl(info['TTL'])
-    return render_template('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objOwnTtl/{objId}', 'LABEL'))
+    return _renderObjTtl(objId, info, '_objOwnTtl')    
 
 def _objTtl(objId:int, info=None):
     if info is None:
@@ -110,8 +105,7 @@ def _objTtl(objId:int, info=None):
         saveTtl(info['TTL'])
         db().touchEnt(objId)
         return db().getObjLabel(objId)
-    data = getTtl(info['TTL'])
-    return render_template('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objTtl/{objId}', 'LABEL'))
+    return _renderObjTtl(objId, info, '_objTtl')    
 
 def _objOwnTtl(objId:int):
     if post():
@@ -119,7 +113,5 @@ def _objOwnTtl(objId:int):
         saveTtl(ttlId)
         return db().setObjTtl(objId, ttlId)
     info = db().newObjTtl()
-    debug(info)
-    data = getTtl(info['TTL'])
-    return render_template('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/_objOwnTtl/{objId}', 'LABEL'))
+    return _renderObjTtl(objId, info, '_objOwnTtl')
 

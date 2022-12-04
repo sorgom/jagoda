@@ -79,6 +79,6 @@ def getExif(id:int):
             [l, v] for l, v in [[l, data.get(k)] for l, k in RELEVANT_EXIF_TAGS]     
             if v is not None
         ]
-        out.insert(0, ['Image ID', id])
+        # out.insert(0, ['Image ID', id])
         return out
 

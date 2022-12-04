@@ -30,11 +30,11 @@ block content
     p.label Re-order images of object:
     .imgDisplayFrame
         #objImgs.imgDisplay.objImgs
-        .imgDisplayEnd 
+        .clr 
     p.label Unassigned images (drag up to assign):
     .imgDisplayFrame
-        #freeImgs.imgDisplay.imgDisplayFix
-        .imgDisplayEnd 
+        #freeImgs.imgDisplay
+        .clr 
     script 
         | document.body.onload = () => { loadObjImgs('objImgs', {{objId}}); loadUnusedImgs('freeImgs'); }
          

@@ -30,8 +30,13 @@ def ttps():
     return TTPS
 
 def getTtls(tpc:str):
+    return expandTtls(db().getTtls(tpc))
+
+def getStdTtls():
+    return expandTtls(db().getStdTtls())
+
+def expandTtls(data:list):
     getLangs()
-    data = db().getTtls(tpc)
     fnd = {}
     for (id, ilc, label) in data:
         fnd.setdefault(id, {})[ilc] = label
@@ -73,6 +78,11 @@ def renderBase(template:str, **args):
 def _ttls(tpc:str):
     if not loggedIn(): return ERR_AUTH
     return renderBase('popup_ttls.jade', tpc=tpc, items=getTtls(tpc))
+
+def _stdTtls():
+    if not loggedIn(): return ERR_AUTH
+#    return renderBase('popup_ttls.jade', tpc='OT', items=getStdTtls(), title='standard titles')
+    return debugTemplate('popup_ttls.jade', tpc='OT', items=getStdTtls(), title='standard titles')
 
 #   lising of elements of a title
 def _ttl(id:int):

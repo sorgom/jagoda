@@ -1,0 +1,7 @@
+.dropdown 
+    a language 
+    div
+        div 
+            {% for ilc, label in langs %}
+            a(onclick="popup('/_setUsrLang/{{ilc}}')") {{label}}
+            {% endfor %}

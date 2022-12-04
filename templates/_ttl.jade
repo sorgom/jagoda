@@ -1,16 +1,15 @@
-form#popup_form(method="post", onsubmit="{{onsubmit}};return false;")
-    table.lel
+form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
+    .ttl
         {% for ilc, label, value in data %}
-        tr
-            td {{label}}
-            td 
-                textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}
+        div
+            p {{label}}
+            textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}
         {% endfor %}
     {% if info['STD'] %}
     input(type="hidden", name="STD", value="1")
     {% else %}
     input(type="checkbox", id="STD", name="STD")
-    label(for="STD") Use as standard title
+    label(for="STD") use as standard title
     {% endif %} 
     input(type="hidden", name="tpc", value="{{tpc}}")
     input(type="hidden", name="STDABLE", value="{{info['STDABLE']}}")
@@ -18,5 +17,5 @@ form#popup_form(method="post", onsubmit="{{onsubmit}};return false;")
     input(type="hidden", name="TTL", value="{{info['TTL']}}")
 .buttons
     button(onclick="getGoogle()") google translate
-    input(type="submit", form="popup_form", value="Save Changes")
+    input(type="submit", form="ttl", value="save changes")
     p#popup_info 

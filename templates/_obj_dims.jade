@@ -1,5 +1,5 @@
 .center
-    form#popup_form(method="post", onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;")
+    form(method="post", onsubmit="usePopupSubmit(this, '/{{submit}}', '{{field}}');return false;")
         include _obj_dim_inputs.jade
         .buttons 
             input(type="submit", value="Submit")

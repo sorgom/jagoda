@@ -147,6 +147,9 @@ class MyDB(MySQL):
     def getTtls(self, tpc:str):
         return self.get('select TTL as ID, ILC, LABEL from TTL_ELEM_ORD where TPC = %s order by TST desc, ORD', tpc)
 
+    def getStdTtls(self):
+        return self.get('select TTL as ID, ILC, LABEL from TTL_ELEM_ORD where TPC = "OT" and STD = 1 order by ID, ORD')
+
     # get elements of a title
     # list of [ilc, label]
     def getTtl(self, id:int):
@@ -174,7 +177,7 @@ class MyDB(MySQL):
         self.callProc('setTtlStd', id, 1 if std else 0)
 
     #   get listing of standard titles
-    def getStdTtls(self):
+    def getStdTtlsForSelect(self):
         return self.get('select ID, LABEL from TTL_1ST where STD = 1 and TPC = "OT" order by TST desc')
 
     #   get first label of given title id
