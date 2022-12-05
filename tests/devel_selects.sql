@@ -31,11 +31,15 @@ limit 1;
 drop procedure if exists getUsrArticles;
 DELIMITER :)  
 
+CREATE TEMPORARY VIEW LX as
+select ID, LABEL
+from TTL_X where ILC = 'hr';
+
 create procedure getUsrArticles(pUSR BIGINT, pILC CHAR(2))
 begin
     select T_ART_L.*, TW.LABEL as WLABEL 
     from (
-        select T_ART.*, TL.LABEL
+        select T_ART.*, TL.LABEL, TL.ILC
         from ( 
             select T1.ID, T1.TTL, T1.WHAT, T2.SRC 
             from USR_ENT as TE
@@ -50,7 +54,7 @@ begin
         on TL.ID = T_ART.TTL and TL.ILC = 'hr'
     ) as T_ART_L
     inner join TTL_X as TW
-    on TW.ID = T_ART_L.WHAT and TW.ILC = 'hr'
+    on TW.ID = T_ART_L.WHAT and TW.ILC = T_ART_L.ILC
     ;
 end :)
 
