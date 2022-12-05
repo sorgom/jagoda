@@ -8,12 +8,14 @@ set global autocommit = 1;
 -- GENERATED DROP>
 drop function  if exists nextId;
 drop procedure if exists initSeq;
+drop function  if exists defIlc;
 drop procedure if exists addTtl;
 drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
 drop procedure if exists addEntImg;
+drop procedure if exists getArtFull;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
 -- <GENERATED DROP
@@ -55,6 +57,16 @@ END :)
 --     WHERE T2.TPC = pTPC
 --     ORDER BY T3.TST desc, T1.ORD;
 -- END :)
+create function defIlc()
+returns CHAR(2)
+begin
+    declare vILC CHAR(2);
+    select T1.ILC from LANG as T1
+    inner join (select min(ORD) as MO from LANG) as T2
+    on T1.ORD = T2.MO limit 1 
+    into @vILC;
+    return @vILC;
+end :)
 
 -- add new title
 create procedure addTtl(pID bigint, pTPC CHAR(2))
@@ -94,18 +106,32 @@ END :)
 -- -- objects
 -- -- ============================================================
 --  get last articles of user
-create procedure getUsrArticles(pUSR BIGINT)
+create procedure getUsrArticles(pUSR BIGINT, pILC CHAR(2))
 begin
-    select ID, SRC, LABEL, WLABEL from ART_FULL
-    inner join USR_ENT
-    on USR_ENT.ENT = ART_FULL.ID and USR_ENT.USR = pUSR
-    order by USR_ENT.TST desc;
-end :)
+    select TAO.ID, TAO.SRC, TL.LABEL, TW.LABEL as WLABEL
+    from ( 
+        select TE.*, TA.* 
+        from (
+            select * from USR_ENT where USR = pUSR order by TST desc
+        ) as TE
+        inner join
+        (
+            select T1.ID, T1.TTL, T1.WHAT, T2.SRC
+            from ART_OBJ as T1
+            inner join OBJ_IMG_DEF as T2
+            on T1.OBJ = T2.OBJ
 
+        ) as TA
+    ) as TAO
+    inner join TTL_X as TL
+    on TL.ID = TAO.TTL and TL.ILC = pILC
+    inner join TTL_X as TW
+    on TW.ID = TAO.WHAT and TL.ILC = pILC
+    ;
+end :)
 -- ============================================================
 -- images
 -- ============================================================
-
 -- create new objet image assignment
 CREATE PROCEDURE addEntImg(pEnt BIGINT, pIMG BIGINT)
 BEGIN
@@ -122,6 +148,15 @@ BEGIN
 
     REPLACE INTO ENT_IMG VALUES (pEnt, pIMG, @vORD);
 END :)  
+-- ============================================================
+-- obect, language, image getters
+-- ============================================================
+-- complete article with labels and default image
+create procedure getArtFull(pOBJ BIGINT, pILC CHAR(2))
+begin
+    select * from ART_X where ID = pOBJ and ILC = pILC limit 1;
+end :)
+
 -- ============================================================
 -- authors / users
 -- ============================================================
@@ -150,12 +185,14 @@ DELIMITER ;
 -- GENERATED GRANT>
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
+grant execute on function  jagoda.defIlc                 to 'aut'@'%';
 grant execute on procedure jagoda.addTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
 grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
+grant execute on procedure jagoda.getArtFull             to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
 -- <GENERATED GRANT

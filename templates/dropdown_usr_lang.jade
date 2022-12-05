@@ -3,5 +3,5 @@
     div
         div 
             {% for ilc, label in langs %}
-            a(onclick="popup('/_setUsrLang/{{ilc}}')") {{label}}
+            a(onclick="getRefresh('/_setUsrIlc/{{ilc}}')") {{label}}
             {% endfor %}

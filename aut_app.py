@@ -24,7 +24,7 @@ app.config['MYSQL_PASSWORD']    = 'aa'
 app.config['MYSQL_DB']          = 'jagoda'
 app.config['MYSQL_AUTOCOMMIT']  = 1
 
-setDB(app, login.getUid)
+setDB(app, login.getUid, login.getUsrIlc)
 
 Compress(app)
 
@@ -55,6 +55,7 @@ route('/login',                         login.login,        methods=BOTH)
 route('/logout',                        login.logout                    )
 route('/pwd',                           login.pwd,          methods=BOTH)
 route('/_loggedIn',                     login._loggedIn                 )
+route('/_setUsrIlc/<ilc>',              login._setUsrIlc                )
 
 # language authoring
 # route('/ttls/<tpc>',                    lang.ttls                  )

@@ -85,6 +85,11 @@ function getAjax(route, func)
     xhr.send();
 }
 
+function getRefresh(route)
+{
+    getAjax(route, rt => { location.reload(); })
+}
+
 function checkLogin()
 {
     debug('checkLogin');
@@ -120,8 +125,6 @@ function closeX(id)
     {
         clean(elem);
         elem.style.visibility = 'hidden';
-        // elem.style.height = '0';
-        // elem.style.top = '0';
     }
 }
 
@@ -144,18 +147,13 @@ function showPopup(small=false)
 
     document.body.style.overflow = 'hidden';
 
-    // debug('window.innerHeight', window.innerHeight)
-    // debug('window.scrollY', window.scrollY)
-    // debug('document.documentElement.scrollTop', document.documentElement.scrollTop )
-    // debug('document.documentElement.scrollHeight', document.documentElement.scrollHeight)
-
     let ih = window.innerHeight
     let h = Math.round(ih * 0.9);
     let s = Math.round(ih * 0.03);
 
     debug('s', s)
 
-    cover.style.height = '100%'; // document.documentElement.scrollHeight + 'px';
+    cover.style.height =  document.documentElement.scrollHeight + 'px';
 
     popup.style.height = h + 'px';
     popup.style.top = s + 'px';
@@ -171,17 +169,10 @@ function showPopup(small=false)
         popup.style.width = '95%';
     }
 
-    let scrollT = document.documentElement.scrollTop;
-    debug('document.documentElement.scrollTop', document.documentElement.scrollTop )
-
     cover.style.visibility = 'visible';
     popup.style.visibility = 'visible';
 
     document.addEventListener('keydown', escHandler);
-
-    let delta = document.documentElement.scrollTop - scrollT;
-    debug('delta', delta);
-    debug('document.documentElement.scrollTop', document.documentElement.scrollTop )
 }
 
 function focusForm(pop)

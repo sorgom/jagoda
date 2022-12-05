@@ -7,6 +7,13 @@ def getUid() -> int:
     debug(id)
     return id
 
+def getUsrIlc():
+    ilc = session.get('ILC')
+    return ilc if ilc else db().getDefIlc()
+
+def setUsrIlc(ilc:str):
+    session['ILC'] = ilc
+
 def loggedIn():
     return getUid() != 0
 
@@ -45,4 +52,8 @@ def logout():
     return relogin()
 
 def _loggedIn():
-    return 'YES' if loggedIn() else ''    
+    return 'YES' if loggedIn() else ''
+
+def _setUsrIlc(ilc:str):
+    setUsrIlc(ilc)
+    return 'DONE'

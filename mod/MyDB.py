@@ -13,8 +13,9 @@ DIM_FIELDS = [f'DIM{n}' for n in range(1,4)]
 USR_RECORDS = 50
 
 class MyDB(MySQL):
-    def __init__(self, app, getUidFunc, *args):
+    def __init__(self, app, getUidFunc, getUsrIlcFunc, *args):
         self.getUid = getUidFunc
+        self.getUsrIlc = getUsrIlcFunc
         super().__init__(app, *args)
 
     def cursor(self):
@@ -123,6 +124,9 @@ class MyDB(MySQL):
     def getLangs(self):
         return self.get('select ILC, LABEL from LANG order by ORD')
 
+    def getDefIlc(self):
+        return self.getOne('call defIlc()')
+
     # get list of item types
     # list of [tpc, label]
     def getTtps(self):
@@ -185,7 +189,7 @@ class MyDB(MySQL):
         return self.getOne('select LABEL from TTL_1ST where ID = %s limit 1', id)
 
     def getWhats(self):
-        return self.get('select ID, LABEL from TTL_1ST where TPC = "TQ" order by TST desc')
+        return self.get('select ID, LABEL from TTL_X where TPC = "TQ" and ILC = %s', self.getUsrIlc())
 
     def getTtl1st(self, id:int):
         return self.getOne('select LABEL from TTL_1ST where ID = %s limit 1', id)
@@ -282,10 +286,10 @@ class MyDB(MySQL):
         return self.get('select ID, SRC, LABEL, WLABEL from ART_FULL order by TST desc limit %s', limit)
 
     def getUsrArtList(self):
-        return self.get('call getUsrArticles(%s)', self.getUid())
+        return self.get('call getUsrArticles(%s, %s)', self.getUid(), self.getUsrIlc())
 
     def getArt(self, objId:int):
-        res = self.getOneDict('select * from ART_FULL where ID = %s limit 1', objId)
+        res = self.getOneDict('select * from ART_X where ID = %s and ILC = %s limit 1', objId, self.getUsrIlc())
         res['DIMS'] = MyDB.dimStrFromDict(res)
         return res
 
@@ -358,9 +362,9 @@ class MyDB(MySQL):
         self.multi('USR_ENT(ENT, USR, TST)', [[id + offset, userIdTest, dtn -  timedelta(minutes=n)] for n, id in enumerate(ids)],insert=True)
         self.callProc('initSeq')
 
-def setDB(app, getUidFunc, *args):
+def setDB(app, getUidFunc, getUsrIlcFunc, *args):
     global __mydb__
-    if not __mydb__: __mydb__ = MyDB(app, getUidFunc, *args)
+    if not __mydb__: __mydb__ = MyDB(app, getUidFunc, getUsrIlcFunc, *args)
     return __mydb__
 
 def db() -> MyDB:

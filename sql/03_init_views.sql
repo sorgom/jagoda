@@ -75,6 +75,14 @@ inner join ENT as T4
 on T4.ID = T1.ID
 ;
 
+drop view if exists ART_OBJ;
+create view ART_OBJ as
+select T1.*, T2.*
+from ART as T1
+inner join OBJ as T2
+on T1.OBJ = T2.ID
+;
+
 --  all articles with (default or first) image and label
 drop view if exists ART_FULL;
 create view ART_FULL as
@@ -87,9 +95,9 @@ on T1.WHAT = T3.ID
 
 -- cross table all elements all languages
 -- pre-filled with what's available
-drop view if exists TTL_ELEM_X;
-create view TTL_ELEM_X as
-select LX.ID, LX.ILC, coalesce(LEO.LABEL, LE1.LABEL) as LABEL from 
+drop view if exists TTL_X;
+create view TTL_X as
+select TI.*, LX.ILC, coalesce(LEO.LABEL, LE1.LABEL) as LABEL from 
 (
     select ID, ILC from TTL
     join
@@ -103,5 +111,23 @@ TTL_ELEM_ORD as LEO
 on
 LX.ID = LEO.TTL and
 LX.ILC = LEO.ILC
+inner join TTL_INFO as TI
+on TI.ID = LX.ID
 order by LX.ID
 ;
+
+drop view if exists ART_X;
+create view ART_X as
+select T1.*, T2.*, T3.ILC, T3.LABEL, T3.STD, T3.STDABLE, T4.LABEL as WLABEL, T5.SRC
+from ART as T1
+inner join OBJ as T2
+on T1.OBJ = T2.ID
+right join TTL_X as T3
+on T2.TTL = T3.ID
+inner join TTL_X as T4
+on T1.WHAT = T4.ID and T4.ILC = T3.ILC
+inner join OBJ_IMG_DEF as T5
+on T5.OBJ = T2.ID
+order by T2.ID, T3.ILC
+;
+
