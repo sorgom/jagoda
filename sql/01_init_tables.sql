@@ -55,7 +55,8 @@ CREATE TABLE TTL (
     STD TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (ID),
     FOREIGN KEY (ID) REFERENCES ENT(ID) ON DELETE CASCADE,
-    FOREIGN KEY (TPC) REFERENCES TTP(TPC) ON DELETE CASCADE
+    FOREIGN KEY (TPC) REFERENCES TTP(TPC) ON DELETE CASCADE,
+    index(TPC)
 ) ENGINE=INNODB;
 
 -- TTL element for all languages
@@ -335,7 +336,9 @@ create table USR_ENT (
     TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key (ENT, USR),
     foreign key (USR)  references USR(ID) on delete cascade,
-    foreign key (ENT)  references ENT(ID) on delete cascade
+    foreign key (ENT)  references ENT(ID) on delete cascade,
+    index(ENT),
+    index(USR)
 ) ENGINE=INNODB;
 
 -- ============================================================
