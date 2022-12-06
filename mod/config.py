@@ -13,6 +13,12 @@ DB_CONFIG = {
 TEMPLATES_FOLDER = 'templates'
 
 # ============================================================
+# database settings
+# ============================================================
+# maximum number of user history entries displayed
+DB_MAX_USR_ENT = 50
+
+# ============================================================
 # Imaging
 # ============================================================
 # maximum number of images per object

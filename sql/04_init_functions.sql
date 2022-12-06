@@ -14,6 +14,7 @@ drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
+drop procedure if exists getUsrArt;
 drop procedure if exists addEntImg;
 drop procedure if exists getArtFull;
 drop procedure if exists setUsr;
@@ -129,6 +130,41 @@ begin
     on TW.ID = TAO.WHAT and TL.ILC = pILC
     ;
 end :)
+
+--  get last articles of user
+create procedure getUsrArt(pUSR BIGINT, pILC CHAR(2), pLimit INT)
+begin
+    select T1.ID, T1.SRC,
+        coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
+        coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+    from (
+        select T11.ID, T11.TTL, T11.WHAT, T13.SRC
+        from
+        (
+            select ENT from USR_ENT where USR = pUSR
+            order by TST
+            limit pLimit
+        ) as T12
+
+        inner join ART_OBJ as T11
+        on T12.ENT = T11.ID
+
+        inner join OBJ_IMG_DEF as T13
+        on T13.OBJ = T11.OBJ
+    ) as T1
+
+    left join TTL_ELEM as T2
+    on T2.TTL = T1.TTL and T2.ILC = pILC
+    left join TTL_1ST as T3
+    on T3.TTL = T1.TTL
+
+    left join TTL_ELEM as T4
+    on T4.TTL = T1.WHAT and T4.ILC = pILC
+    left join TTL_1ST as T5
+    on T3.TTL = T1.WHAT
+    ;
+end :)
+
 -- ============================================================
 -- images
 -- ============================================================
@@ -191,6 +227,7 @@ grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
+grant execute on procedure jagoda.getUsrArt              to 'aut'@'%';
 grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
 grant execute on procedure jagoda.getArtFull             to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';

@@ -4,6 +4,7 @@ from hashlib import md5 as libmd5
 from mod.base import debug
 import random
 from mod.format import formatDims
+from mod import config
 
 from datetime import timedelta, datetime
 
@@ -85,9 +86,6 @@ class MyDB(MySQL):
     def md5(self, val:str):
         return libmd5(val.encode('utf-8')).hexdigest()
 
-    def mask(self, val:str):
-        return val.replace('\\', '\\\\').replace('\'', '\\\'')
-
     def multi(self, tablefields:str, data:list, insert:bool=False):
         if data:
             cl = f"({','.join(['%s' for v in data[0]])})"
@@ -107,7 +105,7 @@ class MyDB(MySQL):
         return self.getNum('select nextId()')
 
     def getUsrId(self, usr:str, pwd:str):
-        res = self.getNum('select getUsrId(%s, %s)', self.mask(usr), self.md5(pwd))
+        res = self.getNum('select getUsrId(%s, %s)', usr, self.md5(pwd))
         debug(res)
         return res
 
@@ -285,8 +283,8 @@ class MyDB(MySQL):
     def getArtList(self, limit:int=1000):
         return self.get('select ID, SRC, LABEL, WLABEL from ART_FULL order by TST desc limit %s', limit)
 
-    def getUsrArtList(self):
-        return self.get('call getUsrArticles(%s, %s)', self.getUid(), self.getUsrIlc())
+    def getUsrArt(self):
+        return self.get('call getUsrArt(%s, %s)', self.getUid(), self.getUsrIlc(), config.DB_MAX_USR_ENT)
 
     def getArt(self, objId:int):
         res = self.getOneDict('select * from ART_X where ID = %s and ILC = %s limit 1', objId, self.getUsrIlc())

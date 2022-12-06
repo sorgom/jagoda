@@ -11,6 +11,7 @@ drop function  if exists imgFileFull;
 drop function  if exists imgFileExif;
 drop procedure if exists imgFiles;
 drop procedure if exists imgFolders;
+drop function  if exists notFound;
 -- <GENERATED DROP
 DELIMITER :)  
 -- ============================================================
@@ -48,6 +49,11 @@ CREATE PROCEDURE imgFolders()
 BEGIN
     CALL imgFiles(-1);
 END :)
+create function notFound()
+RETURNS CHAR(3)
+BEGIN
+    return '*?*';
+END :)
 
 DELIMITER ;
 -- GENERATED GRANT>
@@ -57,4 +63,5 @@ grant execute on function  jagoda.imgFileFull            to 'aut'@'%';
 grant execute on function  jagoda.imgFileExif            to 'aut'@'%';
 grant execute on procedure jagoda.imgFiles               to 'aut'@'%';
 grant execute on procedure jagoda.imgFolders             to 'aut'@'%';
+grant execute on function  jagoda.notFound               to 'aut'@'%';
 -- <GENERATED GRANT

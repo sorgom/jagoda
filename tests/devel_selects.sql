@@ -91,9 +91,10 @@ limit 50;
 
 where T1.WHAT is not null
 
+--  full select 
 select T1.*,
     coalesce(T2.LABEL, T3.LABEL, '??') as LABEL, 
-    T3.STD,
+    T3.STD, T3.STDABLE,
     coalesce(T4.LABEL, T5.LABEL, '??') as WLABEL
 from (
     select T11.*, T13.SRC
@@ -121,3 +122,34 @@ left join TTL_1ST as T5
 on T3.TTL = T1.WHAT
 
 limit 50
+
+-- select id, image, label, wlabel 
+select T1.ID, T1.SRC,
+    coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
+    coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+from (
+    select T11.ID, T11.TTL, T11.WHAT, T13.SRC
+    from
+    (
+        select ENT from USR_ENT where USR = 3
+        order by TST
+        limit 50
+    ) as T12
+
+    inner join ART_OBJ as T11
+    on T12.ENT = T11.ID
+
+    inner join OBJ_IMG_DEF as T13
+    on T13.OBJ = T11.OBJ
+) as T1
+
+left join TTL_ELEM as T2
+on T2.TTL = T1.TTL and T2.ILC = 'hr'
+left join TTL_1ST as T3
+on T3.TTL = T1.TTL
+
+left join TTL_ELEM as T4
+on T4.TTL = T1.WHAT and T4.ILC = 'hr'
+left join TTL_1ST as T5
+on T3.TTL = T1.WHAT
+
