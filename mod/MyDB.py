@@ -283,8 +283,8 @@ class MyDB(MySQL):
     def getArtList(self, limit:int=1000):
         return self.get('select ID, SRC, LABEL, WLABEL from ART_FULL order by TST desc limit %s', limit)
 
-    def getUsrArt(self):
-        return self.get('call getUsrArt(%s, %s)', self.getUid(), self.getUsrIlc(), config.DB_MAX_USR_ENT)
+    def getUsrArts(self):
+        return self.get('call getUsrArts(%s, %s, %s)', self.getUid(), self.getUsrIlc(), config.DB_MAX_USR_ENT)
 
     def getArt(self, objId:int):
         res = self.getOneDict('select * from ART_X where ID = %s and ILC = %s limit 1', objId, self.getUsrIlc())

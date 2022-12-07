@@ -14,7 +14,7 @@ drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists setTtl;
 drop procedure if exists getUsrArticles;
-drop procedure if exists getUsrArt;
+drop procedure if exists getUsrArts;
 drop procedure if exists addEntImg;
 drop procedure if exists getArtFull;
 drop procedure if exists setUsr;
@@ -132,7 +132,7 @@ begin
 end :)
 
 --  get last articles of user
-create procedure getUsrArt(pUSR BIGINT, pILC CHAR(2), pLimit INT)
+create procedure getUsrArts(pUSR BIGINT, pILC CHAR(2), pLimit INT)
 begin
     select T1.ID, T1.SRC,
         coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
@@ -227,7 +227,7 @@ grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
-grant execute on procedure jagoda.getUsrArt              to 'aut'@'%';
+grant execute on procedure jagoda.getUsrArts              to 'aut'@'%';
 grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
 grant execute on procedure jagoda.getArtFull             to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';

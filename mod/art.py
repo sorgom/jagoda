@@ -83,7 +83,7 @@ def _edArtList():
     return render_template('popup_obj_selector.jade', items=db().getArtList(), action='edArt', title='recently edited articles')
 
 def _edUsrArtList():
-    return render_template('popup_obj_selector.jade', items=db().getUsrArt(), action='edArt', title='recently edited articles')
+    return render_template('popup_obj_selector.jade', items=db().getUsrArts(), action='edArt', title='recently edited articles')
 
 def _renderObjTtl(objId:int, info:dict, route:str):
     data = getTtl(info['TTL'])
