@@ -28,6 +28,8 @@ def login():
             debug(usr)
             session['ID']  = id
             session['USR'] = usr
+            if not session.get('ILC'):
+                session['ILC'] = db().getDefIlc()
             db().reduceEntRecs()
             return redirect('/')
     return render_template('aut_login.jade')

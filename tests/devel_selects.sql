@@ -123,7 +123,7 @@ on T3.TTL = T1.WHAT
 
 limit 50
 
--- select id, image, label, wlabel 
+-- select id, image, label, wlabel for user articles listing
 select T1.ID, T1.SRC,
     coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
     coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
@@ -153,3 +153,94 @@ on T4.TTL = T1.WHAT and T4.ILC = 'hr'
 left join TTL_1ST as T5
 on T3.TTL = T1.WHAT
 
+-- select single article by id & language
+select T1.*,
+    coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
+    T3.STD, T3.STDABLE,
+    coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+from (
+    select T11.*, T12.SRC
+    from
+    (
+        select * from ART_OBJ where ID = 200001
+        limit 1
+    ) as T11
+
+    inner join OBJ_IMG_DEF as T12
+    on T12.OBJ = T11.OBJ
+) as T1
+
+left join TTL_ELEM as T2
+on T2.TTL = T1.TTL and T2.ILC = 'hr'
+left join TTL_1ST as T3
+on T3.TTL = T1.TTL
+
+left join TTL_ELEM as T4
+on T4.TTL = T1.WHAT and T4.ILC = 'hr'
+left join TTL_1ST as T5
+on T3.TTL = T1.WHAT
+
+
+-- select single article by id & language
+select T1.*,
+    coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
+    T3.STD, T3.STDABLE,
+    coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+from (
+    select T1.*, T2.SRC
+    from
+    (
+        select * from ART_OBJ where ID = 200001
+        limit 1
+    ) as T1
+
+    inner join OBJ_IMG_DEF as T2
+    on T2.OBJ = T1.OBJ
+) as T1
+
+left join TTL_ELEM as T2
+on T2.TTL = T1.TTL and T2.ILC = 'hr'
+left join TTL_1ST as T3
+on T3.TTL = T1.TTL
+
+left join TTL_ELEM as T4
+on T4.TTL = T1.WHAT and T4.ILC = 'hr'
+left join TTL_1ST as T5
+on T3.TTL = T1.WHAT
+
+-- list of titles
+select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+from
+(
+    select T1.ID from TTL as T1
+    inner join ENT as T2
+    on T2.ID = T1.ID
+    order by T2.TST desc
+) as T1
+
+left join TTL_ELEM as T2
+on T2.TTL = T1.ID and T2.ILC = 'hr'
+left join TTL_1ST as T3
+on T3.TTL = T1.ID
+
+limit 50
+
+-- list of standard titles
+select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+from
+(
+    select T1.ID from
+    (
+        select ID from TTL_INFO where STD = 1    
+    ) as T1
+    inner join ENT as T2
+    on T2.ID = T1.ID
+    order by T2.TST desc
+) as T1
+
+left join TTL_ELEM as T2
+on T2.TTL = T1.ID and T2.ILC = 'hr'
+left join TTL_1ST as T3
+on T3.TTL = T1.ID
+
+limit 50

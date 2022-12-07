@@ -187,7 +187,7 @@ div.objSel {
     width: 100%;
 }
 
-div.clickSel > *,
+div.clickSel > a,
 div.objSel > a {
     display: table-row;
     min-height: 1em;
@@ -202,7 +202,7 @@ div.objSel > a > div:nth-child(2) {
     text-align: right;
 }
 
-div.objSel > a > div:nth-child(4) {
+div.objSel > a > div:nth-child(3) {
     font-style: italic;
 }
 
@@ -213,11 +213,10 @@ div.objSel > a > div:nth-child(4) {
 div.clickSel span 
 {
     display: table-cell;
-    border: 1px solid lightgray;
     padding: 0.1em;
 }
 
-div.clickSel > a > span {
+div.clickSel > a > span:nth-child(2) {
     font-style: italic;
 }
 

@@ -1,11 +1,6 @@
 form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
     .ttl
-        {% for ilc, label, value in data[0:1] %}
-        div
-            p {{label}}
-            textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128", required=true) {{value}}
-        {% endfor %}
-        {% for ilc, label, value in data[1:] %}
+        {% for ilc, label, value in data %}
         div
             p {{label}}
             textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}

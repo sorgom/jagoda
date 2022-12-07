@@ -12,9 +12,9 @@ drop function  if exists defIlc;
 drop procedure if exists addTtl;
 drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
-drop procedure if exists setTtl;
-drop procedure if exists getUsrArticles;
+drop procedure if exists getStdTtls;
 drop procedure if exists getUsrArts;
+drop procedure if exists getArt;
 drop procedure if exists addEntImg;
 drop procedure if exists getArtFull;
 drop procedure if exists setUsr;
@@ -91,45 +91,44 @@ BEGIN
         UPDATE TTL set STD = pSTD where ID = pID;
     end if;
 END :)
--- set language element
-CREATE PROCEDURE setTtl(
-    pTTL BIGINT, 
-    pILC CHAR(2), 
-    pLABEL VARCHAR(128)) 
-BEGIN
-    IF pLABEL = '' THEN
-        DELETE FROM TTL_ELEM WHERE TTL = pTTL AND ILC = pILC;
-    ELSE
-        REPLACE INTO TTL_ELEM VALUES (pTTL, pILC, pLABEL);
-    END IF;
-END :)  
+-- -- set language element
+-- CREATE PROCEDURE setTtl(
+--     pTTL BIGINT, 
+--     pILC CHAR(2), 
+--     pLABEL VARCHAR(128)) 
+-- BEGIN
+--     IF pLABEL = '' THEN
+--         DELETE FROM TTL_ELEM WHERE TTL = pTTL AND ILC = pILC;
+--     ELSE
+--         REPLACE INTO TTL_ELEM VALUES (pTTL, pILC, pLABEL);
+--     END IF;
+-- END :)  
+
+-- list of standard titles
+create procedure getStdTtls(pILC CHAR(2))
+begin
+    select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+    from
+    (
+        select T1.ID from
+        (
+            select ID from TTL_INFO where STD = 1    
+        ) as T1
+        inner join ENT as T2
+        on T2.ID = T1.ID
+        order by T2.TST desc
+    ) as T1
+
+    left join TTL_ELEM as T2
+    on T2.TTL = T1.ID and T2.ILC = pILC
+    left join TTL_1ST as T3
+    on T3.TTL = T1.ID
+    ;
+end :)
+
 -- -- ============================================================
 -- -- objects
 -- -- ============================================================
---  get last articles of user
-create procedure getUsrArticles(pUSR BIGINT, pILC CHAR(2))
-begin
-    select TAO.ID, TAO.SRC, TL.LABEL, TW.LABEL as WLABEL
-    from ( 
-        select TE.*, TA.* 
-        from (
-            select * from USR_ENT where USR = pUSR order by TST desc
-        ) as TE
-        inner join
-        (
-            select T1.ID, T1.TTL, T1.WHAT, T2.SRC
-            from ART_OBJ as T1
-            inner join OBJ_IMG_DEF as T2
-            on T1.OBJ = T2.OBJ
-
-        ) as TA
-    ) as TAO
-    inner join TTL_X as TL
-    on TL.ID = TAO.TTL and TL.ILC = pILC
-    inner join TTL_X as TW
-    on TW.ID = TAO.WHAT and TL.ILC = pILC
-    ;
-end :)
 
 --  get last articles of user
 create procedure getUsrArts(pUSR BIGINT, pILC CHAR(2), pLimit INT)
@@ -138,19 +137,19 @@ begin
         coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
         coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
     from (
-        select T11.ID, T11.TTL, T11.WHAT, T13.SRC
+        select T2.ID, T2.TTL, T2.WHAT, T3.SRC
         from
         (
             select ENT from USR_ENT where USR = pUSR
-            order by TST
+            order by TST desc
             limit pLimit
-        ) as T12
+        ) as T1
 
-        inner join ART_OBJ as T11
-        on T12.ENT = T11.ID
+        inner join ART_OBJ as T2
+        on T2.ID = T1.ENT
 
-        inner join OBJ_IMG_DEF as T13
-        on T13.OBJ = T11.OBJ
+        inner join OBJ_IMG_DEF as T3
+        on T3.OBJ = T1.ENT
     ) as T1
 
     left join TTL_ELEM as T2
@@ -161,7 +160,38 @@ begin
     left join TTL_ELEM as T4
     on T4.TTL = T1.WHAT and T4.ILC = pILC
     left join TTL_1ST as T5
-    on T3.TTL = T1.WHAT
+    on T5.TTL = T1.WHAT
+    ;
+end :)
+
+-- select single article by id & language
+create procedure getArt(pID BIGINT, pILC CHAR(2))
+begin
+    select T1.*,
+        coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
+        T3.STD, T3.STDABLE,
+        coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+    from (
+        select T1.*, T2.SRC
+        from
+        (
+            select * from ART_OBJ where ID = pID
+            limit 1
+        ) as T1
+
+        inner join OBJ_IMG_DEF as T2
+        on T2.OBJ = T1.OBJ
+    ) as T1
+
+    left join TTL_ELEM as T2
+    on T2.TTL = T1.TTL and T2.ILC = pILC
+    left join TTL_1ST as T3
+    on T3.TTL = T1.TTL
+
+    left join TTL_ELEM as T4
+    on T4.TTL = T1.WHAT and T4.ILC = pILC
+    left join TTL_1ST as T5
+    on T5.TTL = T1.WHAT
     ;
 end :)
 
@@ -225,9 +255,9 @@ grant execute on function  jagoda.defIlc                 to 'aut'@'%';
 grant execute on procedure jagoda.addTtl                 to 'aut'@'%';
 grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
-grant execute on procedure jagoda.setTtl                 to 'aut'@'%';
-grant execute on procedure jagoda.getUsrArticles         to 'aut'@'%';
-grant execute on procedure jagoda.getUsrArts              to 'aut'@'%';
+grant execute on procedure jagoda.getStdTtls             to 'aut'@'%';
+grant execute on procedure jagoda.getUsrArts             to 'aut'@'%';
+grant execute on procedure jagoda.getArt                 to 'aut'@'%';
 grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
 grant execute on procedure jagoda.getArtFull             to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';

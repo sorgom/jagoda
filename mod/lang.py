@@ -81,8 +81,8 @@ def _ttls(tpc:str):
 
 def _stdTtls():
     if not loggedIn(): return ERR_AUTH
-#    return renderBase('popup_ttls.jade', tpc='OT', items=getStdTtls(), title='standard titles')
-    return debugTemplate('popup_ttls.jade', tpc='OT', items=getStdTtls(), title='standard titles')
+    return renderBase('popup_ttls.jade', tpc='OT', items=db().getStdTtls(), title='standard titles')
+    # return debugTemplate('popup_ttls.jade', tpc='OT', items=getStdTtls(), title='standard titles')
 
 #   lising of elements of a title
 def _ttl(id:int):

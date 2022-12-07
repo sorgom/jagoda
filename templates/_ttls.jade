@@ -1,16 +1,7 @@
-.clickSel
-    div
-        {% for ilc, label in langs %}
-        span {{label}}
-        {% endfor %}
-        a(onclick="popup('/_newTtl/{{tpc}}')", title="new item")
-            {% for lang in langs %}
-            span ...
-            {% endfor %}
-        {% for id, labels in items %}
-        a(onclick="popup('/_ttl/{{id}}')")
-            {% for label in labels %}
-            span {{label}}
-            {% endfor %}
-        {% endfor %}
+.titles 
+    a(onclick="popup('/_newTtl/{{tpc}}', true)", title="new item") ...
+    {% for id, label in items %} 
+    a(onclick="popup('/_ttl/{{id}}')") {{label}}
+    {% endfor %}
+
 

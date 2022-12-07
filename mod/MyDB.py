@@ -123,7 +123,7 @@ class MyDB(MySQL):
         return self.get('select ILC, LABEL from LANG order by ORD')
 
     def getDefIlc(self):
-        return self.getOne('call defIlc()')
+        return self.getOne('select defIlc()')
 
     # get list of item types
     # list of [tpc, label]
@@ -150,7 +150,7 @@ class MyDB(MySQL):
         return self.get('select TTL as ID, ILC, LABEL from TTL_ELEM_ORD where TPC = %s order by TST desc, ORD', tpc)
 
     def getStdTtls(self):
-        return self.get('select TTL as ID, ILC, LABEL from TTL_ELEM_ORD where TPC = "OT" and STD = 1 order by ID, ORD')
+        return self.get('call getStdTtls(%s)', self.getUsrIlc())
 
     # get elements of a title
     # list of [ilc, label]
@@ -172,7 +172,7 @@ class MyDB(MySQL):
         debug(id)
         self.multi('TTL_ELEM', [[id, ilc, label] for ilc, label in data])
         self.call('delete from TTL_ELEM where TTL = %s and LABEL = ""', id)
-        # self.touchEnt(id)
+        self.touchEnt(id)
     
     # change titel standard flag
     def setTtlStd(self, id:int, std:int):
@@ -287,7 +287,7 @@ class MyDB(MySQL):
         return self.get('call getUsrArts(%s, %s, %s)', self.getUid(), self.getUsrIlc(), config.DB_MAX_USR_ENT)
 
     def getArt(self, objId:int):
-        res = self.getOneDict('select * from ART_X where ID = %s and ILC = %s limit 1', objId, self.getUsrIlc())
+        res = self.getOneDict('call getArt(%s, %s)', objId, self.getUsrIlc())
         res['DIMS'] = MyDB.dimStrFromDict(res)
         return res
 
@@ -356,7 +356,7 @@ class MyDB(MySQL):
         data = [[id + offset, id, random.choice(sizes), random.choice(sizes), random.choice(sizes)] for id in ids]
         self.multi('OBJ(ID, TTL, DIM1, DIM2, DIM3)', data, insert=True)
         self.multi('ART(OBJ)', [[id + offset] for id in ids])
-        dtn = datetime.now()
+        dtn = datetime.now() - timedelta(days=1)
         self.multi('USR_ENT(ENT, USR, TST)', [[id + offset, userIdTest, dtn -  timedelta(minutes=n)] for n, id in enumerate(ids)],insert=True)
         self.callProc('initSeq')
 
