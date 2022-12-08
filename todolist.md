@@ -99,7 +99,7 @@ byte_im = buf.getvalue()
   - can be assigned to abstract types
   - can be put into a container
   - e.g.:
-    - art pieces
+    - obj pieces
     - containers
   - a fit into another can be applied  
 - abstract types: grouping
@@ -108,7 +108,7 @@ byte_im = buf.getvalue()
     - grouping for presentation
     - exhibitions?
 ### attributes
-#### art pieces
+#### obj pieces
   - title
   - image(s)
   - owner

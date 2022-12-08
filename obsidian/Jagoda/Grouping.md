@@ -21,7 +21,7 @@
 - Group of same obcts
 - Individual by number within edit
 - The edition itself represents the objects / articles
-# Series of art pieces
+# Series of obj pieces
 ## Examples
 - Paintings of a common theme / subject
 ## Charactaristica

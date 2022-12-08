@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, render_template
 
 from mod.MyDB import setDB, db
 from mod.base import *
-from mod import img, login, lang, saveImg, art, qrc
+from mod import img, login, lang, saveImg, obj, qrc
 from mod.config import *
 
 from flask_compress import Compress
@@ -76,26 +76,26 @@ route('/_unusedImgs',               img._unusedImgs                 )
 route('/_imgInfo/<int:id>',         img._imgInfo                    )
 
 # articles / objects
-route('/newArt',                            art.newArt)
-route('/_newArtStdTtl/<int:objId>',         art._newArtStdTtl)
-route('/_newArtTtl/<int:objId>',            art._newArtTtl)
-route('/newArtTtl/<int:objId>',             art.newArtTtl)
-route('/_newArt2/<int:objId>/<int:ttlId>',  art._newArt2, methods=BOTH)
-route('/edArt/<int:objId>',                 art.edArt)
+route('/newObj',                            obj.newObj)
+route('/_newObjStdTtl/<int:objId>',         obj._newObjStdTtl)
+route('/_newObjTtl/<int:objId>',            obj._newObjTtl)
+route('/newObjTtl/<int:objId>',             obj.newObjTtl)
+route('/_newObj2/<int:objId>/<int:ttlId>',  obj._newObj2, methods=BOTH)
+route('/edObj/<int:objId>',                 obj.edObj)
 
-route('/_edArtList',                        art._edArtList)
-route('/_edUsrArtList',                     art._edUsrArtList)
+route('/_edObjList',                        obj._edObjList)
+route('/_edUsrObjList',                     obj._edUsrObjList)
 
-route('/_objSelWhat/<int:objId>',           art._objSelWhat)
-route('/_objSetWhat/<int:objId>/<int:wId>', art._objSetWhat)
+route('/_objSelWhat/<int:objId>',           obj._objSelWhat)
+route('/_objSetWhat/<int:objId>/<int:wId>', obj._objSetWhat)
 
-route('/_objImg/<int:objId>',               art._objImg)
-route('/_objDims/<int:objId>',              art._objDims,   methods=BOTH)
-route('/_objTtl/<int:objId>',               art._objTtl,    methods=BOTH)
-route('/_objOwnTtl/<int:objId>',            art._objOwnTtl, methods=BOTH)
-route('/_objWhichTtl/<int:objId>',          art._objWichTtl)
+route('/_objImg/<int:objId>',               obj._objImg)
+route('/_objDims/<int:objId>',              obj._objDims,   methods=BOTH)
+route('/_objTtl/<int:objId>',               obj._objTtl,    methods=BOTH)
+route('/_objOwnTtl/<int:objId>',            obj._objOwnTtl, methods=BOTH)
+route('/_objWhichTtl/<int:objId>',          obj._objWichTtl)
 
-route('/_updArt/<int:objId>',               art._updArt,    methods=BOTH)
+route('/_updObj/<int:objId>',               obj._updObj,    methods=BOTH)
 
 # general
 route('/_qrc_view/<int:id>/<what>',         qrc._qrc_view)

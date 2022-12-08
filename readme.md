@@ -2,7 +2,7 @@
 ## Purpose
 Manage Content and Storage of an Artist's Foundation
 ## Attributes
--   substantial ammount of art pieces in different locations all over Europe
+-   substantial ammount of obj pieces in different locations all over Europe
 -   multi language support
     -   currently 4 languages
 

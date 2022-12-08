@@ -1,8 +1,8 @@
 # General
 New object is created instantly.
 Otherwise nothing can be assigned.
-- Create new Article
-- Show Article Form
+- Create new Object
+- Show Object Form
  
 ## Input 1
 Dimensions

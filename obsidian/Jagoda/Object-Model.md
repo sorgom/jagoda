@@ -4,9 +4,9 @@
 - has dimensions
 - has a title
 - has one or more images
-## Article (ART)
+## Object (OBJ)
 - inherits object
-	- has several article / art piece specific attributes
+	- has several article / obj piece specific attributes
 - can be grouped
 ## Container (CON)
 - inherits object

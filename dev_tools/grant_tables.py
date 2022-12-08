@@ -9,7 +9,7 @@ rxRoot = re.compile('^\s*--\s+ROOT')
 grantAut = 'select, insert, delete'
 grantMin = 'select'
 
-noCols = 'primary foreign unique'
+noCols = 'primary foreign unique index'
 rxNo = re.compile('^(?:' +  '|'.join(noCols.split()) + ')$', re.I )
 rxFix = re.compile('-- *FIX\\b')
 

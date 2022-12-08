@@ -29,7 +29,7 @@ def _orderObjImgs(objId:int):
         for imgId, ord in getJson():
             debug(objId, imgId, ord)
             db().setObjImg(objId, imgId, ord)
-        db().touchEnt(objId)
+        db().touchObj(objId)
         return 'DONE'
 
 def _rmObjImg():
@@ -49,3 +49,4 @@ def _imgInfo(id:int):
     if src and data:
         return render_template('popup_img_info.jade', id=id, src=src, data=data, title=f'image {id}')
     return ERR_DATA
+

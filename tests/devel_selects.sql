@@ -1,5 +1,5 @@
 
--- T1 ART OBJ
+-- T1 OBJ OBJ
 -- T2 OBJ ID TTL ...
 -- T3 TTL_ELEM_X -> TTL_X ID ILC LABEL
 -- T4 TTL_INFO -> ID TPC STDABLE STD
@@ -9,7 +9,7 @@
 drop view if exists ART_X;
 create view ART_X as
 select T1.*, T2.*, T3.ILC, T3.LABEL, T4.STD, T4.STDABLE, T5.LABEL as WLABEL, T6.SRC
-from ART as T1
+from OBJ as T1
 inner join OBJ as T2
 on T1.OBJ = T2.ID
 right join TTL_X as T3
@@ -28,14 +28,14 @@ inner join (select min(ORD) as MO from LANG) as T2
 on T1.ORD = T2.MO
 limit 1;
 
-drop procedure if exists getUsrArticles;
+drop procedure if exists getUsrObjicles;
 DELIMITER :)  
 
 CREATE TEMPORARY VIEW LX as
 select ID, LABEL
 from TTL_X where ILC = 'hr';
 
-create procedure getUsrArticles(pUSR BIGINT, pILC CHAR(2))
+create procedure getUsrObjicles(pUSR BIGINT, pILC CHAR(2))
 begin
     select T_ART_L.*, TW.LABEL as WLABEL 
     from (
@@ -43,7 +43,7 @@ begin
         from ( 
             select T1.ID, T1.TTL, T1.WHAT, T2.SRC 
             from USR_ENT as TE
-            inner join ART_OBJ as T1
+            inner join OBJ as T1
             on T1.ID = TE.ENT
             inner join OBJ_IMG_DEF as T2
             on T1.OBJ = T2.OBJ
@@ -61,13 +61,13 @@ end :)
 
 DELIMITER ;
 
-call getUsrArticles(3, 'hr');
+call getUsrObjicles(3, 'hr');
 
 select T1.*, 
     TIMG.SRC,
     coalesce(T2.LABEL, T3.LABEL, '??') as LABEL,
     coalesce(T4.LABEL, T5.LABEL, '??') as WLABEL
-from ART_OBJ as T1
+from OBJ as T1
 
 inner join USR_ENT as UE
 on UE.ENT = T1.ID and UE.USR = 3
@@ -104,7 +104,7 @@ from (
         order by TST
     ) as T12
 
-    inner join ART_OBJ as T11
+    inner join OBJ as T11
     on T12.ENT = T11.ID
 
     inner join OBJ_IMG_DEF as T13
@@ -136,7 +136,7 @@ from (
         limit 50
     ) as T12
 
-    inner join ART_OBJ as T11
+    inner join OBJ as T11
     on T12.ENT = T11.ID
 
     inner join OBJ_IMG_DEF as T13
@@ -162,7 +162,7 @@ from (
     select T11.*, T12.SRC
     from
     (
-        select * from ART_OBJ where ID = 200001
+        select * from OBJ where ID = 200001
         limit 1
     ) as T11
 
@@ -190,7 +190,7 @@ from (
     select T1.*, T2.SRC
     from
     (
-        select * from ART_OBJ where ID = 200001
+        select * from OBJ where ID = 200001
         limit 1
     ) as T1
 
@@ -244,3 +244,27 @@ left join TTL_1ST as T3
 on T3.TTL = T1.ID
 
 limit 50
+
+-- title info of object
+select T1.ID as OBJ, T2.*
+from OBJ as T1
+inner join TTL_INFO as T2
+on T2.ID = T1.TTL
+
+limit 50
+
+--  listing of object whats
+
+select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+from
+(
+    select ID from TTL where TPC = 'TQ'
+) AS T1
+
+left join TTL_ELEM as T2
+on T2.TTL = T1.ID and T2.ILC = 'hr'
+left join TTL_1ST as T3
+on T3.TTL = T1.ID
+
+limit 50
+

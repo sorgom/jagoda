@@ -9,14 +9,12 @@ set global autocommit = 1;
 drop function  if exists nextId;
 drop procedure if exists initSeq;
 drop function  if exists defIlc;
-drop procedure if exists addTtl;
-drop procedure if exists addObj;
 drop procedure if exists setTtlStd;
 drop procedure if exists getStdTtls;
-drop procedure if exists getUsrArts;
-drop procedure if exists getArt;
-drop procedure if exists addEntImg;
-drop procedure if exists getArtFull;
+drop procedure if exists getWhats;
+drop procedure if exists getUsrObjs;
+drop procedure if exists getObj;
+drop procedure if exists addObjImg;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
 -- <GENERATED DROP
@@ -38,7 +36,10 @@ CREATE PROCEDURE initSeq()
 BEGIN
     DECLARE num BIGINT;
     SELECT GREATEST(
-         IFNULL((SELECT MAX(ID) FROM ENT), 0),
+         IFNULL((SELECT MAX(ID) FROM TTL), 0),
+         IFNULL((SELECT MAX(ID) FROM CAP), 0),
+         IFNULL((SELECT MAX(ID) FROM OBJ), 0),
+         IFNULL((SELECT MAX(ID) FROM GRP), 0),
          IFNULL((SELECT MAX(ID) FROM IMG), 0)
     ) INTO @num;
     REPLACE INTO SEQ VALUES(1, @num);
@@ -46,18 +47,6 @@ END :)
 -- ============================================================
 -- language support
 -- ============================================================
--- retrieve all titles of a type 
--- CREATE PROCEDURE getTtls(pTPC CHAR(2))  
--- BEGIN
---     SELECT T1.TTL as ID, T1.ILC, T2.LABEL 
---     FROM TTL_ELEM_ORD as T1
---         INNER JOIN TTL as T2
---         ON T1.TTL = T2.ID
---         inner join ENT as T3
---         on  T3.ID = T2.ID
---     WHERE T2.TPC = pTPC
---     ORDER BY T3.TST desc, T1.ORD;
--- END :)
 create function defIlc()
 returns CHAR(2)
 begin
@@ -69,19 +58,6 @@ begin
     return @vILC;
 end :)
 
--- add new title
-create procedure addTtl(pID bigint, pTPC CHAR(2))
-BEGIN
-    insert into ENT(ID) values (pID);
-    insert into TTL(ID, TPC) values (pID, pTPC);
-END :)
--- add new object
-create procedure addObj(pID bigint, pTTL bigint)
-BEGIN
-    insert into ENT(ID) values (pID);
-    insert into OBJ(ID, TTL) values (pID, pTTL);
-END :)
-
 -- set title standard
 create procedure setTtlStd(pID bigint, pSTD tinyint)
 BEGIN
@@ -91,18 +67,6 @@ BEGIN
         UPDATE TTL set STD = pSTD where ID = pID;
     end if;
 END :)
--- -- set language element
--- CREATE PROCEDURE setTtl(
---     pTTL BIGINT, 
---     pILC CHAR(2), 
---     pLABEL VARCHAR(128)) 
--- BEGIN
---     IF pLABEL = '' THEN
---         DELETE FROM TTL_ELEM WHERE TTL = pTTL AND ILC = pILC;
---     ELSE
---         REPLACE INTO TTL_ELEM VALUES (pTTL, pILC, pLABEL);
---     END IF;
--- END :)  
 
 -- list of standard titles
 create procedure getStdTtls(pILC CHAR(2))
@@ -110,13 +74,8 @@ begin
     select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
     from
     (
-        select T1.ID from
-        (
-            select ID from TTL_INFO where STD = 1    
-        ) as T1
-        inner join ENT as T2
-        on T2.ID = T1.ID
-        order by T2.TST desc
+        select ID from TTL where STD = 1
+        order by TST desc
     ) as T1
 
     left join TTL_ELEM as T2
@@ -126,12 +85,29 @@ begin
     ;
 end :)
 
+-- list of what
+create procedure getWhats(pILC CHAR(2))
+begin
+    select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+    from
+    (
+        select ID from TTL where TPC = 'TQ'
+    ) AS T1
+
+    left join TTL_ELEM as T2
+    on T2.TTL = T1.ID and T2.ILC = 'hr'
+    left join TTL_1ST as T3
+    on T3.TTL = T1.ID
+    ;
+end :)
+
+
 -- -- ============================================================
 -- -- objects
 -- -- ============================================================
 
---  get last articles of user
-create procedure getUsrArts(pUSR BIGINT, pILC CHAR(2), pLimit INT)
+--  get last objects of user
+create procedure getUsrObjs(pUSR BIGINT, pILC CHAR(2), pLimit INT)
 begin
     select T1.ID, T1.SRC,
         coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
@@ -140,16 +116,16 @@ begin
         select T2.ID, T2.TTL, T2.WHAT, T3.SRC
         from
         (
-            select ENT from USR_ENT where USR = pUSR
+            select OBJ from USR_OBJ where USR = pUSR
             order by TST desc
             limit pLimit
         ) as T1
 
-        inner join ART_OBJ as T2
-        on T2.ID = T1.ENT
+        inner join OBJ as T2
+        on T2.ID = T1.OBJ
 
         inner join OBJ_IMG_DEF as T3
-        on T3.OBJ = T1.ENT
+        on T3.OBJ = T1.OBJ
     ) as T1
 
     left join TTL_ELEM as T2
@@ -164,8 +140,8 @@ begin
     ;
 end :)
 
--- select single article by id & language
-create procedure getArt(pID BIGINT, pILC CHAR(2))
+-- select single object by id & language
+create procedure getObj(pID BIGINT, pILC CHAR(2))
 begin
     select T1.*,
         coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
@@ -175,12 +151,12 @@ begin
         select T1.*, T2.SRC
         from
         (
-            select * from ART_OBJ where ID = pID
+            select * from OBJ where ID = pID
             limit 1
         ) as T1
 
         inner join OBJ_IMG_DEF as T2
-        on T2.OBJ = T1.OBJ
+        on T2.OBJ = T1.ID
     ) as T1
 
     left join TTL_ELEM as T2
@@ -199,29 +175,21 @@ end :)
 -- images
 -- ============================================================
 -- create new objet image assignment
-CREATE PROCEDURE addEntImg(pEnt BIGINT, pIMG BIGINT)
+CREATE PROCEDURE addObjImg(pOBJ BIGINT, pIMG BIGINT)
 BEGIN
     DECLARE vORD INT;
 
     REPLACE INTO IMG VALUES(pIMG); 
     
-    SELECT MAX(ORD) FROM ENT_IMG
-    WHERE ENT = pEnt
+    SELECT MAX(ORD) FROM OBJ_IMG
+    WHERE OBJ = pOBJ
     INTO @vORD;
 
     SET @vORD = IFNULL(@vORD, -1);
     SET @vORD = @vORD + 1;
 
-    REPLACE INTO ENT_IMG VALUES (pEnt, pIMG, @vORD);
+    REPLACE INTO OBJ_IMG VALUES (pOBJ, pIMG, @vORD);
 END :)  
--- ============================================================
--- obect, language, image getters
--- ============================================================
--- complete article with labels and default image
-create procedure getArtFull(pOBJ BIGINT, pILC CHAR(2))
-begin
-    select * from ART_X where ID = pOBJ and ILC = pILC limit 1;
-end :)
 
 -- ============================================================
 -- authors / users
@@ -252,14 +220,12 @@ DELIMITER ;
 grant execute on function  jagoda.nextId                 to 'aut'@'%';
 grant execute on procedure jagoda.initSeq                to 'aut'@'%';
 grant execute on function  jagoda.defIlc                 to 'aut'@'%';
-grant execute on procedure jagoda.addTtl                 to 'aut'@'%';
-grant execute on procedure jagoda.addObj                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.getStdTtls             to 'aut'@'%';
-grant execute on procedure jagoda.getUsrArts             to 'aut'@'%';
-grant execute on procedure jagoda.getArt                 to 'aut'@'%';
-grant execute on procedure jagoda.addEntImg              to 'aut'@'%';
-grant execute on procedure jagoda.getArtFull             to 'aut'@'%';
+grant execute on procedure jagoda.getWhats               to 'aut'@'%';
+grant execute on procedure jagoda.getUsrObjs             to 'aut'@'%';
+grant execute on procedure jagoda.getObj                 to 'aut'@'%';
+grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';
 -- <GENERATED GRANT

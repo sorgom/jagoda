@@ -3,46 +3,21 @@
 -- ============================================================
 SET foreign_key_checks = 1;
 
-delete from ENT;
-
 -- Languages
-REPLACE INTO LANG VALUES
-    ('en', 'English',  0),
-    ('de', 'Deutsch',  1),
-    ('fr', 'Français', 2),
-    ('hr', 'Hrvatski', 3),
-    ('ko', '한국인', 4)
+REPLACE INTO LANG(ILC, LABEL, ORD) VALUES
+    ('en', 'English',   0),
+    ('hr', 'Hrvatski',  1),
+    ('it', 'Italiano',  2),
+    ('fr', 'Français',  3),
+    ('de', 'Deutsch',   4),
+    ('ko', '한국인',     5)
 ;
 
 -- Language element types
 REPLACE INTO TTP VALUES
     ('OT', 'Object Titles', 1),
-    ('CA', 'Website Captions', 0),
-    ('TQ', 'Artpiece Techniques', 0)
+    ('TQ', 'Objpiece Techniques', 0)
 ;
-
--- Captions
--- REPLACE INTO TTL(ID, TPC) VALUES
---     (1, 'CA'),
---     (2, 'CA'),
---     (3, 'CA'),
---     (4, 'CA'),
---     (5, 'CA'),
---     (6, 'CA'),
---     (7, 'CA'),
---     (8, 'CA')
--- ;
-
--- REPLACE INTO TTL_ELEM VALUES
---     (1, 'en', 'Year'),
---     (2, 'en', 'Exhibitions'),
---     (3, 'en', 'Location'),
---     (4, 'en', 'Owner'),
---     (5, 'en', 'Artifact'),
---     (6, 'en', 'Price'),
---     (7, 'en', 'Search'),
---     (8, 'en', 'Technique')
--- ;
 
 -- REPLACE INTO TTL(ID, TPC) VALUES
 --     (20, 'CA'),
@@ -65,29 +40,18 @@ REPLACE INTO TTP VALUES
 -- ;
 
 -- Make
-call addTtl(30, 'TQ');
-call addTtl(31, 'TQ');
-call addTtl(32, 'TQ');
-call addTtl(33, 'TQ');
-call addTtl(34, 'TQ');
-call addTtl(35, 'TQ');
-call addTtl(36, 'TQ');
-call addTtl(37, 'TQ');
-call addTtl(38, 'TQ');
-call addTtl(39, 'TQ');
-
--- REPLACE INTO TTL(ID, TPC) VALUES
---     (30, 'TQ'),
---     (31, 'TQ'),
---     (32, 'TQ'),
---     (33, 'TQ'),
---     (34, 'TQ'),
---     (35, 'TQ'),
---     (36, 'TQ'),
---     (37, 'TQ'),
---     (38, 'TQ'),
---     (39, 'TQ')
--- ;
+REPLACE INTO TTL(ID, TPC) VALUES
+    (30, 'TQ'),
+    (31, 'TQ'),
+    (32, 'TQ'),
+    (33, 'TQ'),
+    (34, 'TQ'),
+    (35, 'TQ'),
+    (36, 'TQ'),
+    (37, 'TQ'),
+    (38, 'TQ'),
+    (39, 'TQ')
+;
 
 REPLACE INTO TTL_ELEM VALUES
     (30, 'en', 'Sheet of Paper'),
