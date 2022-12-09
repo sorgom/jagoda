@@ -3,5 +3,9 @@
     div
         div 
             {% for ilc, label in langs %}
+            {% if ilc == usrIlc %}
+            a.def(onclick="getRefresh('/_setUsrIlc/{{ilc}}')") {{label}}
+            {% else %}
             a(onclick="getRefresh('/_setUsrIlc/{{ilc}}')") {{label}}
+            {% endif %}
             {% endfor %}

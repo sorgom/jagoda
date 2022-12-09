@@ -1,4 +1,8 @@
 .titles
     {% for id, label in items %}
+    {% if id == defId %}
+    a.def(onclick="usePopupClick('/{{submit}}/{{id}}', '{{field}}')") {{label}}
+    {% else %}
     a(onclick="usePopupClick('/{{submit}}/{{id}}', '{{field}}')") {{label}}
+    {% endif %}
     {% endfor %}

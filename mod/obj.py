@@ -1,4 +1,4 @@
-# processing of articles
+# processing of objects
 from flask import render_template, request, redirect, escape
 import json
 from mod.lang import renderBase, getTtl, saveTtl
@@ -39,7 +39,7 @@ def _newObjTtl(objId:int):
     info  = db().getNewTtlInfo('OT')
     return render_template('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newObj2/{objId}/{ttlId}', f'/edObj/{objId}'), title=f'title of object {objId}')
 
-#   save article & title
+#   save object & title
 def _newObj2(objId:int, ttlId:int):
     if not loggedIn(): return ERR_AUTH
     if post():
@@ -67,23 +67,24 @@ def edObj(objId:int):
 
 def _objSelWhat(objId:int):
     items = db().getWhats()
-    return render_template('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', items=items, title='select kind of article')
+    defWhat = db().getWhat(objId)
+    return render_template('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', items=db().getWhats(), defId=db().getWhat(objId), title='select kind of object')
 
 def _objSetWhat(objId:int, wId:int):
     db().setWhat(objId, wId)
-    ret = db().getTtl1st(wId)
+    ret = db().getTtlLabel(wId)
     debug(ret)
     return ret
 
 def _objImg(objId:int):
     return db().getObjImg(objId)
 
-#   article listing for popups
+#   object listing for popups
 def _edObjList():
-    return render_template('popup_obj_selector.jade', items=db().getObjList(), action='edObj', title='recently edited articles')
+    return render_template('popup_obj_selector.jade', items=db().getObjList(), action='edObj', title='recently edited objects')
 
 def _edUsrObjList():
-    return render_template('popup_obj_selector.jade', items=db().getUsrObjs(), action='edObj', title='recently edited articles')
+    return render_template('popup_obj_selector.jade', items=db().getUsrObjs(), action='edObj', title='recently edited objects')
 
 def _renderObjTtl(objId:int, info:dict, route:str):
     data = getTtl(info['TTL'])

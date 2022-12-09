@@ -268,3 +268,13 @@ on T3.TTL = T1.ID
 
 limit 50
 
+-- label of given title
+select coalesce(T1.LABEL, T2.LABEL, notFound()) as LABEL
+from (
+    select TTL, LABEL from TTL_1ST
+    where TTL = 105090
+    limit 1
+) as T1
+left join TTL_ELEM as T2
+on T2.TTL = T1.TTL and T2.ILC = 'hr'
+

@@ -12,6 +12,7 @@ drop function  if exists defIlc;
 drop procedure if exists setTtlStd;
 drop procedure if exists getStdTtls;
 drop procedure if exists getWhats;
+drop function  if exists getTtlLabel;
 drop procedure if exists getUsrObjs;
 drop procedure if exists getObj;
 drop procedure if exists addObjImg;
@@ -71,7 +72,7 @@ END :)
 -- list of standard titles
 create procedure getStdTtls(pILC CHAR(2))
 begin
-    select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+    select T1.ID, getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL
     from
     (
         select ID from TTL where STD = 1
@@ -88,19 +89,35 @@ end :)
 -- list of what
 create procedure getWhats(pILC CHAR(2))
 begin
-    select T1.ID, coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL
+    select T1.ID, getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL
     from
     (
         select ID from TTL where TPC = 'TQ'
     ) AS T1
 
     left join TTL_ELEM as T2
-    on T2.TTL = T1.ID and T2.ILC = 'hr'
+    on T2.TTL = T1.ID and T2.ILC = pILC
     left join TTL_1ST as T3
     on T3.TTL = T1.ID
     ;
 end :)
 
+-- label of given title
+create function getTtlLabel(pID BIGINT, pILC CHAR(2))
+returns VARCHAR(128)
+begin
+    declare vLABEL VARCHAR(128);
+    select getLabel(T2.LABEL, T1.ILC, T1.LABEL)
+    from (
+        select TTL, ILC, LABEL from TTL_1ST
+        where TTL = pID
+        limit 1
+    ) as T1
+    left join TTL_ELEM as T2
+    on T2.TTL = T1.TTL and T2.ILC = pILC
+    into @vLABEL;
+    return @vLABEL;
+end :)
 
 -- -- ============================================================
 -- -- objects
@@ -110,8 +127,8 @@ end :)
 create procedure getUsrObjs(pUSR BIGINT, pILC CHAR(2), pLimit INT)
 begin
     select T1.ID, T1.SRC,
-        coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
-        coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+        getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL, 
+        getLabel(T4.LABEL, T5.ILC, T5.LABEL) as WLABEL
     from (
         select T2.ID, T2.TTL, T2.WHAT, T3.SRC
         from
@@ -144,9 +161,9 @@ end :)
 create procedure getObj(pID BIGINT, pILC CHAR(2))
 begin
     select T1.*,
-        coalesce(T2.LABEL, T3.LABEL, notFound()) as LABEL, 
+        getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL, 
         T3.STD, T3.STDABLE,
-        coalesce(T4.LABEL, T5.LABEL, notFound()) as WLABEL
+        getLabel(T4.LABEL, T5.ILC, T5.LABEL) as WLABEL
     from (
         select T1.*, T2.SRC
         from
@@ -205,7 +222,7 @@ RETURNS BIGINT
 BEGIN  
     DECLARE vID BIGINT;
     SET @vID = -1;  
-    SELECT ID FROM USR WHERE (NAME = LOWER(pNAME) AND PASS = pMD5) INTO @vID; 
+    SELECT ID FROM USR WHERE (NAME = LOWER(pNAME) AND PASS = pMD5) limit 1 INTO @vID; 
     RETURN @vID;
 END :)  
 -- ============================================================
@@ -223,6 +240,7 @@ grant execute on function  jagoda.defIlc                 to 'aut'@'%';
 grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
 grant execute on procedure jagoda.getStdTtls             to 'aut'@'%';
 grant execute on procedure jagoda.getWhats               to 'aut'@'%';
+grant execute on function  jagoda.getTtlLabel            to 'aut'@'%';
 grant execute on procedure jagoda.getUsrObjs             to 'aut'@'%';
 grant execute on procedure jagoda.getObj                 to 'aut'@'%';
 grant execute on procedure jagoda.addObjImg              to 'aut'@'%';

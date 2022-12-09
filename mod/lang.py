@@ -1,7 +1,7 @@
 from flask import redirect, render_template
 import json
 from mod.MyDB import db
-from mod.login import loggedIn 
+from mod.login import loggedIn, getUsrIlc 
 from mod.base import *
 from mod.google import translate
 from mod.popups import *
@@ -70,7 +70,7 @@ def getTtl(id:int):
 
 def renderBase(template:str, **args):
     getLangs()
-    return render_template(template, langs=LANGS, ilcs=ILCS, ttps=TTPS, **args)
+    return render_template(template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=getUsrIlc(), **args)
 #   ============================================================
 #   AJAX
 #   ============================================================
@@ -118,7 +118,7 @@ def _addTtl(tpc:str, id:int):
     return _setTtl(id)
 
 def _label(id:int):
-    return db().getFirstLabel(id)
+    return db().getTtlLabel(id)
 
 def _google():
     res = []

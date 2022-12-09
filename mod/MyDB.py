@@ -174,15 +174,15 @@ class MyDB(MySQL):
     def getStdTtlsForSelect(self):
         return self.get('select ID, LABEL from TTL_1ST where STD = 1 and TPC = "OT" order by TST desc')
 
-    #   get first label of given title id
-    def getFirstLabel(self, id:int):
-        return self.getOne('select LABEL from TTL_1ST where ID = %s limit 1', id)
+    #   get label of given title id
+    def getTtlLabel(self, id:int):
+        return self.getOne('select getTtlLabel(%s, %s)', id, self.getUsrIlc())
+
+    def getWhat(self, objId:int):
+        return self.getNum('select WHAT from OBJ where ID = %s limit 1', objId)
 
     def getWhats(self):
         return self.get('call getWhats(%s)', self.getUsrIlc())
-
-    def getTtl1st(self, id:int):
-        return self.getOne('select LABEL from TTL_1ST where ID = %s limit 1', id)
 
     ## objects
     @staticmethod
@@ -246,7 +246,7 @@ class MyDB(MySQL):
     def setObjTtl(self, objId:int, ttlId:int):
         self.call('update OBJ set TTL = %s where ID = %s', ttlId, objId)
         self.recObj(objId)
-        return self.getFirstLabel(ttlId)
+        return self.getTtlLabel(ttlId)
 
     def addObj(self, objId:int, ttlId:int):
         debug(objId, ttlId)
@@ -259,10 +259,6 @@ class MyDB(MySQL):
     def updObj(self, objId:int, data:dict):
         self.updTable('OBJ', 'ID', objId, data)
 
-    def updObj(self, objId:int, data:dict, withObj=True):
-        self.updTable('OBJ', 'OBJ', objId, data)
-        if withObj: self.updObj(objId, data)
- 
     def updTable(self, table:str, idKey:str, id:int, data):
         keys = self.getDesc(table)
         keys.pop(0)
@@ -277,7 +273,7 @@ class MyDB(MySQL):
             sql = f'update {table} set ' + ','.join(sets) + f' where {idKey}=%s'
             self.call(sql, *vals)
 
-    #   list of articles [id, img, label]
+    #   list of objects [id, img, label]
     #   TODO: call getObjs
     def getObjList(self, limit:int=1000):
         return self.get('select ID, SRC, LABEL, WLABEL from ART_FULL order by TST desc limit %s', limit)
@@ -331,7 +327,7 @@ class MyDB(MySQL):
     def getImgFolders(self):
         return self.getOneRow('call imgFolders()')
 
-    # create a lot of articles and titels
+    # create a lot of objects and titels
     def testData(self):
         userIdTest = 3
         self.call('delete from TTL where TPC = "OT"')
@@ -345,7 +341,7 @@ class MyDB(MySQL):
         stds = [ 0 for n in range(20) ] + [1]
         self.multi('TTL(ID, TPC, STD)', [[id, 'OT', random.choice(stds)] for id in ids], insert=True)
         self.multi('TTL_ELEM', [[id, ilc, f'LE {id} {label}'] for id in ids for ilc, label in random.sample(langs, random.randrange(1, slen))], insert=True)
-        debug('random articles / objects')
+        debug('random objects / objects')
         offset = 100000
         sizes = [10.5, 20.7, 50, 300, 400, 1000, 14.7]
         
