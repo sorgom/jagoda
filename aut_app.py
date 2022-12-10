@@ -65,7 +65,13 @@ route('/_newTtl/<tpc>',                 lang._newTtl               )
 route('/_addTtl/<tpc>/<int:id>',        lang._addTtl,  methods=POST)
 route('/_label/<int:id>',               lang._label                )
 route('/_google',                       lang._google,  methods=POST)
+route('/stdTtls',                       lang.stdTtls               )
 route('/_stdTtls',                      lang._stdTtls              )
+route('/_stdTtl/<int:id>',              lang._stdTtl                )
+route('/_setStdTtl/<int:id>',           lang._setStdTtl, methods=POST)
+route('/_newStdTtl',                    lang._newStdTtl             )
+route('/_addStdTtl/<int:id>',           lang._addStdTtl, methods=POST)
+
 
 # image ajax calls
 route('/_addObjImgs/<int:objId>',   img._addObjImgs,    methods=POST)

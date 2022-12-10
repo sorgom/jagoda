@@ -1,7 +1,7 @@
 from flask import redirect, render_template
 import json
 from mod.MyDB import db
-from mod.login import loggedIn, getUsrIlc 
+from mod.login import loggedIn, getUsrIlc, checkLogin 
 from mod.base import *
 from mod.google import translate
 from mod.popups import *
@@ -79,10 +79,6 @@ def _ttls(tpc:str):
     if not loggedIn(): return ERR_AUTH
     return renderBase('popup_ttls.jade', tpc=tpc, items=getTtls(tpc))
 
-def _stdTtls():
-    if not loggedIn(): return ERR_AUTH
-    return renderBase('popup_ttls.jade', tpc='OT', items=db().getStdTtls(), title='standard titles')
-    # return debugTemplate('popup_ttls.jade', tpc='OT', items=getStdTtls(), title='standard titles')
 
 #   lising of elements of a title
 def _ttl(id:int):
@@ -100,6 +96,45 @@ def _setTtl(id:int):
     if not tpc: return ERR_DATA
     saveTtl(id)
     return _ttls(tpc)
+
+#   listing of standard titles (full html)
+def stdTtls():
+    c = checkLogin()
+    if c: return c
+    return renderBase('aut_std_ttls.jade', items=db().getStdTtls(), title='standard titles')
+
+#   listing of standard titles (ajax, content)
+def _stdTtls():
+    if not loggedIn(): return ERR_AUTH
+    return renderBase('_std_ttls.jade', items=db().getStdTtls())
+
+#   display of standard title (ajax, popup)
+def _stdTtl(id:int):
+    debug(id)
+    if not loggedIn(): return ERR_AUTH
+    info = db().getTtlInfo(id)
+    debug('info:', info)
+    return render_template('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setStdTtl/{id}'), title=f'edit standard title')
+
+def _newStdTtl():
+    debug()
+    if not loggedIn(): return ERR_AUTH
+    id = db().getNextId()
+    info = db().getNewTtlInfo('OT')
+    info['STD'] = 1
+    return render_template('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopupScrollDown(f'/_addStdTtl/{id}'), title=f'new standard title')
+
+#   ajax post: new language entry
+def _addStdTtl(id:int):
+    debug(id)
+    if not loggedIn(): return ERR_AUTH
+    db().addTtl(id, 'OT')
+    return _setStdTtl(id)
+
+def _setStdTtl(id:int):
+    if not loggedIn(): return ERR_AUTH
+    saveTtl(id)
+    return _stdTtls()
 
 #   ajax get: new language entry form
 def _newTtl(tpc:str):

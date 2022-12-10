@@ -215,37 +215,64 @@ function popup(route, small=false)
     }
 }
 
+function checkPopupForm(pf)
+{
+    let ok = false;
+    for (let a of pf.querySelectorAll('textarea'))
+    {
+        if (a.value != '') return true;
+    }
+    debug('missing content');
+    focusForm(pf);
+    return false;
+}
+
 function submitPopup(route, route2=false)
 {
     debug('submitPopup:', route, route2);
     let pf = document.querySelector('#popup form');
     if (pf)
     {
-        let ok = false;
-        for (let a of pf.querySelectorAll('textarea'))
+        if (checkPopupForm(pf))
         {
-            if (a.value != '')
-            {
-                ok = true;
-                break;
-            }
+            postAjax(new FormData(pf), route, rt => {
+                if (route2) repRoute(route2);
+                else setContent(rt);
+            });
         }
-        if (!ok) 
-        {
-            debug('missing content');
-            focusForm(pf);
-            return;
-        }
-        postAjax(new FormData(pf), route, rt => {
-            if (route2) repRoute(route2);
-            else setContent(rt);
-        });
     }
     else getAjax(route, rt => {
         if (route2) repRoute(route2);
         else setContent(rt);
     });
 }
+
+function scrollDown()
+{
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+function submitPopupScrollDown(route)
+{
+    debug('submitPopupScrollDown:', route);
+    let pf = document.querySelector('#popup form');
+    if (pf)
+    {
+        if (checkPopupForm(pf))
+        {
+            postAjax(new FormData(pf), route, rt => {
+                setContent(rt);
+                scrollDown();
+            });
+        }
+    }
+    else getAjax(route, rt => {
+        setContent(rt);
+        scrollDown();
+    });
+}
+
+
 
 function popupInfo(text)
 {
@@ -279,7 +306,6 @@ function repRoute(route)
 {
     debug('repRoute', route);
     location.replace(route);
-    // location.reload(); 
 }
 
 function setContent(html)

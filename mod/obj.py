@@ -63,7 +63,7 @@ def _objDims(objId:int):
     return render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
 
 def edObj(objId:int):
-    return renderObj(objId, 'out_ed_art.jade')
+    return renderObj(objId, 'aut_ed_obj.jade')
 
 def _objSelWhat(objId:int):
     items = db().getWhats()
