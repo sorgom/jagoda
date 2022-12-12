@@ -54,7 +54,7 @@ END :)
 create function notFound()
 RETURNS CHAR(3)
 BEGIN
-    return '*?*';
+    return '(?)';
 END :)
 
 create function defLabel(pILC CHAR(2), pLABEL VARCHAR(128))
@@ -63,7 +63,7 @@ begin
     if pLABEL is null then
         return NULL;
     else
-        RETURN CONCAT('[',  pILC, '] ', pLABEL);
+        RETURN CONCAT('(',  pILC, ') ', pLABEL);
     end if;    
 end :)
 

@@ -1,5 +1,5 @@
 from flask import redirect, render_template
-import json
+import json, re
 from mod.MyDB import db
 from mod.login import loggedIn, getUsrIlc, checkLogin 
 from mod.base import *
@@ -8,14 +8,18 @@ from mod.popups import *
 
 LANGS = None
 ILCS  = None
+LANG_LABELS = None
 TTPS = None
+RX_FOREIGN = None
 
 def getLangs():
-    global LANGS, ILCS, TTPS
+    global LANGS, ILCS, LANG_LABELS, TTPS, RX_FOREIGN
     if not LANGS:
         LANGS = db().getLangs()
         ILCS  = [ l[0] for l in LANGS ]
+        LANG_LABELS = { i:l for i, l in LANGS }
         TTPS = [item[0:2] for item in db().getTtps()]
+        RX_FOREIGN = re.compile(r'^\((' + '|'.join(ILCS) + r'|\?' + r')\).*')
 
 def langs():
     getLangs()
@@ -29,6 +33,10 @@ def ttps():
     getLangs()
     return TTPS
 
+def getLabelClass(label:str):
+    getLangs()
+    return 'foreign' if RX_FOREIGN.match(label) else 'OK'
+
 def getTtls(tpc:str):
     return expandTtls(db().getTtls(tpc))
 
@@ -37,19 +45,8 @@ def getStdTtls():
 
 def expandTtls(data:list):
     getLangs()
-    fnd = {}
-    for (id, ilc, label) in data:
-        fnd.setdefault(id, {})[ilc] = label
-    return [ [ id, [ fnd[id].get(ilc, '') for ilc in ILCS ] ] for id in fnd.keys() ]
+    return [[id, label, getLabelClass(label)] for id, label in data]
 
-#   ============================================================
-#   CALLS
-#   ============================================================
-#   listing of all title elements of a type
-# def ttls(tpc:str):
-#     title = db().getTtpLabel(tpc)
-#     if not title: return redirect('/')
-#     return renderBase('GEN_lang_items.htm', tpc=tpc, title=title, items=getTtls(tpc))
 
 #   ============================================================
 #   API
@@ -68,16 +65,17 @@ def getTtl(id:int):
     fnd = { ilc:value for ilc, value in data }
     return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
-def renderBase(template:str, **args):
+def renderLang(template:str, **args):
     getLangs()
-    return render_template(template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=getUsrIlc(), **args)
+    usrIlc=getUsrIlc()
+    return render_template(template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=usrIlc, usrLang=LANG_LABELS.get(usrIlc, '??'),  **args)
 #   ============================================================
 #   AJAX
 #   ============================================================
 #   listing of all lang items of a type
 def _ttls(tpc:str):
     if not loggedIn(): return ERR_AUTH
-    return renderBase('popup_ttls.jade', tpc=tpc, items=getTtls(tpc))
+    return renderLang('popup_ttls.jade', tpc=tpc, items=getTtls(tpc))
 
 
 #   lising of elements of a title
@@ -86,7 +84,7 @@ def _ttl(id:int):
     if not loggedIn(): return ERR_AUTH
     info = db().getTtlInfo(id)
     debug('info:', info)
-    return render_template('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setTtl/{id}'))
+    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setTtl/{id}'))
 
 #   set title element data
 #   return language table of element type
@@ -101,12 +99,12 @@ def _setTtl(id:int):
 def stdTtls():
     c = checkLogin()
     if c: return c
-    return renderBase('aut_std_ttls.jade', items=db().getStdTtls(), title='standard titles')
+    return renderLang('aut_std_ttls.jade', items=getStdTtls(), title='standard titles')
 
 #   listing of standard titles (ajax, content)
 def _stdTtls():
     if not loggedIn(): return ERR_AUTH
-    return renderBase('_std_ttls.jade', items=db().getStdTtls())
+    return renderLang('_std_ttls.jade', items=getStdTtls())
 
 #   display of standard title (ajax, popup)
 def _stdTtl(id:int):
@@ -114,7 +112,7 @@ def _stdTtl(id:int):
     if not loggedIn(): return ERR_AUTH
     info = db().getTtlInfo(id)
     debug('info:', info)
-    return render_template('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setStdTtl/{id}'), title=f'edit standard title')
+    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setStdTtl/{id}'), title=f'edit standard title')
 
 def _newStdTtl():
     debug()
@@ -122,7 +120,7 @@ def _newStdTtl():
     id = db().getNextId()
     info = db().getNewTtlInfo('OT')
     info['STD'] = 1
-    return render_template('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopupScrollDown(f'/_addStdTtl/{id}'), title=f'new standard title')
+    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopupScrollDown(f'/_addStdTtl/{id}'), title=f'new standard title')
 
 #   ajax post: new language entry
 def _addStdTtl(id:int):
@@ -143,7 +141,7 @@ def _newTtl(tpc:str):
     id = db().getNextId()
     info = db().getNewTtlInfo(tpc)
     debug('new id:', id)
-    return render_template('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_addTtl/{tpc}/{id}'))
+    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_addTtl/{tpc}/{id}'))
 
 #   ajax post: new language entry
 def _addTtl(tpc:str, id:int):

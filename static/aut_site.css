@@ -13,12 +13,16 @@ a {
     background-color: #eee;
     padding: 5px;
 }
-a:hover { background-color: #ddd;}
-a.def { background-color: #f8f8f8; }
+a:hover,
+a:hover > * 
+{ background-color: #ddd;}
+a.def { background-color: #e1ffe3; }
 
-/* a, a:visited,a:active,a:link {
-    color: blue;
-} */
+.foreign {
+    color: rgb(136, 5, 5);
+    background-color:rgb(241, 230, 226);
+}
+
 /*  ===================================================
     ## login forms
     ===================================================*/

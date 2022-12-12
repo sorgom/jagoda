@@ -1,7 +1,7 @@
 # processing of objects
-from flask import render_template, request, redirect, escape
+from flask import request, redirect
 import json
-from mod.lang import renderBase, getTtl, saveTtl
+from mod.lang import renderLang, getTtl, saveTtl, getLabelClass
 from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
@@ -12,7 +12,13 @@ def renderObj(objId:int, template:str, what='obj', **args):
     debug('OBJ:', obj)
     # objImg, objTitel = db().getObjImg(objId)
     # debug(objImg, objTitel)
-    return renderBase(template, obj=obj, objId=objId, what='obj', title=f'Object no. {objId}', **args)
+    return renderLang(template, obj=obj, objId=objId, what='obj', title=f'Object no. {objId}', **args)
+
+def expandObjs(data:list):
+    return [
+        [id, src, label, getLabelClass(label), wlabel, getLabelClass(wlabel)]
+        for id, src, label, wlabel in data
+    ]  
 
 def _updObj(objId:int):
     if post():
@@ -24,20 +30,20 @@ def newObj():
     return redirect(f'/newObjTtl/{db().getNextId()}')
 
 def newObjTtl(objId:int):
-    return renderBase('aut_new_art_1.jade', objId=objId, title='New Object')
+    return renderLang('aut_new_art_1.jade', objId=objId, title='New Object')
 
 def _newObjStdTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     items = db().getStdTtlsForSelect()
-    return render_template('popup_title_selector.jade', items=items, submit=f'_newObj2/{objId}', replace=f'/edObj/{objId}', title=f'select standard title for object {objId}')
+    return renderLang('popup_title_selector.jade', items=items, submit=f'_newObj2/{objId}', replace=f'/edObj/{objId}', title=f'select standard title for object {objId}')
 
 def _newObjTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
     info  = db().getNewTtlInfo('OT')
-    return render_template('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newObj2/{objId}/{ttlId}', f'/edObj/{objId}'), title=f'title of object {objId}')
+    return renderLang('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newObj2/{objId}/{ttlId}', f'/edObj/{objId}'), title=f'title of object {objId}')
 
 #   save object & title
 def _newObj2(objId:int, ttlId:int):
@@ -60,7 +66,7 @@ def _objDims(objId:int):
     if post():
         _setObjDims(objId, dict(request.form))
         return db().getObjDims(objId)
-    return render_template('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
+    return renderLang('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
 
 def edObj(objId:int):
     return renderObj(objId, 'aut_ed_obj.jade')
@@ -68,7 +74,7 @@ def edObj(objId:int):
 def _objSelWhat(objId:int):
     items = db().getWhats()
     defWhat = db().getWhat(objId)
-    return render_template('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', items=db().getWhats(), defId=db().getWhat(objId), title='select kind of object')
+    return renderLang('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', items=db().getWhats(), defId=db().getWhat(objId), title='select kind of object')
 
 def _objSetWhat(objId:int, wId:int):
     db().setWhat(objId, wId)
@@ -81,21 +87,21 @@ def _objImg(objId:int):
 
 #   object listing for popups
 def _edObjList():
-    return render_template('popup_obj_selector.jade', items=db().getObjList(), action='edObj', title='recently edited objects')
+    return renderLang('popup_obj_selector.jade', items=db().getObjList(), action='edObj', title='recently edited objects')
 
 def _edUsrObjList():
-    return render_template('popup_obj_selector.jade', items=db().getUsrObjs(), action='edObj', title='recently edited objects')
+    return renderLang('popup_obj_selector.jade', items=expandObjs(db().getUsrObjs()), action='edObj', title='recently edited objects')
 
 def _renderObjTtl(objId:int, info:dict, route:str):
     data = getTtl(info['TTL'])
     title = f'title of object {objId}'
     if info['STD'] == 1: title += ' (standard title)' 
-    return render_template('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/{route}/{objId}', 'LABEL'), title=title)
+    return renderLang('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/{route}/{objId}', 'LABEL'), title=title)
 
 def _objWichTtl(objId:int):
     info = db().getObjTtlInfo(objId)
     if info['STD'] == 1:
-        return render_template('popup_obj_which_ttl.jade', objId=objId, title='which title')
+        return renderLang('popup_obj_which_ttl.jade', objId=objId, title='which title')
     return _renderObjTtl(objId, info, '_objOwnTtl')    
 
 def _objTtl(objId:int, info=None):

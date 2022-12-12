@@ -37,7 +37,7 @@ def preStart():
 @app.route('/')
 def index():
     if login.loggedIn():
-        return lang.renderBase('aut_base.jade')
+        return lang.renderLang('aut_base.jade')
     else:
         return redirect('/login')
 

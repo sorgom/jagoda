@@ -1,10 +1,10 @@
 .objSel 
-    {% for id, src, label, wlabel in items %}
+    {% for id, src, label, class, wlabel, wclass in items %}
     a(href="/{{action}}/{{id}}")
         div 
             div
                 img(src="{{src}}")
         div {{id}}
-        div {{label}}         
-        div {{wlabel}}
+        div(class="{{class}}") {{label}}         
+        div(class="{{wclass}}") {{wlabel}}
     {% endfor %}

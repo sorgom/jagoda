@@ -1,7 +1,7 @@
-from flask import render_template
 from mod.MyDB import db
 from mod.base import *
 from mod.saveImg import saveImg, getExif
+from mod.lang import renderLang
 from mod.login import loggedIn
 
 # TODO: make part of config
@@ -47,6 +47,6 @@ def _imgInfo(id:int):
     src  = db().getImgFileFull(id)
     data = getExif(id)
     if src and data:
-        return render_template('popup_img_info.jade', id=id, src=src, data=data, title=f'image {id}')
+        return renderLang('popup_img_info.jade', id=id, src=src, data=data, title=f'image {id}')
     return ERR_DATA
 
