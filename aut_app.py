@@ -18,10 +18,10 @@ app.jinja_env.add_extension('pyjade.ext.jinja.PyJadeExtension')
 # secret string for session cooky
 app.secret_key = 'ein Hund kam in die Kueche'
 
-app.config['MYSQL_HOST']        = '127.0.0.1'
-app.config['MYSQL_USER']        = 'aut'
-app.config['MYSQL_PASSWORD']    = 'aa'
-app.config['MYSQL_DB']          = 'jagoda'
+app.config['MYSQL_HOST']        = DB_CONFIG['host']
+app.config['MYSQL_USER']        = DB_CONFIG['user']
+app.config['MYSQL_PASSWORD']    = DB_CONFIG['password']
+app.config['MYSQL_DB']          = DB_CONFIG['database']
 app.config['MYSQL_AUTOCOMMIT']  = 1
 
 setDB(app, login.getUid, login.getUsrIlc)
@@ -65,12 +65,20 @@ route('/_newTtl/<tpc>',                 lang._newTtl               )
 route('/_addTtl/<tpc>/<int:id>',        lang._addTtl,  methods=POST)
 route('/_label/<int:id>',               lang._label                )
 route('/_google',                       lang._google,  methods=POST)
+# standard titles
 route('/stdTtls',                       lang.stdTtls               )
 route('/_stdTtls',                      lang._stdTtls              )
 route('/_stdTtl/<int:id>',              lang._stdTtl                )
 route('/_setStdTtl/<int:id>',           lang._setStdTtl, methods=POST)
 route('/_newStdTtl',                    lang._newStdTtl             )
 route('/_addStdTtl/<int:id>',           lang._addStdTtl, methods=POST)
+# object kinds
+route('/whats',                         lang.whats                   )
+route('/_whats',                        lang._whats                  )
+route('/_what/<int:id>',                lang._what                   )
+route('/_setWhat/<int:id>',             lang._setWhat,   methods=POST)
+route('/_newWhat',                      lang._newWhat                )
+route('/_addWhat/<int:id>',             lang._addWhat,   methods=POST)
 
 
 # image ajax calls

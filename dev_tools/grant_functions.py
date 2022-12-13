@@ -1,4 +1,4 @@
-from replGenSql import replGenSql, ROLE_AUT, DB, USR
+from replGenSql import replGenSql, DB, USR
 import re
 from glob import glob
 

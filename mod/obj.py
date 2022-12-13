@@ -1,7 +1,7 @@
 # processing of objects
 from flask import request, redirect
 import json
-from mod.lang import renderLang, getTtl, saveTtl, getLabelClass
+from mod.lang import renderLang, getTtl, saveTtl, getLabelClass, getLabelDefClass
 from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
@@ -72,9 +72,9 @@ def edObj(objId:int):
     return renderObj(objId, 'aut_ed_obj.jade')
 
 def _objSelWhat(objId:int):
-    items = db().getWhats()
-    defWhat = db().getWhat(objId)
-    return renderLang('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', items=db().getWhats(), defId=db().getWhat(objId), title='select kind of object')
+    defId = db().getWhat(objId)
+    data = [[id, label, getLabelDefClass(label, defId, id)] for id, label in db().getWhats()]
+    return renderLang('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', data=data, title='select kind of object')
 
 def _objSetWhat(objId:int, wId:int):
     db().setWhat(objId, wId)

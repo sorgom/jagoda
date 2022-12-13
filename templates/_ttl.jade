@@ -7,9 +7,11 @@ form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
         {% endfor %}
     {% if info['STD'] %}
     input(type="hidden", name="STD", value="1")
-    {% else %}
+    {% elif info['STDABLE'] %}
     input(type="checkbox", id="STD", name="STD")
     label(for="STD") use as standard title
+    {% else %}
+    input(type="hidden", name="STD", value="0")
     {% endif %} 
     input(type="hidden", name="tpc", value="{{tpc}}")
     input(type="hidden", name="STDABLE", value="{{info['STDABLE']}}")

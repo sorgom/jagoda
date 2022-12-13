@@ -137,7 +137,7 @@ function closePopup()
     document.removeEventListener('keydown', escHandler);
 }
 
-function showPopup(small=false)
+function showPopup()
 {
     debug('showPopup');
     const cover = geti('cover');
@@ -157,17 +157,8 @@ function showPopup(small=false)
 
     popup.style.height = h + 'px';
     popup.style.top = s + 'px';
-
-    if (small)
-    {
-        popup.style.left = '20%';
-        popup.style.width = '60%';
-    }
-    else
-    {
-        popup.style.left = '2%';
-        popup.style.width = '95%';
-    }
+    popup.style.left = '2%';
+    popup.style.width = '95%';
 
     cover.style.visibility = 'visible';
     popup.style.visibility = 'visible';
@@ -175,7 +166,7 @@ function showPopup(small=false)
     document.addEventListener('keydown', escHandler);
 }
 
-function focusForm(pop)
+function focusForm(pop, ilc=undefined)
 {
     debug('focusForm');
     let form = pop.querySelector('form') 
@@ -189,35 +180,46 @@ function focusForm(pop)
         it.select();
         return;
     }
+    if (ilc)
+    {
+        for (let a of form.querySelectorAll('textarea'))
+        {
+            if (a.id == ilc)
+            {
+                a.focus();
+                a.select();
+                return;
+            }
+        }
+    }
     for (let a of form.querySelectorAll('textarea'))
     {
         if (a.value == '')
         {
             a.focus();
-            break;
+            return;
         }
     }
 }
 
-function popup(route, small=false)
+function popup(route, ilc=undefined)
 {
-    debug('popup: ' + route);
+    debug('popup:', route, ilc);
     let pop = geti('popup');
     if (pop)
     {
         getAjax(route, rt => {
             pop.innerHTML = rt;
-            showPopup(small)
+            showPopup()
             let cont = geti('popup_content');
             if (cont) cont.scrollTop = 0;
-            focusForm(pop);
+            focusForm(pop, ilc);
         });
     }
 }
 
 function checkPopupForm(pf)
 {
-    let ok = false;
     for (let a of pf.querySelectorAll('textarea'))
     {
         if (a.value != '') return true;
@@ -227,7 +229,7 @@ function checkPopupForm(pf)
     return false;
 }
 
-function submitPopup(route, route2=false)
+function submitPopup(route, route2=undefined)
 {
     debug('submitPopup:', route, route2);
     let pf = document.querySelector('#popup form');

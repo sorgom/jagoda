@@ -234,17 +234,17 @@ END :)
 -- ============================================================
 DELIMITER ;
 -- GENERATED GRANT>
-grant execute on function  jagoda.nextId                 to 'aut'@'%';
-grant execute on procedure jagoda.initSeq                to 'aut'@'%';
-grant execute on function  jagoda.defIlc                 to 'aut'@'%';
-grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
-grant execute on procedure jagoda.getStdTtls             to 'aut'@'%';
-grant execute on procedure jagoda.getWhats               to 'aut'@'%';
-grant execute on function  jagoda.getTtlLabel            to 'aut'@'%';
-grant execute on procedure jagoda.getUsrObjs             to 'aut'@'%';
-grant execute on procedure jagoda.getObj                 to 'aut'@'%';
-grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
-grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
-grant execute on function  jagoda.getUsrId               to 'aut'@'%';
+grant execute on function  jagoda.nextId                 to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.initSeq                to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.defIlc                 to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.setTtlStd              to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.getStdTtls             to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.getWhats               to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.getTtlLabel            to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.getUsrObjs             to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.getObj                 to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.addObjImg              to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.setUsr                 to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.getUsrId               to 'aut'@'127.0.0.1';
 -- <GENERATED GRANT
 

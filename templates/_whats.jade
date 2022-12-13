@@ -1,0 +1,7 @@
+.titles 
+    a(onclick="popup('/_newWhat', '{{usrIlc}}')", title="new item") ...
+    {% for id, label, class in data %} 
+    a(class="{{class}}" onclick="popup('/_what/{{id}}', '{{usrIlc}}')") {{label}}
+    {% endfor %}
+
+

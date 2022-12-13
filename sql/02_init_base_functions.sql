@@ -75,13 +75,13 @@ end :)
 
 DELIMITER ;
 -- GENERATED GRANT>
-grant execute on function  jagoda.imgPath                to 'aut'@'%';
-grant execute on function  jagoda.imgFileMini            to 'aut'@'%';
-grant execute on function  jagoda.imgFileFull            to 'aut'@'%';
-grant execute on function  jagoda.imgFileExif            to 'aut'@'%';
-grant execute on procedure jagoda.imgFiles               to 'aut'@'%';
-grant execute on procedure jagoda.imgFolders             to 'aut'@'%';
-grant execute on function  jagoda.notFound               to 'aut'@'%';
-grant execute on function  jagoda.defLabel               to 'aut'@'%';
-grant execute on function  jagoda.getLabel               to 'aut'@'%';
+grant execute on function  jagoda.imgPath                to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.imgFileMini            to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.imgFileFull            to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.imgFileExif            to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.imgFiles               to 'aut'@'127.0.0.1';
+grant execute on procedure jagoda.imgFolders             to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.notFound               to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.defLabel               to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.getLabel               to 'aut'@'127.0.0.1';
 -- <GENERATED GRANT

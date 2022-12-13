@@ -37,11 +37,21 @@ def getLabelClass(label:str):
     getLangs()
     return 'foreign' if RX_FOREIGN.match(label) else 'OK'
 
+def getLabelDefClass(label:str, defId:int, id:int):
+    getLangs()
+    cl = getLabelClass(label)
+    if (id == defId): cl += ' def'
+    return cl
+
+
 def getTtls(tpc:str):
     return expandTtls(db().getTtls(tpc))
 
 def getStdTtls():
     return expandTtls(db().getStdTtls())
+
+def getWhats():
+    return expandTtls(db().getWhats())
 
 def expandTtls(data:list):
     getLangs()
@@ -95,6 +105,9 @@ def _setTtl(id:int):
     saveTtl(id)
     return _ttls(tpc)
 
+#   ============================================================
+##  standard titles
+#   ============================================================
 #   listing of standard titles (full html)
 def stdTtls():
     c = checkLogin()
@@ -134,6 +147,52 @@ def _setStdTtl(id:int):
     saveTtl(id)
     return _stdTtls()
 
+#   ============================================================
+##  object kinds (what)
+#   ============================================================
+#   listing of whats (full html)
+def whats():
+    c = checkLogin()
+    if c: return c
+    return renderLang('aut_whats.jade', data=getWhats(), title='object kinds')
+
+#   listing of standard titles (ajax, content)
+def _whats():
+    if not loggedIn(): return ERR_AUTH
+    return renderLang('_whats.jade', data=getWhats())
+
+#   display of an object kind (ajax, popup)
+def _what(id:int):
+    debug(id)
+    if not loggedIn(): return ERR_AUTH
+    info = db().getTtlInfo(id)
+    debug('info:', info)
+    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setWhat/{id}'), title=f'edit object kind')
+
+def _newWhat():
+    debug()
+    if not loggedIn(): return ERR_AUTH
+    id = db().getNextId()
+    info = db().getNewTtlInfo('TQ')
+    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopupScrollDown(f'/_addWhat/{id}'), title=f'new object kind')
+
+#   ajax post: new language entry
+def _addWhat(id:int):
+    debug(id)
+    if not loggedIn(): return ERR_AUTH
+    db().addTtl(id, 'TQ')
+    return _setWhat(id)
+
+def _setWhat(id:int):
+    if not loggedIn(): return ERR_AUTH
+    saveTtl(id)
+    return _whats()
+
+
+
+#   ============================================================
+##  object titles
+#   ============================================================
 #   ajax get: new language entry form
 def _newTtl(tpc:str):
     debug(tpc)

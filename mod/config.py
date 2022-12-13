@@ -3,7 +3,7 @@
 # ============================================================
 DB_CONFIG = {
   'user': 'aut',
-  'password': 'aa',
+  'password': '** yes: i am an author **',
   'host': '127.0.0.1',
   'database': 'jagoda'
 }

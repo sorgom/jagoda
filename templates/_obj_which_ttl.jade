@@ -1,4 +1,5 @@
-p current title is a standard title
- 
-a(onclick="popup('/_objOwnTtl/{{objId}}', true)") create own title for object {{objId}}
-a(onclick="popup('/_objTtl/{{objId}}', true)") edit this standard title
+.center
+    div
+        p current title is a standard title
+        a(onclick="popup('/_objOwnTtl/{{objId}}', '{{usrIlc}}')") create own title for object {{objId}}
+        a(onclick="popup('/_objTtl/{{objId}}', '{{usrIlc}}')") edit this standard title
