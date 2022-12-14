@@ -3,7 +3,7 @@ from glob import glob
 from os import path, remove
 from sys import argv
 
-rxHtm = re.compile('(\w+\.htm)')
+rxHtm = re.compile('(\w+\.jade)')
 
 usage = {}
 
@@ -18,10 +18,10 @@ def findInFile(fpath:str):
 for fpath in glob('mod/*.py'):
      findInFile(fpath)
 
-for fpath in glob('templates/*.htm'):
+for fpath in glob('templates/*.jade'):
      findInFile(fpath)
 
-files = [ file for file in glob('templates/*.htm') if not usage.get(path.basename(file)) ]
+files = [ file for file in glob('templates/*.jade') if not usage.get(path.basename(file)) ]
 
 for file in sorted(files):
     print(file)

@@ -18,6 +18,6 @@ form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
     input(type="hidden", name="objId", value="{{objId}}")
     input(type="hidden", name="TTL", value="{{info['TTL']}}")
 .buttons
-    button(onclick="getGoogle()") google translate
-    input(type="submit", form="ttl", value="save changes")
+    button(onclick="getGoogle()") {{cap('GOOGLE TRANS')}}
+    input(type="submit", form="ttl", value="{{cap('SAVE CHGS')}}")
     p#popup_info 

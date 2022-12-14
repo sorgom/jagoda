@@ -34,18 +34,6 @@ def loadCaps():
     }
     debug(type(CAPS))
 
-def langs():
-    getLangs()
-    return LANGS
-
-def ilcs():
-    getLangs()
-    return ILCS
-
-def ttps():
-    getLangs()
-    return TTPS
-
 def getLabelClass(label:str):
     getLangs()
     return 'foreign' if RX_FOREIGN.match(label) else 'OK'
@@ -56,6 +44,16 @@ def getLabelDefClass(label:str, defId:int, id:int):
     if (id == defId): cl += ' def'
     return cl
 
+#   expand list of title
+def expandTtls(data:list):
+    getLangs()
+    return [[id, label, getLabelClass(label)] for id, label in data]
+
+#   expand title elements
+def expandTtl(data:list):
+    getLangs()
+    fnd = { ilc:label for ilc, label in data }
+    return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
 def getTtls(tpc:str):
     return expandTtls(db().getTtls(tpc))
@@ -66,11 +64,11 @@ def getStdTtls():
 def getWhats():
     return expandTtls(db().getWhats())
 
-def expandTtls(data:list):
+def getCaps():
     getLangs()
-    return [[id, label, getLabelClass(label)] for id, label in data]
+    return [[id, cpc, label, getLabelClass(label)] for id, cpc, label in db().getCaps()]
 
-def getCap(src:dict, cpc:str):
+def fndCap(src:dict, cpc:str):
     return src.get(cpc, f'*{cpc}*') if cpc else ''
 
 #   ============================================================
@@ -84,11 +82,18 @@ def saveTtl(id:int):
     if rf('STDABLE'):
         db().setTtlStd(id, rf('STD'))
 
-def getTtl(id:int):
+def saveCap(id:int):
+    debug(id)
     getLangs()
-    data = db().getTtl(id)
-    fnd = { ilc:value for ilc, value in data }
-    return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
+    db().setCap(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    loadCaps()
+
+def getTtl(id:int):
+    return expandTtl(db().getTtl(id))
+    # getLangs()
+    # data = db().getTtl(id)
+    # fnd = { ilc:value for ilc, value in data }
+    # return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
 def renderLang(template:str, **args):
     getLangs()
@@ -96,7 +101,7 @@ def renderLang(template:str, **args):
     caps = CAPS.get(usrIlc, {})
     return render_template(
         template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=usrIlc, usrLang=LANG_LABELS.get(usrIlc, '??'),
-        cap=lambda c : getCap(caps, c),
+        cap=lambda c : fndCap(caps, c),
         **args
     )
 #   ============================================================
@@ -145,7 +150,8 @@ def _stdTtl(id:int):
     if not loggedIn(): return ERR_AUTH
     info = db().getTtlInfo(id)
     debug('info:', info)
-    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setStdTtl/{id}'), title=f'edit standard title')
+    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, 
+        onsubmit=submitPopup(f'/_setStdTtl/{id}'), title='ED STD TTL')
 
 def _newStdTtl():
     debug()
@@ -153,7 +159,8 @@ def _newStdTtl():
     id = db().getNextId()
     info = db().getNewTtlInfo('OT')
     info['STD'] = 1
-    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopupScrollDown(f'/_addStdTtl/{id}'), title=f'new standard title')
+    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, 
+        onsubmit=submitPopupScrollDown(f'/_addStdTtl/{id}'), title='NEW STD TTL')
 
 #   ajax post: new language entry
 def _addStdTtl(id:int):
@@ -174,9 +181,9 @@ def _setStdTtl(id:int):
 def whats():
     c = checkLogin()
     if c: return c
-    return renderLang('aut_whats.jade', data=getWhats(), title='object kinds')
+    return renderLang('aut_whats.jade', data=getWhats(), title='WHATS')
 
-#   listing of standard titles (ajax, content)
+#   listing of whats (ajax, content)
 def _whats():
     if not loggedIn(): return ERR_AUTH
     return renderLang('_whats.jade', data=getWhats())
@@ -187,16 +194,18 @@ def _what(id:int):
     if not loggedIn(): return ERR_AUTH
     info = db().getTtlInfo(id)
     debug('info:', info)
-    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_setWhat/{id}'), title=f'edit object kind')
+    return renderLang('popup_ttl.jade', itemId=id, data=getTtl(id), info=info,
+        onsubmit=submitPopup(f'/_setWhat/{id}'), title='ED WHAT')
 
 def _newWhat():
     debug()
     if not loggedIn(): return ERR_AUTH
     id = db().getNextId()
     info = db().getNewTtlInfo('TQ')
-    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopupScrollDown(f'/_addWhat/{id}'), title=f'new object kind')
+    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, 
+        onsubmit=submitPopupScrollDown(f'/_addWhat/{id}'), title='NEW WHAT')
 
-#   ajax post: new language entry
+#   ajax post: new what
 def _addWhat(id:int):
     debug(id)
     if not loggedIn(): return ERR_AUTH
@@ -208,6 +217,49 @@ def _setWhat(id:int):
     saveTtl(id)
     return _whats()
 
+#   ============================================================
+##  captions (cap)
+#   ============================================================
+#   listing of caps (full html)
+def caps():
+    c = checkLogin()
+    if c: return c
+    return renderLang('aut_caps.jade', data=getCaps(), title='CAPS')
+
+#   listing of caps (ajax, content)
+def _caps():
+    if not loggedIn(): return ERR_AUTH
+    return renderLang('_caps.jade', data=getCaps())
+
+#   display of a caption (ajax, popup)
+def _cap(id:int):
+    debug(id)
+    if not loggedIn(): return ERR_AUTH
+    cpc = db().getCapCpc(id)
+    if not cpc: return ERR_DATA
+    data = expandTtl(db().getCap(id))
+    return renderLang('popup_cap_ed.jade', cpc=cpc, data=data,
+        onsubmit=submitPopup(f'/_setCap/{id}'), title='ED CAP')
+
+# def _newWhat():
+#     debug()
+#     if not loggedIn(): return ERR_AUTH
+#     id = db().getNextId()
+#     info = db().getNewTtlInfo('TQ')
+#     return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, 
+#         onsubmit=submitPopupScrollDown(f'/_addWhat/{id}'), title='NEW WHAT')
+
+# #   ajax post: new language entry
+# def _addWhat(id:int):
+#     debug(id)
+#     if not loggedIn(): return ERR_AUTH
+#     db().addTtl(id, 'TQ')
+#     return _setWhat(id)
+
+def _setCap(id:int):
+    if not loggedIn(): return ERR_AUTH
+    saveCap(id)
+    return _caps()
 
 
 #   ============================================================
@@ -220,7 +272,8 @@ def _newTtl(tpc:str):
     id = db().getNextId()
     info = db().getNewTtlInfo(tpc)
     debug('new id:', id)
-    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, onsubmit=submitPopup(f'/_addTtl/{tpc}/{id}'))
+    return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, 
+        onsubmit=submitPopup(f'/_addTtl/{tpc}/{id}'), title='NEW TTL')
 
 #   ajax post: new language entry
 def _addTtl(tpc:str, id:int):

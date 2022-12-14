@@ -187,6 +187,7 @@ class MyDB(MySQL):
     def getWhats(self):
         return self.get('call getWhats(%s)', self.getUsrIlc())
 
+    ##  captions
     #   get all captions for production
     def getCapsPro(self, ilc:str):
         return self.get('call getCapsPro(%s)', ilc)
@@ -195,6 +196,20 @@ class MyDB(MySQL):
     def getCaps(self):
         return self.get('call getCaps(%s)', self.getUsrIlc())
 
+    # get CPC of caption
+    def getCapCpc(self, capId:int):
+        return self.getOne('select CPC from CAP where ID = %s limit 1', capId)
+
+    #  get elements of caption
+    def getCap(self, capId:int):
+        return self.get('select ILC, LABEL from CAP_ELEM where CAP = %s', capId)
+
+    # set elements of a caption
+    def setCap(self, id:int, data:list):
+        debug(id)
+        self.multi('CAP_ELEM', [[id, ilc, label] for ilc, label in data])
+        self.call('delete from CAP_ELEM where CAP = %s and LABEL = ""', id)
+    
     ## objects
     @staticmethod
     def dimStrFromDict(res):

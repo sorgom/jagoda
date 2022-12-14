@@ -82,6 +82,15 @@ route('/_what/<int:id>',                lang._what                   )
 route('/_setWhat/<int:id>',             lang._setWhat,   methods=POST)
 route('/_newWhat',                      lang._newWhat                )
 route('/_addWhat/<int:id>',             lang._addWhat,   methods=POST)
+# captions
+route('/caps',                          lang.caps                   )
+route('/_caps',                         lang._caps                  )
+route('/_cap/<int:id>',                 lang._cap                   )
+route('/_setCap/<int:id>',              lang._setCap,   methods=POST)
+# route('/_newWhat',                      lang._newWhat                )
+# route('/_addWhat/<int:id>',             lang._addWhat,   methods=POST)
+
+
 
 
 # image ajax calls

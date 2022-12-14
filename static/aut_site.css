@@ -188,13 +188,13 @@ input:invalid {
 }
 
 /* ============= selection tables */
-div.clickSel,
+div.capSel,
 div.objSel {
     display: table;
     width: 100%;
 }
 
-div.clickSel > a,
+div.capSel > a,
 div.objSel > a {
     display: table-row;
     min-height: 1em;
@@ -213,17 +213,14 @@ div.objSel > a > div:nth-child(3) {
     font-style: italic;
 }
 
-/* div.clickSel > div {
-    background-color: cyan;
-} */
-
-div.clickSel span 
+div.capSel span 
 {
     display: table-cell;
-    padding: 0.1em;
+    padding: 0.2em;
+    padding-left: 1em;
 }
 
-div.clickSel > a > span:nth-child(2) {
+div.capSel > a > span:nth-child(2) {
     font-style: italic;
 }
 

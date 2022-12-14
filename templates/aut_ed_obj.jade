@@ -13,7 +13,7 @@ block content
     .clr         
     span#objId(style="visibility: hidden;") {{objId}}
     h2 {{cap('IMGS')}}
-    p.label {{cap('UPLOD OBJ IMGS')}}
+    p.label {{cap('UPLD IMGS')}}
     input.dropZone(type="file", multiple=true, onchange="uploadImgs(this, 'objImgs', {{objId}});", accept="{{acceptImgTypes}}") 
     p.label {{cap('RE-ORD OBJ IMGS')}}
     .imgDisplayFrame

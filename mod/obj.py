@@ -30,20 +30,22 @@ def newObj():
     return redirect(f'/newObjTtl/{db().getNextId()}')
 
 def newObjTtl(objId:int):
-    return renderLang('aut_new_art_1.jade', objId=objId, title='New Object')
+    return renderLang('aut_new_art_1.jade', objId=objId, title='NEW OBJ')
 
 def _newObjStdTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     items = db().getStdTtlsForSelect()
-    return renderLang('popup_title_selector.jade', items=items, submit=f'_newObj2/{objId}', replace=f'/edObj/{objId}', title=f'select standard title for object {objId}')
+    return renderLang('popup_title_selector.jade', items=items, 
+        submit=f'_newObj2/{objId}', replace=f'/edObj/{objId}', title='SEL STD TTL')
 
 def _newObjTtl(objId:int):
     debug(objId)
     if not loggedIn(): return ERR_AUTH
     ttlId = db().getNextId()
     info  = db().getNewTtlInfo('OT')
-    return renderLang('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, onsubmit=submitPopup(f'/_newObj2/{objId}/{ttlId}', f'/edObj/{objId}'), title=f'title of object {objId}')
+    return renderLang('popup_ttl.jade', objId=objId, id=ttlId, data=getTtl(ttlId), info=info, 
+        onsubmit=submitPopup(f'/_newObj2/{objId}/{ttlId}', f'/edObj/{objId}'), title='TTL')
 
 #   save object & title
 def _newObj2(objId:int, ttlId:int):
@@ -74,7 +76,7 @@ def edObj(objId:int):
 def _objSelWhat(objId:int):
     defId = db().getWhat(objId)
     data = [[id, label, getLabelDefClass(label, defId, id)] for id, label in db().getWhats()]
-    return renderLang('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', data=data, title='select kind of object')
+    return renderLang('popup_obj_sel_what.jade', submit=f'_objSetWhat/{objId}', field='WLABEL', data=data, title='WHAT')
 
 def _objSetWhat(objId:int, wId:int):
     db().setWhat(objId, wId)
@@ -87,16 +89,17 @@ def _objImg(objId:int):
 
 #   object listing for popups
 def _edObjList():
-    return renderLang('popup_obj_selector.jade', items=db().getObjList(), action='edObj', title='recently edited objects')
+    return renderLang('popup_obj_selector.jade', items=db().getObjList(), 
+        action='edObj', title='OBJS')
 
 def _edUsrObjList():
-    return renderLang('popup_obj_selector.jade', items=expandObjs(db().getUsrObjs()), action='edObj', title='recently edited objects')
+    return renderLang('popup_obj_selector.jade', items=expandObjs(db().getUsrObjs()), 
+        action='edObj', title='USR OBJS')
 
 def _renderObjTtl(objId:int, info:dict, route:str):
     data = getTtl(info['TTL'])
-    title = f'title of object {objId}'
-    if info['STD'] == 1: title += ' (standard title)' 
-    return renderLang('popup_ttl.jade', objId=objId, data=data, info=info, onsubmit=usePopupSubmit(f'/{route}/{objId}', 'LABEL'), title=title)
+    return renderLang('popup_ttl.jade', objId=objId, data=data, info=info, 
+        onsubmit=usePopupSubmit(f'/{route}/{objId}', 'LABEL'), title='TTL')
 
 def _objWichTtl(objId:int):
     info = db().getObjTtlInfo(objId)

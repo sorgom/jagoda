@@ -1,5 +1,5 @@
-#popup_head {{title}} ({{usrLang}})
-    a(onclick="closePopup()") close / ESC
+#popup_head {{cap(title)}} {{"#%d" % nr if nr}} ({{usrLang}})
+    a(onclick="closePopup()") {{cap('CLOSE ESC')}}
 #popup_body
     #popup_content
         block content

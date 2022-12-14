@@ -47,6 +47,6 @@ def _imgInfo(id:int):
     src  = db().getImgFileFull(id)
     data = getExif(id)
     if src and data:
-        return renderLang('popup_img_info.jade', id=id, src=src, data=data, title=f'image {id}')
+        return renderLang('popup_img_info.jade', id=id, src=src, data=data, title='IMG')
     return ERR_DATA
 

@@ -1,0 +1,11 @@
+.capSel 
+    a(onclick="popup('/_newCap', '{{usrIlc}}')", title="{{cap('NEW ITEM')}}")
+        span ...
+        span ...
+    {% for id, cpc, label, class in data %}
+    a(onclick="popup('/_cap/{{id}}', '{{usrIlc}}')")
+        span {{cpc}}
+        span(class="{{class}}") {{label}}
+    {% endfor %}
+
+

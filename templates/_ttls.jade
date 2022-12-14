@@ -1,5 +1,5 @@
 .titles 
-    a(onclick="popup('/_newTtl/{{tpc}}')", title="new item") ...
+    a(onclick="popup('/_newTtl/{{tpc}}')", title={{cap('NEW ITEM')}}) ...
     {% for id, label in items %} 
     a(onclick="popup('/_ttl/{{id}}')") {{label}}
     {% endfor %}
