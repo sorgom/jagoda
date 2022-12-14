@@ -46,11 +46,8 @@ def processFile(tblFile:str, initUsr=False):
         txt = fh.read()
         fh.close()
         tables = [Table(name, cont) for name, cont in rxCreate.findall(txt)]
-        maxNameLen = 0
-        maxUpdateLen = 0
-        for t in tables:
-            maxNameLen   = max(maxNameLen,   t.nameLen)
-            maxUpdateLen = max(maxUpdateLen, t.updateLen)
+        maxNameLen   = max(t.nameLen for t in tables)
+        maxUpdateLen = max(t.updateLen for t in tables)
         grantStr  = f'grant %-{maxGrantLen}s on %s.%-{maxNameLen}s to %s;'
         updateStr = f'grant update (%-{maxUpdateLen}s) on %s.%-{maxNameLen}s to %s;'
 

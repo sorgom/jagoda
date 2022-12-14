@@ -141,6 +141,7 @@ class MyDB(MySQL):
     def getTtls(self, tpc:str):
         return self.get('select ID, ILC, LABEL from TTL_ORD where TPC = %s order by TST desc, ORD', tpc)
 
+    #   get standard titles
     def getStdTtls(self):
         return self.get('call getStdTtls(%s)', self.getUsrIlc())
 
@@ -149,13 +150,13 @@ class MyDB(MySQL):
     def getTtl(self, id:int):
         return self.get('select ILC, LABEL from TTL_ORD where ID = %s order by ORD', id)
 
-    # get head (info) of language item
+    # get head (info) of title
     def getTtlInfo(self, id:int):
         res = self.getOneDict('select * from TTL_INFO where ID = %s limit 1', id)
         res['TTL'] = res['ID']
         return res
 
-    # get head (info) of for a new language item
+    # get head (info) of for a new title
     def getNewTtlInfo(self, tpc:str):
         return self.getOneDict('select STDABLE, 0 as STD from TTP where TPC = %s limit 1', tpc)
 
@@ -178,11 +179,21 @@ class MyDB(MySQL):
     def getTtlLabel(self, id:int):
         return self.getOne('select getTtlLabel(%s, %s)', id, self.getUsrIlc())
 
+    #   get object kind
     def getWhat(self, objId:int):
         return self.getNum('select WHAT from OBJ where ID = %s limit 1', objId)
 
+    #   all object kinds
     def getWhats(self):
         return self.get('call getWhats(%s)', self.getUsrIlc())
+
+    #   get all captions for production
+    def getCapsPro(self, ilc:str):
+        return self.get('call getCapsPro(%s)', ilc)
+
+    #   get all captions for editing (forein language / not found displayed)
+    def getCaps(self):
+        return self.get('call getCaps(%s)', self.getUsrIlc())
 
     ## objects
     @staticmethod

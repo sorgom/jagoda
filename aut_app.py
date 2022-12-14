@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, render_template
 
 from mod.MyDB import setDB, db
 from mod.base import *
-from mod import img, login, lang, saveImg, obj, qrc
+from mod import img, login, lang, saveImg, obj, qrc, test, meta
 from mod.config import *
 
 from flask_compress import Compress
@@ -50,10 +50,13 @@ def testData():
 def d():
     return render_template('test_dropdown.htm')
 
+
+route('/test', test.test)
+
 # login
 route('/login',                         login.login,        methods=BOTH)
 route('/logout',                        login.logout                    )
-route('/pwd',                           login.pwd,          methods=BOTH)
+route('/pwd',                           meta.pwd,          methods=BOTH)
 route('/_loggedIn',                     login._loggedIn                 )
 route('/_setUsrIlc/<ilc>',              login._setUsrIlc                )
 

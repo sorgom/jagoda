@@ -18,7 +18,8 @@ services:
       MYSQL_ROOT_PASSWORD: rr
     ports:
       - 3306:3306
-  
+      # - "localhost:3306:3306"
+      
   # dbMongo:
   #   image: mongo:3.6.2
   #   restart: always

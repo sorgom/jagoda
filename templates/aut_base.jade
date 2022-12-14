@@ -12,13 +12,13 @@ html(lang='en')
         #popup.modal
         #cover.modal
         #menu
-            include dropdown_author.jade
+            include dropdown_login.jade
             include dropdown_usr_lang.jade
             include dropdown_objs.jade
             include dropdown_ttls.jade
             .clr
         div 
-            h2 {{title}} {{"#%d" % id if id}} 
+            h2 {{cap(title)}} {{"#%d" % id if id}} 
             #content
                 block content 
         +script('aut_site')

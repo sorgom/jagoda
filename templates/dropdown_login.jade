@@ -1,0 +1,7 @@
+.dropdown 
+    a {{cap('LOGIN')}} 
+    div
+        div 
+            p {{ session['USR'] }} 
+            a(href="/logout") {{cap('LOGOUT')}}
+            a(href="/pwd") {{cap('CHG PWD')}}

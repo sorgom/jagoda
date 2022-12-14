@@ -1,9 +1,9 @@
 {% extends 'aut_base.jade' %}
 block content 
     form.login(action="/pwd", method="post")
-        p.label new password
-        input(type="password", placeholder="enter new password", name="PWD1", autofocus=true, required=true)
-        p.label new password repeated
-        input(type="password", placeholder="repeat new password", name="PWD2", required=true)
-        button(type="submit") submit
+        p.label {{cap('LBL PWD 1')}}
+        input(type="password", placeholder="{{cap('PLH PWD 1')}}", name="PWD1", autofocus=true, required=true)
+        p.label {{cap('LBL PWD 2')}}
+        input(type="password", placeholder="{{cap('PLH PWD 2')}}", name="PWD2", required=true)
+        button(type="submit") {{cap('SUBMIT')}}
 

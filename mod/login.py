@@ -40,13 +40,13 @@ def checkLogin():
 def relogin():
     return redirect('/login')
 
-def pwd():
-    c = checkLogin()
-    if c: return c
-    if post():
-        if db().setPwd(session['ID'], rf('PWD1'), rf('PWD2')):
-            return redirect('/')
-    return render_template('aut_pwd.jade', title='Change Password')
+# def pwd():
+#     c = checkLogin()
+#     if c: return c
+#     if post():
+#         if db().setPwd(session['ID'], rf('PWD1'), rf('PWD2')):
+#             return redirect('/')
+#     return render_template('aut_pwd.jade', title='Change Password')
 
 def logout():
     session.pop('ID', None)

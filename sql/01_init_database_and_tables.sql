@@ -97,7 +97,7 @@ CREATE TABLE CAP (
     CPC VARCHAR(16) NOT NULL, -- FIX
     TST TIMESTAMP not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     PRIMARY KEY (ID),
-    index(CPC),
+    UNIQUE(CPC),
     index(TST)
 ) ENGINE=INNODB;
 
@@ -259,39 +259,39 @@ DELIMITER ;
 SET foreign_key_checks = 1;
 
 -- GENERATED GRANT>
-drop user if exists 'aut'@'127.0.0.1';
-create user 'aut'@'127.0.0.1' identified by '** yes: i am an author **';
-grant select                 on jagoda.LANG     to 'aut'@'127.0.0.1';
-grant select                 on jagoda.TTP      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.TTL      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.TTL_ELEM to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.TXT      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.TXT_ELEM to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.CAP      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.CAP_ELEM to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.OBJ      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.GRP      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.GRP_OBJ  to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.IMG      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.OBJ_IMG  to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.SEQ      to 'aut'@'127.0.0.1';
-grant select                 on jagoda.ROLE     to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.USR      to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.USR_OBJ  to 'aut'@'127.0.0.1';
-grant select, insert, delete on jagoda.USR_TTL  to 'aut'@'127.0.0.1';
-grant update (STD, TST                                             ) on jagoda.TTL      to 'aut'@'127.0.0.1';
-grant update (LABEL                                                ) on jagoda.TTL_ELEM to 'aut'@'127.0.0.1';
-grant update (TST                                                  ) on jagoda.TXT      to 'aut'@'127.0.0.1';
-grant update (CONT                                                 ) on jagoda.TXT_ELEM to 'aut'@'127.0.0.1';
-grant update (TST                                                  ) on jagoda.CAP      to 'aut'@'127.0.0.1';
-grant update (LABEL                                                ) on jagoda.CAP_ELEM to 'aut'@'127.0.0.1';
-grant update (TTL, NRD, DIM1, DIM2, DIM3, WHAT, YEAR, VAL, PUB, TST) on jagoda.OBJ      to 'aut'@'127.0.0.1';
-grant update (TTL, TST                                             ) on jagoda.GRP      to 'aut'@'127.0.0.1';
-grant update (GRP                                                  ) on jagoda.GRP_OBJ  to 'aut'@'127.0.0.1';
-grant update (ORD                                                  ) on jagoda.OBJ_IMG  to 'aut'@'127.0.0.1';
-grant update (NUM                                                  ) on jagoda.SEQ      to 'aut'@'127.0.0.1';
-grant update (NAME, PASS, RC                                       ) on jagoda.USR      to 'aut'@'127.0.0.1';
-grant update (TST                                                  ) on jagoda.USR_OBJ  to 'aut'@'127.0.0.1';
-grant update (TST                                                  ) on jagoda.USR_TTL  to 'aut'@'127.0.0.1';
+drop user if exists 'aut'@'%';
+create user 'aut'@'%' identified by '** yes: i am an author **';
+grant select                 on jagoda.LANG     to 'aut'@'%';
+grant select                 on jagoda.TTP      to 'aut'@'%';
+grant select, insert, delete on jagoda.TTL      to 'aut'@'%';
+grant select, insert, delete on jagoda.TTL_ELEM to 'aut'@'%';
+grant select, insert, delete on jagoda.TXT      to 'aut'@'%';
+grant select, insert, delete on jagoda.TXT_ELEM to 'aut'@'%';
+grant select, insert, delete on jagoda.CAP      to 'aut'@'%';
+grant select, insert, delete on jagoda.CAP_ELEM to 'aut'@'%';
+grant select, insert, delete on jagoda.OBJ      to 'aut'@'%';
+grant select, insert, delete on jagoda.GRP      to 'aut'@'%';
+grant select, insert, delete on jagoda.GRP_OBJ  to 'aut'@'%';
+grant select, insert, delete on jagoda.IMG      to 'aut'@'%';
+grant select, insert, delete on jagoda.OBJ_IMG  to 'aut'@'%';
+grant select, insert, delete on jagoda.SEQ      to 'aut'@'%';
+grant select                 on jagoda.ROLE     to 'aut'@'%';
+grant select, insert, delete on jagoda.USR      to 'aut'@'%';
+grant select, insert, delete on jagoda.USR_OBJ  to 'aut'@'%';
+grant select, insert, delete on jagoda.USR_TTL  to 'aut'@'%';
+grant update (STD, TST                                             ) on jagoda.TTL      to 'aut'@'%';
+grant update (LABEL                                                ) on jagoda.TTL_ELEM to 'aut'@'%';
+grant update (TST                                                  ) on jagoda.TXT      to 'aut'@'%';
+grant update (CONT                                                 ) on jagoda.TXT_ELEM to 'aut'@'%';
+grant update (TST                                                  ) on jagoda.CAP      to 'aut'@'%';
+grant update (LABEL                                                ) on jagoda.CAP_ELEM to 'aut'@'%';
+grant update (TTL, NRD, DIM1, DIM2, DIM3, WHAT, YEAR, VAL, PUB, TST) on jagoda.OBJ      to 'aut'@'%';
+grant update (TTL, TST                                             ) on jagoda.GRP      to 'aut'@'%';
+grant update (GRP                                                  ) on jagoda.GRP_OBJ  to 'aut'@'%';
+grant update (ORD                                                  ) on jagoda.OBJ_IMG  to 'aut'@'%';
+grant update (NUM                                                  ) on jagoda.SEQ      to 'aut'@'%';
+grant update (NAME, PASS, RC                                       ) on jagoda.USR      to 'aut'@'%';
+grant update (TST                                                  ) on jagoda.USR_OBJ  to 'aut'@'%';
+grant update (TST                                                  ) on jagoda.USR_TTL  to 'aut'@'%';
 -- <GENERATED GRANT
 

@@ -2,7 +2,7 @@ import re
 import paths
 from mod.config import *
 
-USR = f"'{ DB_CONFIG['user']}'@'{DB_CONFIG['host']}'"
+USR = f"'{ DB_CONFIG['user']}'@'{DB_CONFIG['userhost']}'"
 DB = DB_CONFIG['database']
 # ROLE_AUT = "'author'"
 # ROLE_ADM = "'admin'"

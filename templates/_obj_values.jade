@@ -1,8 +1,8 @@
 .center
     form(method="post", onsubmit="getElementsPost(this, '/_updObj/{{objId}}');return false;")
-        p dimensions
+        p {{cap('DIMS')}}
         include _obj_dim_inputs.jade
-        p year 
+        p {{cap('YEAR')}} 
         input(type="text", name="YEAR", value="{{obj['YEAR']}}", pattern="\d{4}")
         p
             {% if obj['VAL'] %}
@@ -10,15 +10,15 @@
             {% else %}
             input#VAL(type="checkbox", name="VAL", checked=false)
             {% endif %}
-            label(for="VAL") confirmed 
+            label(for="VAL") {{cap('READY')}} 
         p
             {% if obj['PUB'] %}
             input#PUB(type="checkbox", name="PUB", checked=true)
             {% else %}
             input#PUB(type="checkbox", name="PUB", checked=false)
             {% endif %}
-            label(for="PUB") publish on website
+            label(for="PUB") {{cap('PUB WEB')}}
         .buttons 
-            button(type="submit") submit
-        a(onclick="popup('/_objSelWhat/{{objId}}')") select kind of object 
-        a(onclick="popup('/_objWhichTtl/{{objId}}', '{{usrIlc}}')") edit title
+            button(type="submit") {{cap('SUBMIT')}}
+        a(onclick="popup('/_objSelWhat/{{objId}}')") {{cap('OBJ KIND')}}
+        a(onclick="popup('/_objWhichTtl/{{objId}}', '{{usrIlc}}')") {{cap('TTL')}}

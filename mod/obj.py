@@ -12,7 +12,7 @@ def renderObj(objId:int, template:str, what='obj', **args):
     debug('OBJ:', obj)
     # objImg, objTitel = db().getObjImg(objId)
     # debug(objImg, objTitel)
-    return renderLang(template, obj=obj, objId=objId, what='obj', title=f'Object no. {objId}', **args)
+    return renderLang(template, obj=obj, objId=objId, what='obj', title=f'OBJ', id=objId, **args)
 
 def expandObjs(data:list):
     return [

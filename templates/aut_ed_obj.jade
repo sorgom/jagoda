@@ -12,14 +12,14 @@ block content
             include _obj_values.jade
     .clr         
     span#objId(style="visibility: hidden;") {{objId}}
-    h2 Images of object
-    p.label Upload image files for object from your PC (klick or drag here):
+    h2 {{cap('IMGS')}}
+    p.label {{cap('UPLOD OBJ IMGS')}}
     input.dropZone(type="file", multiple=true, onchange="uploadImgs(this, 'objImgs', {{objId}});", accept="{{acceptImgTypes}}") 
-    p.label Re-order images of object:
+    p.label {{cap('RE-ORD OBJ IMGS')}}
     .imgDisplayFrame
         #objImgs.imgDisplay.objImgs
         .clr 
-    p.label Unassigned images (drag up to assign):
+    p.label {{cap('UNUSED IMGS DRAG')}}
     .imgDisplayFrame
         #freeImgs.imgDisplay
         .clr 

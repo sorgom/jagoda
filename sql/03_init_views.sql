@@ -61,7 +61,6 @@ inner join (select TTL, min(ORD) as MINORD from TTL_ORD group by TTL) as T2
 on T1.TTL = T2.TTL and T1.ORD = T2.MINORD
 ;
 
-
 drop view if exists OBJ_TTL_INFO;
 create view OBJ_TTL_INFO as
 select T1.ID as OBJ, T2.ID as TTL, T2.STD, T2.STDABLE
@@ -70,3 +69,31 @@ inner join TTL_INFO as T2
 on T2.ID = T1.TTL
 ;
 
+-- caption elements
+drop view if exists CAP_ORD;
+create view CAP_ORD as
+select T1.*, T2.ORD
+from CAP_ELEM as T1
+inner join LANG as T2
+on T1.ILC = T2.ILC
+;
+
+-- first available captions
+drop view if exists CAP_1ST;
+create view CAP_1ST as
+select T1.* from CAP_ORD as T1
+inner join (select CAP, min(ORD) as MINORD from CAP_ORD group by CAP) as T2
+on T1.CAP = T2.CAP and T1.ORD = T2.MINORD
+;
+
+-- GENERATED GRANT>
+grant select on jagoda.OBJ_IMG_1ST  to 'aut'@'%';
+grant select on jagoda.OBJ_IMG_DEF  to 'aut'@'%';
+grant select on jagoda.UNUSED_IMGS  to 'aut'@'%';
+grant select on jagoda.TTL_INFO     to 'aut'@'%';
+grant select on jagoda.TTL_ORD      to 'aut'@'%';
+grant select on jagoda.TTL_1ST      to 'aut'@'%';
+grant select on jagoda.OBJ_TTL_INFO to 'aut'@'%';
+grant select on jagoda.CAP_ORD      to 'aut'@'%';
+grant select on jagoda.CAP_1ST      to 'aut'@'%';
+-- <GENERATED GRANT

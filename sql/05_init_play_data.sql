@@ -13,63 +13,48 @@ REPLACE INTO LANG(ILC, LABEL, ORD) VALUES
     ('ko', '한국인',     5)
 ;
 
--- Language element types
-REPLACE INTO TTP VALUES
-    ('OT', 'Object Titles', 1),
-    ('TQ', 'Objpiece Techniques', 0)
-;
-
--- REPLACE INTO TTL(ID, TPC) VALUES
---     (20, 'CA'),
---     (21, 'CA'),
---     (22, 'CA'),
---     (23, 'CA'),
---     (24, 'CA'),
---     (25, 'CA')
--- ;
-
--- REPLACE INTO TTL_ELEM VALUES
---     (20, 'en', 'File'),
---     (20, 'fr', 'Fiche'),
---     (20, 'de', 'Datei'),
---     (21, 'fr', 'Fántastique'),
---     (22, 'en', 'This is a longer one in Englisch: let us see if it fits'),
---     (23, 'de', 'This is a longer one in Deutsch: let us see if it fits'),
---     (24, 'fr', 'This is a longer one in Français: let us see if it fits'),
---     (25, 'hr', 'This is a longer one in Hrvatski: let us see if it fits')
--- ;
-
 -- Make
-REPLACE INTO TTL(ID, TPC) VALUES
-    (30, 'TQ'),
-    (31, 'TQ'),
-    (32, 'TQ'),
-    (33, 'TQ'),
-    (34, 'TQ'),
-    (35, 'TQ'),
-    (36, 'TQ'),
-    (37, 'TQ'),
-    (38, 'TQ'),
-    (39, 'TQ')
+delete from TTL where TPC = 'TQ' and ID < 1000;
+
+INSERT INTO TTL(ID, TPC) VALUES
+    (10, 'TQ'),
+    (11, 'TQ'),
+    (12, 'TQ'),
+    (13, 'TQ'),
+    (14, 'TQ'),
+    (15, 'TQ'),
+    (16, 'TQ'),
+    (17, 'TQ'),
+    (18, 'TQ'),
+    (19, 'TQ')
 ;
 
-REPLACE INTO TTL_ELEM VALUES
-    (30, 'en', 'Sheet of Paper'),
-    (31, 'en', 'Book'),
-    (32, 'en', 'Print'),
-    (33, 'en', 'Skulpture'),
-    (34, 'en', 'Oil on Canvas'),
-    (35, 'en', 'Screen Print'),
-    (36, 'en', 'Water Colour'),
-    (37, 'en', 'Catalogue'),
-    (38, 'en', 'Car'),
-    (39, 'en', 'Building')
+insert INTO TTL_ELEM VALUES
+    (10, 'en', 'sheet of paper'),
+    (11, 'en', 'book'),
+    (12, 'en', 'print'),
+    (13, 'en', 'skulpture'),
+    (14, 'en', 'oil on canvas'),
+    (15, 'en', 'screen print'),
+    (16, 'en', 'watercolour'),
+    (17, 'en', 'catalogue'),
+    (18, 'en', 'car'),
+    (19, 'en', 'building')
 ;
+
+-- website captions
+-- moved to 06_gen_init_caps.sql
 
 -- Some Authors
-CALL setUsr('Ilonka', 'ChangeMeSoon');
-CALL setUsr('Wumpel', 'Test123');
-CALL setUsr('test', 'tt');
+delete from USR;
+insert into USR(ID, NAME, PASS) VALUES
+    (1, 'ilonka', MD5('ChangeMeSoon')),
+    (2, 'wumpel', MD5('Test123')),
+    (3, 'test', MD5('tt'))
+;
+-- CALL setUsr('Ilonka', 'ChangeMeSoon');
+-- CALL setUsr('Wumpel', 'Test123');
+-- CALL setUsr('test', 'tt');
 
 --  Update Sequences
 CALL initSeq();

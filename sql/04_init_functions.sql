@@ -13,6 +13,8 @@ drop procedure if exists setTtlStd;
 drop procedure if exists getStdTtls;
 drop procedure if exists getWhats;
 drop function  if exists getTtlLabel;
+drop procedure if exists getCapsPro;
+drop procedure if exists getCaps;
 drop procedure if exists getUsrObjs;
 drop procedure if exists getObj;
 drop procedure if exists addObjImg;
@@ -118,10 +120,36 @@ begin
     into @vLABEL;
     return @vLABEL;
 end :)
+-- ============================================================
+-- captions
+-- ============================================================
+-- all captions with available label for production
+create procedure getCapsPro(pILC CHAR(2))
+begin
+    select T1.CPC, coalesce(T2.LABEL, T3.LABEL) as LABEL
+    from CAP as T1
+    left join CAP_ELEM as T2
+    on T2.CAP = T1.ID and T2.ILC = pILC
+    left join CAP_1ST as T3
+    on T3.CAP = T1.ID
+    where T3.LABEL is not null
+    ;
+end :)
 
--- -- ============================================================
--- -- objects
--- -- ============================================================
+create procedure getCaps(pILC CHAR(2))
+begin
+    select T1.ID, T1.CPC, getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL
+    from CAP as T1
+    left join CAP_ELEM as T2
+    on T2.CAP = T1.ID and T2.ILC = pILC
+    left join CAP_1ST as T3
+    on T3.CAP = T1.ID
+    ;
+end :)
+
+-- ============================================================
+-- objects
+-- ============================================================
 
 --  get last objects of user
 create procedure getUsrObjs(pUSR BIGINT, pILC CHAR(2), pLimit INT)
@@ -234,17 +262,19 @@ END :)
 -- ============================================================
 DELIMITER ;
 -- GENERATED GRANT>
-grant execute on function  jagoda.nextId                 to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.initSeq                to 'aut'@'127.0.0.1';
-grant execute on function  jagoda.defIlc                 to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.setTtlStd              to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.getStdTtls             to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.getWhats               to 'aut'@'127.0.0.1';
-grant execute on function  jagoda.getTtlLabel            to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.getUsrObjs             to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.getObj                 to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.addObjImg              to 'aut'@'127.0.0.1';
-grant execute on procedure jagoda.setUsr                 to 'aut'@'127.0.0.1';
-grant execute on function  jagoda.getUsrId               to 'aut'@'127.0.0.1';
+grant execute on function  jagoda.nextId                 to 'aut'@'%';
+grant execute on procedure jagoda.initSeq                to 'aut'@'%';
+grant execute on function  jagoda.defIlc                 to 'aut'@'%';
+grant execute on procedure jagoda.setTtlStd              to 'aut'@'%';
+grant execute on procedure jagoda.getStdTtls             to 'aut'@'%';
+grant execute on procedure jagoda.getWhats               to 'aut'@'%';
+grant execute on function  jagoda.getTtlLabel            to 'aut'@'%';
+grant execute on procedure jagoda.getCapsPro             to 'aut'@'%';
+grant execute on procedure jagoda.getCaps                to 'aut'@'%';
+grant execute on procedure jagoda.getUsrObjs             to 'aut'@'%';
+grant execute on procedure jagoda.getObj                 to 'aut'@'%';
+grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
+grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
+grant execute on function  jagoda.getUsrId               to 'aut'@'%';
 -- <GENERATED GRANT
 

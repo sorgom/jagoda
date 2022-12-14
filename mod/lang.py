@@ -11,6 +11,7 @@ ILCS  = None
 LANG_LABELS = None
 TTPS = None
 RX_FOREIGN = None
+CAPS = None
 
 def getLangs():
     global LANGS, ILCS, LANG_LABELS, TTPS, RX_FOREIGN
@@ -20,6 +21,18 @@ def getLangs():
         LANG_LABELS = { i:l for i, l in LANGS }
         TTPS = [item[0:2] for item in db().getTtps()]
         RX_FOREIGN = re.compile(r'^\((' + '|'.join(ILCS) + r'|\?' + r')\).*')
+        loadCaps()
+
+def loadCaps():
+    global CAPS
+    CAPS = {
+        ilc: {
+            cpc: label
+            for cpc, label in db().getCapsPro(ilc)
+        }
+        for ilc in ILCS
+    }
+    debug(type(CAPS))
 
 def langs():
     getLangs()
@@ -57,6 +70,8 @@ def expandTtls(data:list):
     getLangs()
     return [[id, label, getLabelClass(label)] for id, label in data]
 
+def getCap(src:dict, cpc:str):
+    return src.get(cpc, f'*{cpc}*') if cpc else ''
 
 #   ============================================================
 #   API
@@ -78,7 +93,12 @@ def getTtl(id:int):
 def renderLang(template:str, **args):
     getLangs()
     usrIlc=getUsrIlc()
-    return render_template(template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=usrIlc, usrLang=LANG_LABELS.get(usrIlc, '??'),  **args)
+    caps = CAPS.get(usrIlc, {})
+    return render_template(
+        template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=usrIlc, usrLang=LANG_LABELS.get(usrIlc, '??'),
+        cap=lambda c : getCap(caps, c),
+        **args
+    )
 #   ============================================================
 #   AJAX
 #   ============================================================
@@ -112,7 +132,7 @@ def _setTtl(id:int):
 def stdTtls():
     c = checkLogin()
     if c: return c
-    return renderLang('aut_std_ttls.jade', items=getStdTtls(), title='standard titles')
+    return renderLang('aut_std_ttls.jade', items=getStdTtls(), title='STD TTLS')
 
 #   listing of standard titles (ajax, content)
 def _stdTtls():

@@ -4,8 +4,9 @@
 DB_CONFIG = {
   'user': 'aut',
   'password': '** yes: i am an author **',
+  'userhost': '%',
   'host': '127.0.0.1',
-  'database': 'jagoda'
+  'database': 'jagoda',
 }
 # ============================================================
 # templates
