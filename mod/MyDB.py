@@ -200,6 +200,10 @@ class MyDB(MySQL):
     def getCapCpc(self, capId:int):
         return self.getOne('select CPC from CAP where ID = %s limit 1', capId)
 
+    # # get all cpcs of captions
+    # def getCapCpcs(self):
+    #     return self.getFirstCol('select CPC from CAP')
+
     #  get elements of caption
     def getCap(self, capId:int):
         return self.get('select ILC, LABEL from CAP_ELEM where CAP = %s', capId)
