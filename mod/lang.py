@@ -71,6 +71,9 @@ def getCaps():
 def fndCap(src:dict, cpc:str):
     return src.get(cpc, f'*{cpc}*') if cpc else ''
 
+def langFormData():
+    return [[ilc, rf(ilc)] for ilc in ILCS]
+
 #   ============================================================
 #   API
 #   ============================================================
@@ -78,22 +81,18 @@ def fndCap(src:dict, cpc:str):
 def saveTtl(id:int):
     debug(id)
     getLangs()
-    db().setTtl(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    db().setTtl(id, langFormData())
     if rf('STDABLE'):
         db().setTtlStd(id, rf('STD'))
 
 def saveCap(id:int):
     debug(id)
     getLangs()
-    db().setCap(id, [[ilc, rf(ilc)] for ilc in ILCS])
+    db().setCap(id, langFormData())
     loadCaps()
 
 def getTtl(id:int):
     return expandTtl(db().getTtl(id))
-    # getLangs()
-    # data = db().getTtl(id)
-    # fnd = { ilc:value for ilc, value in data }
-    # return [ [ilc, label, fnd.get(ilc, '')] for ilc, label in LANGS ]
 
 def renderLang(template:str, **args):
     getLangs()
@@ -241,20 +240,18 @@ def _cap(id:int):
     return renderLang('popup_cap_ed.jade', cpc=cpc, data=data,
         onsubmit=submitPopup(f'/_setCap/{id}'), title='ED CAP')
 
-# def _newWhat():
-#     debug()
-#     if not loggedIn(): return ERR_AUTH
-#     id = db().getNextId()
-#     info = db().getNewTtlInfo('TQ')
-#     return renderLang('popup_ttl.jade', id=id, data=getTtl(id), info=info, 
-#         onsubmit=submitPopupScrollDown(f'/_addWhat/{id}'), title='NEW WHAT')
+def _newCap():
+    debug()
+    if not loggedIn(): return ERR_AUTH
+    return renderLang('popup_cap_new.jade', data=expandTtl([]), 
+        onsubmit=submitPopupScrollDown('/_addCap'), title='NEW CAP')
 
-# #   ajax post: new language entry
-# def _addWhat(id:int):
-#     debug(id)
-#     if not loggedIn(): return ERR_AUTH
-#     db().addTtl(id, 'TQ')
-#     return _setWhat(id)
+#   ajax post: new caption
+def _addCap():
+    if not loggedIn(): return ERR_AUTH
+    id = db().addCap(rf('CPC'))
+    if id: return _setCap(id)
+    return _caps()
 
 def _setCap(id:int):
     if not loggedIn(): return ERR_AUTH

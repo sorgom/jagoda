@@ -1,0 +1,4 @@
+{% extends '_cap_base.jade' %}
+block head
+    p {{cap('CAP')}}
+    input#CPC(type='text', required=true, name='CPC', size=32, maxlength=32, pattern='^[A-Z]+[ A-Z0-9]*')

@@ -87,8 +87,8 @@ route('/caps',                          lang.caps                   )
 route('/_caps',                         lang._caps                  )
 route('/_cap/<int:id>',                 lang._cap                   )
 route('/_setCap/<int:id>',              lang._setCap,   methods=POST)
-# route('/_newWhat',                      lang._newWhat                )
-# route('/_addWhat/<int:id>',             lang._addWhat,   methods=POST)
+route('/_newCap',                       lang._newCap                )
+route('/_addCap',                       lang._addCap,   methods=POST)
 
 
 

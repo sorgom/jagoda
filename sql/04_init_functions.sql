@@ -126,7 +126,7 @@ end :)
 -- all captions with available label for production
 create procedure getCapsPro(pILC CHAR(2))
 begin
-    select T1.CPC, coalesce(T2.LABEL, T3.LABEL) as LABEL
+    select T1.CPC, coalesce(T2.LABEL, defCap(T3.LABEL)) as LABEL
     from CAP as T1
     left join CAP_ELEM as T2
     on T2.CAP = T1.ID and T2.ILC = pILC

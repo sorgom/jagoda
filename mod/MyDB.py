@@ -214,6 +214,13 @@ class MyDB(MySQL):
         self.multi('CAP_ELEM', [[id, ilc, label] for ilc, label in data])
         self.call('delete from CAP_ELEM where CAP = %s and LABEL = ""', id)
     
+    def addCap(self, cpc:str) -> int: 
+        cpcs = self.getFirstCol('select CPC from CAP')
+        if cpc in cpcs: return 0
+        id = self.getNextId()
+        self.call('insert into CAP(ID, CPC) values(%s, %s)', id, cpc)
+        return id
+
     ## objects
     @staticmethod
     def dimStrFromDict(res):
@@ -230,18 +237,16 @@ class MyDB(MySQL):
         self.touchTbl('TTL', id)
         self.recTtl(id)
  
-    def reduceRecWhat(self, what:str, uid:int):
-        uid = self.getUid()
-        if uid:
-            recs = self.getFirstCol(f'select TST from USR_{what} where USR = %s limit %s', uid, USR_RECORDS)
-            if len(recs) == USR_RECORDS:
-                self.call(f'delete from USR_{what} where USR = %s and TST < %s', uid, recs[-1])
+    def reduceUsrRec(self, what:str, uid:int):
+        recs = self.getFirstCol(f'select TST from USR_{what} where USR = %s limit %s', uid, USR_RECORDS)
+        if len(recs) == USR_RECORDS:
+            self.call(f'delete from USR_{what} where USR = %s and TST < %s', uid, recs[-1])
 
     def reduceRecs(self):
         uid = self.getUid()
         if uid:
-            self.reduceRecWhat('OBJ', uid)
-            self.reduceRecWhat('TTL', uid)
+            self.reduceUsrRec('OBJ', uid)
+            self.reduceUsrRec('TTL', uid)
 
     def recWhat(self, what:str, id:int):
         uid = self.getUid()

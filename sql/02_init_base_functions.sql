@@ -72,6 +72,16 @@ returns VARCHAR(128)
     return coalesce(pLABEL, defLabel(pILC_1, pLABEL_1), notFound());
 end :)
 
+create function defCap(pLABEL VARCHAR(128))
+returns VARCHAR(128)
+begin
+    if pLABEL is null then
+        return NULL;
+    else
+        RETURN CONCAT('*', pLABEL, '*');
+    end if;    
+end :)
+
 
 DELIMITER ;
 -- GENERATED GRANT>
