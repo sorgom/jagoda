@@ -1,4 +1,4 @@
-delete from CAP where ID >= 0 and ID < 40;
+delete from CAP where ID >= 0 and ID < 44;
 insert into CAP(ID, CPC) values
 (0, 'AUT SITE'),
 (1, 'CHG PWD'),
@@ -39,7 +39,11 @@ insert into CAP(ID, CPC) values
 (36, 'USR OBJS'),
 (37, 'WHAT'),
 (38, 'WHATS'),
-(39, 'YEAR')
+(39, 'YEAR'),
+(40, 'CAP'),
+(41, 'CAPS'),
+(42, 'ED CAP'),
+(43, 'NEW CAP')
 ;
 insert into CAP_ELEM values
 (0, 'en', 'authors site'),
@@ -81,5 +85,9 @@ insert into CAP_ELEM values
 (36, 'en', 'my recent objects'),
 (37, 'en', 'object kind'),
 (38, 'en', 'object kinds'),
-(39, 'en', 'year')
+(39, 'en', 'year'),
+(40, 'en', 'caption'),
+(41, 'en', 'captions'),
+(42, 'en', 'edit caption'),
+(43, 'en', 'new caption')
 ;

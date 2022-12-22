@@ -220,7 +220,9 @@ function popup(route, ilc=undefined)
 
 function checkPopupForm(pf)
 {
-    for (let a of pf.querySelectorAll('textarea'))
+    let tas = pf.querySelectorAll('textarea');
+    if (tas.length == 0) return true;
+    for (let a of tas)
     {
         if (a.value != '') return true;
     }

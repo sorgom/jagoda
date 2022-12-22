@@ -4,7 +4,7 @@ form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
         {% for ilc, label, value in data %}
         div
             p {{label}}
-            textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}
+            textarea(rows=1, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}
         {% endfor %}
 .buttons
     button(onclick="getGoogle()") {{cap('GOOGLE TRANS')}}

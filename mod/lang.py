@@ -1,4 +1,4 @@
-from flask import redirect, render_template
+from flask import redirect, render_template, escape
 import json, re
 from mod.MyDB import db
 from mod.login import loggedIn, getUsrIlc, checkLogin 
@@ -103,6 +103,16 @@ def renderLang(template:str, **args):
         cap=lambda c : fndCap(caps, c),
         **args
     )
+
+def debugLang(template:str, **args):
+    getLangs()
+    usrIlc=getUsrIlc()
+    caps = CAPS.get(usrIlc, {})
+    return escape(render_template(
+        template, langs=LANGS, ilcs=ILCS, ttps=TTPS, usrIlc=usrIlc, usrLang=LANG_LABELS.get(usrIlc, '??'),
+        cap=lambda c : fndCap(caps, c),
+        **args
+    ))
 #   ============================================================
 #   AJAX
 #   ============================================================

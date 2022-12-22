@@ -111,6 +111,7 @@ route('/edObj/<int:objId>',                 obj.edObj)
 
 route('/_edObjList',                        obj._edObjList)
 route('/_edUsrObjList',                     obj._edUsrObjList)
+route('/_edObjByWhat',                      obj._edObjByWhat, methods=BOTH)
 
 route('/_objSelWhat/<int:objId>',           obj._objSelWhat)
 route('/_objSetWhat/<int:objId>/<int:wId>', obj._objSetWhat)

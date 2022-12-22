@@ -174,7 +174,7 @@ body {
 .show { visibility: visible }
 
 
-    /*  ===================================================
+/*  ===================================================
     ## content
     ===================================================*/
 #content {
@@ -482,4 +482,28 @@ div.exifData > div {
 div.exifData > div > span {
     display: table-cell;
     padding-right: 1em;
+}
+
+/*  ===================================================
+    ## selects
+    ===================================================*/
+select[multiple] {
+    width: 100%;
+    border: none;
+    overflow-Y: hidden;
+}
+select[multiple] > option {
+    display: block;
+    padding: 0.2em;
+    padding-left: 2em;
+    /* overflow: none; */
+}
+
+/* select[multiple]:focus > option:checked {
+    background-color: aqua;
+} */
+
+select[multiple] option:checked {
+    background: #3498DB linear-gradient(0, #3498DB 100%, #3498DB 100%);
+    /* background: #3498DB; */
 }

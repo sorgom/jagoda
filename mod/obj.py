@@ -1,7 +1,7 @@
 # processing of objects
 from flask import request, redirect
 import json
-from mod.lang import renderLang, getTtl, saveTtl, getLabelClass, getLabelDefClass
+from mod.lang import renderLang, getTtl, saveTtl, getLabelClass, getLabelDefClass, debugLang
 from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
@@ -93,8 +93,19 @@ def _edObjList():
         action='edObj', title='OBJS')
 
 def _edUsrObjList():
-    return renderLang('popup_obj_selector.jade', items=expandObjs(db().getUsrObjs()), 
+    return  renderLang('popup_obj_selector.jade', items=expandObjs(db().getUsrObjs()), 
         action='edObj', title='USR OBJS')
+
+def _edObjByWhat():
+    if post():
+        debug(request.form.getlist('ids'))
+        for v in request.form.getlist('ids'):
+            debug(v)
+        return 'Hello World'
+    data = db().getWhats()
+    debug(data)
+    return renderLang('popup_sel_whats.jade', data=data, size=len(data),
+        onsubmit=submitPopup('/_edObjByWhat'), title='WHATS')
 
 def _renderObjTtl(objId:int, info:dict, route:str):
     data = getTtl(info['TTL'])

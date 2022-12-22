@@ -59,6 +59,10 @@ if __name__ == '__main__':
             ['WHAT', 'object kind'],
             ['WHATS', 'object kinds'],
             ['YEAR', 'year'],
+            ['CAP', 'caption'],
+            ['CAPS', 'captions'],
+            ['ED CAP', 'edit caption'],
+            ['NEW CAP', 'new caption'],
         ]
     )
     
