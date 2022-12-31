@@ -216,23 +216,27 @@ end :)
 --  get objects data by WHAT
 create procedure getObjsByWhat(pILC CHAR(2), pWHAT BIGINT)
 begin
-    select T1.ID, T1.SRC, T2.LABEL, coalesce(T3.LABEL, notFound()) as WLABEL
-    from (
-        select T1.*, T2.SRC from
-        (
-            select * from OBJ
-            where WHAT = pWHAT
+    if pWHAT = 0 then
+        call getObjsNoWhat(pILC);
+    else
+        select T1.ID, T1.SRC, T2.LABEL, coalesce(T3.LABEL, notFound()) as WLABEL
+        from (
+            select T1.*, T2.SRC from
+            (
+                select * from OBJ
+                where WHAT = pWHAT
+            ) as T1
+            inner join OBJ_IMG_DEF as T2
+            on T2.OBJ = T1.ID
         ) as T1
-        inner join OBJ_IMG_DEF as T2
-        on T2.OBJ = T1.ID
-    ) as T1
 
-    left join TTL_X as T2
-    on T2.TTL = T1.TTL and T2.ILC = pILC
+        left join TTL_X as T2
+        on T2.TTL = T1.TTL and T2.ILC = pILC
 
-    left join TTL_X as T3
-    on T1.WHAT is not NULL and T3.TTL = T1.WHAT and T3.ILC = pILC
-    ;
+        left join TTL_X as T3
+        on T1.WHAT is not NULL and T3.TTL = T1.WHAT and T3.ILC = pILC
+        ;
+    end if;
 end :)
 
 --  get objects with undifined WHAT
@@ -256,12 +260,11 @@ end :)
 
 create procedure getObjWhats(pILC CHAR(2))
 begin
-    select coalesce(T1.WHAT, -1) as WHAT, coalesce(T2.LABEL, notFound()) as LABEL, T1.CNT
+    select coalesce(T1.WHAT, 0) as WHAT, coalesce(T2.LABEL, notFound()) as LABEL, T1.CNT
     from
     (
         select WHAT, count(*) as CNT
         from OBJ
-        -- where WHAT is not null
         group by WHAT
     ) as T1
     

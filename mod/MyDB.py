@@ -187,10 +187,6 @@ class MyDB(MySQL):
     def getWhats(self):
         return self.get('call getWhats(%s)', self.getUsrIlc())
 
-    #   object kinds from objects (including no kind set)
-    def getObjWhats(self):
-        return self.get('call getObjWhats(%s)', self.getUsrIlc())
-
     ##  captions
     #   get all captions for production
     def getCapsPro(self, ilc:str):
@@ -333,7 +329,13 @@ class MyDB(MySQL):
         self.call('update OBJ set WHAT = %s where ID = %s', wId, objId)
         self.touchObj(objId)
     
-    ##  images
+    #   object kinds from objects (including no kind set)
+    def getObjWhats(self):
+        return self.get('call getObjWhats(%s)', self.getUsrIlc())
+
+    def getObjsByWhat(self, what:int):
+        return self.get('call getObjsByWhat(%s, %s)', self.getUsrIlc(), what)
+
     def addObjImg(self, objId:int, imgId:int):
         self.callProc('addObjImg', objId, imgId)
         self.touchObj(objId)

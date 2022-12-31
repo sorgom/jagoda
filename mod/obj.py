@@ -97,14 +97,16 @@ def _edUsrObjList():
         action='edObj', title='USR OBJS')
 
 def _edObjByWhat():
-    if post():
-        res = dict(request.form)
-        debug(res)
-        return 'Hello World'
-    data = db().getWhats()
+    data = db().getObjWhats()
     debug(data)
-    return renderLang('popup_obj_whats.jade', data=data, size=len(data),
-        onsubmit=submitPopup('/_edObjByWhat'), title='WHATS')
+    return renderLang('popup_obj_whats.jade', data=data, title='WHATS')
+
+def _objsByWhat(what:int):
+    # data = db().getObjsByWhat(what)
+    # debug(data)
+    return  renderLang('popup_obj_selector.jade', items=expandObjs(db().getObjsByWhat(what)), 
+        action='edObj', title='USR OBJS')
+    # return 'Hello World'
 
 def _renderObjTtl(objId:int, info:dict, route:str):
     data = getTtl(info['TTL'])

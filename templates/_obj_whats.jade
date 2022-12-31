@@ -1,9 +1,6 @@
-form#whats(method="post", onsubmit="{{onsubmit}};return false;")
-    {% for id, label in data %}
-    .cboxes 
-        input(type="checkbox", id="{{id}}", name="{{id}}")
-        label(for="{{id}}") {{label}}
-    .clr 
+.objWhatSel
+    {% for id, label, cnt in data %}
+    a(onclick="popup('/_objsByWhat/{{id}}')")
+        span {{label}}
+        span {{cnt}}
     {% endfor %}
-.buttons 
-    input(type="submit", form="whats", value="{{cap('SUBMIT')}}")

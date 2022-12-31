@@ -1,9 +1,15 @@
 .center
     form(method="post", onsubmit="getElementsPost(this, '/_updObj/{{objId}}');return false;")
-        p {{cap('DIMS')}}
-        include _obj_dim_inputs.jade
         p {{cap('YEAR')}} 
-        input(type="text", name="YEAR", value="{{obj['YEAR']}}", pattern="\d{4}")
+        input(type="text", name="YEAR", value="{{obj['YEAR']}}", pattern="\d{4}", autofocus=true, onfocus="select(this)")
+        p {{cap('DIMS')}}
+        .dims
+            input(type="text", name="DIM1", value="{{obj['DIM1']}}", pattern="\d+(?:\.\d+)?") 
+            |  x
+            input(type="text", name="DIM2", value="{{obj['DIM2']}}", pattern="\d+(?:\.\d+)?") 
+            |  x
+            input(type="text", name="DIM3", value="{{obj['DIM3']}}", pattern="\d+(?:\.\d+)?") 
+            |  cm
         p
             {% if obj['VAL'] %}
             input#VAL(type="checkbox", name="VAL", checked=true)
