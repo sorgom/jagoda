@@ -507,3 +507,20 @@ select[multiple] option:checked {
     background: #3498DB linear-gradient(0, #3498DB 100%, #3498DB 100%);
     /* background: #3498DB; */
 }
+
+.cboxes label {
+    display: block;
+    float: left;
+    width: 90%;
+    padding: 0.3em;
+    padding-left: 1em;
+}
+.cboxes input {
+    display: block;
+    float: left;
+    margin: 0.5em;
+}
+
+.cboxes *:hover {
+    background-color: #ddd;
+}

@@ -98,13 +98,12 @@ def _edUsrObjList():
 
 def _edObjByWhat():
     if post():
-        debug(request.form.getlist('ids'))
-        for v in request.form.getlist('ids'):
-            debug(v)
+        res = dict(request.form)
+        debug(res)
         return 'Hello World'
     data = db().getWhats()
     debug(data)
-    return renderLang('popup_sel_whats.jade', data=data, size=len(data),
+    return renderLang('popup_obj_whats.jade', data=data, size=len(data),
         onsubmit=submitPopup('/_edObjByWhat'), title='WHATS')
 
 def _renderObjTtl(objId:int, info:dict, route:str):

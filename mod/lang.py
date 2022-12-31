@@ -36,6 +36,7 @@ def loadCaps():
 
 def getLabelClass(label:str):
     getLangs()
+    debug(label)
     return 'foreign' if RX_FOREIGN.match(label) else 'OK'
 
 def getLabelDefClass(label:str, defId:int, id:int):

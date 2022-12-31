@@ -17,6 +17,9 @@ drop procedure if exists getCapsPro;
 drop procedure if exists getCaps;
 drop procedure if exists getUsrObjs;
 drop procedure if exists getObj;
+drop procedure if exists getObjsByWhat;
+drop procedure if exists getObjsNoWhat;
+drop procedure if exists getObjWhats;
 drop procedure if exists addObjImg;
 drop procedure if exists setUsr;
 drop function  if exists getUsrId;
@@ -154,9 +157,7 @@ end :)
 --  get last objects of user
 create procedure getUsrObjs(pUSR BIGINT, pILC CHAR(2), pLimit INT)
 begin
-    select T1.ID, T1.SRC,
-        getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL, 
-        getLabel(T4.LABEL, T5.ILC, T5.LABEL) as WLABEL
+    select T1.ID, T1.SRC, T2.LABEL, coalesce(T3.LABEL, notFound()) as WLABEL
     from (
         select T2.ID, T2.TTL, T2.WHAT, T3.SRC
         from
@@ -173,15 +174,11 @@ begin
         on T3.OBJ = T1.OBJ
     ) as T1
 
-    left join TTL_ELEM as T2
+    left join TTL_X as T2
     on T2.TTL = T1.TTL and T2.ILC = pILC
-    left join TTL_1ST as T3
-    on T3.TTL = T1.TTL
 
-    left join TTL_ELEM as T4
-    on T4.TTL = T1.WHAT and T4.ILC = pILC
-    left join TTL_1ST as T5
-    on T5.TTL = T1.WHAT
+    left join TTL_X as T3
+    on T1.WHAT is not NULL and T3.TTL = T1.WHAT and T3.ILC = pILC
     ;
 end :)
 
@@ -213,6 +210,64 @@ begin
     on T4.TTL = T1.WHAT and T4.ILC = pILC
     left join TTL_1ST as T5
     on T5.TTL = T1.WHAT
+    ;
+end :)
+
+--  get objects data by WHAT
+create procedure getObjsByWhat(pILC CHAR(2), pWHAT BIGINT)
+begin
+    select T1.ID, T1.SRC, T2.LABEL, coalesce(T3.LABEL, notFound()) as WLABEL
+    from (
+        select T1.*, T2.SRC from
+        (
+            select * from OBJ
+            where WHAT = pWHAT
+        ) as T1
+        inner join OBJ_IMG_DEF as T2
+        on T2.OBJ = T1.ID
+    ) as T1
+
+    left join TTL_X as T2
+    on T2.TTL = T1.TTL and T2.ILC = pILC
+
+    left join TTL_X as T3
+    on T1.WHAT is not NULL and T3.TTL = T1.WHAT and T3.ILC = pILC
+    ;
+end :)
+
+--  get objects with undifined WHAT
+create procedure getObjsNoWhat(pILC CHAR(2))
+begin
+    select T1.ID, T1.SRC, T2.LABEL, notFound() as WLABEL
+    from (
+        select T1.*, T2.SRC from
+        (
+            select * from OBJ
+            where WHAT is NULL
+        ) as T1
+        inner join OBJ_IMG_DEF as T2
+        on T2.OBJ = T1.ID
+    ) as T1
+
+    left join TTL_X as T2
+    on T2.TTL = T1.TTL and T2.ILC = pILC
+    ;
+end :)
+
+create procedure getObjWhats(pILC CHAR(2))
+begin
+    select coalesce(T1.WHAT, -1) as WHAT, coalesce(T2.LABEL, notFound()) as LABEL, T1.CNT
+    from
+    (
+        select WHAT, count(*) as CNT
+        from OBJ
+        -- where WHAT is not null
+        group by WHAT
+    ) as T1
+    
+    left join TTL_X as T2
+    on T2.TTL = T1.WHAT and T2.ILC = pILC
+    order by T1.CNT desc
     ;
 end :)
 
@@ -273,6 +328,9 @@ grant execute on procedure jagoda.getCapsPro             to 'aut'@'%';
 grant execute on procedure jagoda.getCaps                to 'aut'@'%';
 grant execute on procedure jagoda.getUsrObjs             to 'aut'@'%';
 grant execute on procedure jagoda.getObj                 to 'aut'@'%';
+grant execute on procedure jagoda.getObjsByWhat          to 'aut'@'%';
+grant execute on procedure jagoda.getObjsNoWhat          to 'aut'@'%';
+grant execute on procedure jagoda.getObjWhats            to 'aut'@'%';
 grant execute on procedure jagoda.addObjImg              to 'aut'@'%';
 grant execute on procedure jagoda.setUsr                 to 'aut'@'%';
 grant execute on function  jagoda.getUsrId               to 'aut'@'%';

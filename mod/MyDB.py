@@ -187,6 +187,10 @@ class MyDB(MySQL):
     def getWhats(self):
         return self.get('call getWhats(%s)', self.getUsrIlc())
 
+    #   object kinds from objects (including no kind set)
+    def getObjWhats(self):
+        return self.get('call getObjWhats(%s)', self.getUsrIlc())
+
     ##  captions
     #   get all captions for production
     def getCapsPro(self, ilc:str):

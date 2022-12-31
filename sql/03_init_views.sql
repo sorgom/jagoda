@@ -61,6 +61,21 @@ inner join (select TTL, min(ORD) as MINORD from TTL_ORD group by TTL) as T2
 on T1.TTL = T2.TTL and T1.ORD = T2.MINORD
 ;
 
+drop view if exists TTL_X;
+create view TTL_X as
+select T1.*, getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL
+from
+(
+    select T2.ID as TTL, T1.ILC
+    from LANG as T1
+    cross join TTL as T2
+) as T1
+left join TTL_ELEM as T2
+on T2.TTL = T1.TTL and T2.ILC = T1.ILC
+left join TTL_1ST as T3
+on T3.TTL = T1.TTL
+;
+
 drop view if exists OBJ_TTL_INFO;
 create view OBJ_TTL_INFO as
 select T1.ID as OBJ, T2.ID as TTL, T2.STD, T2.STDABLE
@@ -93,6 +108,7 @@ grant select on jagoda.UNUSED_IMGS  to 'aut'@'%';
 grant select on jagoda.TTL_INFO     to 'aut'@'%';
 grant select on jagoda.TTL_ORD      to 'aut'@'%';
 grant select on jagoda.TTL_1ST      to 'aut'@'%';
+grant select on jagoda.TTL_X        to 'aut'@'%';
 grant select on jagoda.OBJ_TTL_INFO to 'aut'@'%';
 grant select on jagoda.CAP_ORD      to 'aut'@'%';
 grant select on jagoda.CAP_1ST      to 'aut'@'%';

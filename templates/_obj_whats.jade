@@ -1,0 +1,9 @@
+form#whats(method="post", onsubmit="{{onsubmit}};return false;")
+    {% for id, label in data %}
+    .cboxes 
+        input(type="checkbox", id="{{id}}", name="{{id}}")
+        label(for="{{id}}") {{label}}
+    .clr 
+    {% endfor %}
+.buttons 
+    input(type="submit", form="whats", value="{{cap('SUBMIT')}}")

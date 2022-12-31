@@ -1,9 +1,0 @@
-form#whats(method="post", onsubmit="{{onsubmit}};return false;")
-    select(name="ids", multiple=true, size=size) 
-        {% for id, label in data %} 
-        option(value="{{id}}") {{label}}
-        {% endfor %}
-
-
-.buttons 
-    input(type="submit", form="whats", value="{{cap('SUBMIT')}}")

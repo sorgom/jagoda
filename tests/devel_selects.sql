@@ -278,3 +278,18 @@ from (
 left join TTL_ELEM as T2
 on T2.TTL = T1.TTL and T2.ILC = 'hr'
 
+
+drop view if exists TTL_X;
+create view TTL_X as
+select T1.*, getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL
+from
+(
+    select T2.ID, T1.ILC
+    from LANG as T1
+    cross join TTL as T2
+) as T1
+left join TTL_ELEM as T2
+on T2.TTL = T1.ID and T2.ILC = T1.ILC
+left join TTL_1ST as T3
+on T3.TTL = T1.ID
+;

@@ -14,6 +14,7 @@ drop procedure if exists imgFolders;
 drop function  if exists notFound;
 drop function  if exists defLabel;
 drop function  if exists getLabel;
+drop function  if exists defCap;
 -- <GENERATED DROP
 DELIMITER :)  
 -- ============================================================
@@ -94,4 +95,5 @@ grant execute on procedure jagoda.imgFolders             to 'aut'@'%';
 grant execute on function  jagoda.notFound               to 'aut'@'%';
 grant execute on function  jagoda.defLabel               to 'aut'@'%';
 grant execute on function  jagoda.getLabel               to 'aut'@'%';
+grant execute on function  jagoda.defCap                 to 'aut'@'%';
 -- <GENERATED GRANT
