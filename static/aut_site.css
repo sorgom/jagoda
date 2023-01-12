@@ -283,56 +283,6 @@ div.objSel > a > div > div > img
     width: 90%;
 }
 
-
-/* table, th, td {
-    border: 1px solid;
-}
-
-th, td {
-    padding: 5px;
-    text-align: left;
-}
-
-td {
-    vertical-align: top;
-}
-
-thead {
-    background-color: lightgray;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-td > a {
-    background-color: lightgray;
-    width: 95%;
-    height: 1em;
-    border: none;
-    display: inline-block;
-    text-align: center;
-    font-style: normal;
-    padding: 3px;
-}
-
-table.ltb > tbody > tr > td {
-    font-style: italic;
-}
-
-table.lel td:first-child {
-    background-color: lightgray;
-    width: 10em;
-}
-
-td > input,
-td > textarea {
-    width: 100%;
-    border: none;
-    font-style: italic; 
-} */
-
 input[type=text] {
     word-wrap: break-word;
     word-break: break-all;
