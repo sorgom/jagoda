@@ -4,6 +4,7 @@ form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
         div
             p {{label}}
             textarea(rows=2, id="{{ilc}}", name="{{ilc}}", lang="{{ilc}}", maxlength="128") {{value}}
+            button(type="button", onclick="google('{{ilc}}')") ..
         {% endfor %}
     {% if info['STD'] %}
     input(type="hidden", name="STD", value="1")
@@ -18,6 +19,5 @@ form#ttl(method="post", onsubmit="{{onsubmit}};return false;")
     input(type="hidden", name="objId", value="{{objId}}")
     input(type="hidden", name="TTL", value="{{info['TTL']}}")
 .buttons
-    button(onclick="getGoogle()") {{cap('GOOGLE TRANS')}}
     input(type="submit", form="ttl", value="{{cap('SAVE CHGS')}}")
     p#popup_info 

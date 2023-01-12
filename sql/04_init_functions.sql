@@ -17,6 +17,7 @@ drop procedure if exists getCapsPro;
 drop procedure if exists getCaps;
 drop procedure if exists getUsrObjs;
 drop procedure if exists getObj;
+drop procedure if exists getObjTtl;
 drop procedure if exists getObjsByWhat;
 drop procedure if exists getObjsNoWhat;
 drop procedure if exists getObjWhats;
@@ -213,6 +214,24 @@ begin
     ;
 end :)
 
+-- select single object title by id & language
+create procedure getObjTtl(pID BIGINT, pILC CHAR(2))
+begin
+    select getLabel(T2.LABEL, T3.ILC, T3.LABEL) as LABEL
+    from 
+    (
+        select TTL from OBJ
+        where ID = pID
+        limit 1
+    ) as T1
+
+    left join TTL_ELEM as T2
+    on T2.TTL = T1.TTL and T2.ILC = pILC
+    left join TTL_1ST as T3
+    on T3.TTL = T1.TTL
+    ;
+end :)
+
 --  get objects data by WHAT
 create procedure getObjsByWhat(pILC CHAR(2), pWHAT BIGINT)
 begin
@@ -331,6 +350,7 @@ grant execute on procedure jagoda.getCapsPro             to 'aut'@'%';
 grant execute on procedure jagoda.getCaps                to 'aut'@'%';
 grant execute on procedure jagoda.getUsrObjs             to 'aut'@'%';
 grant execute on procedure jagoda.getObj                 to 'aut'@'%';
+grant execute on procedure jagoda.getObjTtl              to 'aut'@'%';
 grant execute on procedure jagoda.getObjsByWhat          to 'aut'@'%';
 grant execute on procedure jagoda.getObjsNoWhat          to 'aut'@'%';
 grant execute on procedure jagoda.getObjWhats            to 'aut'@'%';

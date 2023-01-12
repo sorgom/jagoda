@@ -321,6 +321,9 @@ class MyDB(MySQL):
         res['DIMS'] = MyDB.dimStrFromDict(res)
         return res
 
+    def getObjTtl(self, objId:int):
+        return self.getOne('call getObjTtl(%s, %s)', objId, self.getUsrIlc())
+
     def getObjDims(self, objId:int):
         res = self.getOneDict('select * from OBJ where ID = %s limit 1', objId)
         return MyDB.dimStrFromDict(res)

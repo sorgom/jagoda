@@ -6,6 +6,13 @@ import re
 
 SOURCE_FILE_KEY = 41728
 
+rev = { l:k for k, l in ExifTags.TAGS.items() }
+
+for l in sorted(rev.keys()):
+    print(l, rev[l])
+
+exit()
+
 for k, l in ExifTags.TAGS.items():
     print(l, k)
 

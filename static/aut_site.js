@@ -324,12 +324,12 @@ function setContent(html)
     closePopup();   
 }
 
-function getGoogle()
+function google(ilc)
 {
     debug('getGoogle');
     let pf = document.querySelector('#popup form');
     popupInfo('translating ...');
-    if (pf) postAjax(new FormData(pf), '/_google', setGoogle);
+    if (pf) postAjax(new FormData(pf), '/_google/' + ilc, setGoogle);
 }
 
 function setGoogle(rt)
@@ -347,7 +347,6 @@ function setGoogle(rt)
     });
     popupInfo('');
 }
-
 
 //  ============================================================
 //  ## objects / aticles

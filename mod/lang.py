@@ -36,7 +36,7 @@ def loadCaps():
 
 def getLabelClass(label:str):
     getLangs()
-    debug(label)
+    # debug(label)
     return 'foreign' if RX_FOREIGN.match(label) else 'OK'
 
 def getLabelDefClass(label:str, defId:int, id:int):
@@ -293,23 +293,22 @@ def _addTtl(tpc:str, id:int):
 def _label(id:int):
     return db().getTtlLabel(id)
 
-def _google():
+def _google(trg:str):
     res = []
     if post() and loggedIn():
         getLangs()
         data = dict(request.form)
         src = None
-        for ilc in ILCS:
-            val = data[ilc].strip()
+        txt = None
+        for ilc, val in data.items():
+            if ilc == trg: continue
+            val = val.strip() 
             if val:
                 src = ilc
                 txt = val
                 break
         if src is not None:
-            for ilc in ILCS:
-                val = data[ilc].strip()
-                if ilc != src and not val:
-                    res.append([ilc, translate(src, ilc, txt)])
+            res.append([trg, translate(src, trg, txt)])
     ret = json.dumps(res)
     debug(ret)
     return ret

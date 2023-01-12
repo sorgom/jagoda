@@ -67,7 +67,7 @@ route('/_setTtl/<int:id>',              lang._setTtl,  methods=POST)
 route('/_newTtl/<tpc>',                 lang._newTtl               )
 route('/_addTtl/<tpc>/<int:id>',        lang._addTtl,  methods=POST)
 route('/_label/<int:id>',               lang._label                )
-route('/_google',                       lang._google,  methods=POST)
+route('/_google/<trg>',                 lang._google,  methods=POST)
 # standard titles
 route('/stdTtls',                       lang.stdTtls               )
 route('/_stdTtls',                      lang._stdTtls              )

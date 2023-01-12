@@ -6,6 +6,7 @@ from mod.MyDB import db, DIM_FIELDS
 from mod.login import loggedIn, checkLogin 
 from mod.base import *
 from mod.popups import *
+from mod.config import IMG_TYPE_ACCEPTED
 
 def renderObj(objId:int, template:str, what='obj', **args):
     obj = db().getObj(objId)
@@ -71,7 +72,7 @@ def _objDims(objId:int):
     return renderLang('popup_obj_dims.jade', obj=db().getObj(objId), submit=f'_objDims/{objId}', field='objDims')
 
 def edObj(objId:int):
-    return renderObj(objId, 'aut_ed_obj.jade')
+    return renderObj(objId, 'aut_ed_obj.jade', acceptImgTypes=IMG_TYPE_ACCEPTED)
 
 def _objSelWhat(objId:int):
     defId = db().getWhat(objId)
@@ -126,8 +127,8 @@ def _objTtl(objId:int, info=None):
     if post():
         saveTtl(info['TTL'])
         db().touchObj(objId)
-        return db().getObjLabel(objId)
-    return _renderObjTtl(objId, info, '_objTtl')    
+        return db().getObjTtl(objId)
+    return _renderObjTtl(objId, info, '_objTtl')
 
 def _objOwnTtl(objId:int):
     if post():
