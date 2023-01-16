@@ -311,10 +311,6 @@ div.dims > input {
     text-align: center;
 }
 
-.objTitel {
-    font-style: italic;
-}
-
 /*  ===================================================
     ## object & image display
     ===================================================*/
@@ -447,7 +443,7 @@ div.exifData > div > span {
 /*  ===================================================
     ## selects
     ===================================================*/
-select[multiple] {
+/* select[multiple] {
     width: 100%;
     border: none;
     overflow-Y: hidden;
@@ -456,16 +452,10 @@ select[multiple] > option {
     display: block;
     padding: 0.2em;
     padding-left: 2em;
-    /* overflow: none; */
 }
-
-/* select[multiple]:focus > option:checked {
-    background-color: aqua;
-} */
 
 select[multiple] option:checked {
     background: #3498DB linear-gradient(0, #3498DB 100%, #3498DB 100%);
-    /* background: #3498DB; */
 }
 
 .cboxes label {
@@ -483,4 +473,4 @@ select[multiple] option:checked {
 
 .cboxes *:hover {
     background-color: #ddd;
-}
+} */
