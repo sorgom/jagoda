@@ -1,11 +1,11 @@
 ### Deleting _local_ branches in Git
 
-```
+```bash
 git branch -D <branch>
 ```
 
 ### Deleting _remote_ branches in Git
-```
+```bash
 git push origin --delete <branch>
 ```
 

@@ -18,10 +18,12 @@ html(lang='en')
             include dropdown_ttls.jade
             .clr
         div 
-            h2 {{cap(title)}} {{"#%d" % id if id}} 
+            h2 {{cap(title)}} {{"#%d" % id if id}}
+            button(onclick="fastTest()") click me
             #content
                 block content 
         +script('aut_site')
         +script('navi')
+        +script('test_fetch')
     //- script 
     //-     | document.onload = whatchLogin();

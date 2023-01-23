@@ -2,14 +2,28 @@ from fastapi import FastAPI, Query, Body
 from typing import Union, List
 from datetime import datetime, time, timedelta
 from uuid import UUID
+from ninjadog import render
+
+from mod.MyPyDB import setDB, db
 
 app = FastAPI()
 
+setDB('127.0.0.1', 'aut', '** yes: i am an author **', 'jagoda')
 
 @app.get("/")
 async def root():
     print('working ...')
     return {"message": "Hello World"}
+
+@app.get("/test1")
+async def test1():
+    db().test1()
+    return {"message": "test1"}
+
+@app.get("/test2")
+async def test2():
+    db().test2()
+    return {"message": "test2"}
 
 # @app.get("/items/{item_id}")
 # async def read_item(item_id:int):

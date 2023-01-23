@@ -15,3 +15,9 @@ print(res)
 
 a = (1, 2, 3)
 print(a[0])
+
+def test(**args):
+    print(type(args))
+    print(args)
+
+test(a=10, b=20)

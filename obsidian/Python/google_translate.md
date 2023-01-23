@@ -19,3 +19,4 @@ pip install googletrans==3.1.0a0
 
 See also: [Googletrans: Free and Unlimited Google translate API for Python](https://py-googletrans.readthedocs.io/en/latest/)
 
+installation error
