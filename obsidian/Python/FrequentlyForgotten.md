@@ -9,7 +9,10 @@
 
 last element of list
 ```python
->>> data = [10, 2, 3, 8]                                                                                                                   >>> data[-1]                                                                                                                               8                                                                                                                                          >>> 
+>>> data = [10, 2, 3, 8]                                                                                                                   
+>>> data[-1]
+8                                                                                                                                          
+>>> 
 ```
 
 ## json

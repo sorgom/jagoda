@@ -4,15 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "82fee6feae8da8ab",
+        "id": "afa9584e05332342",
         "type": "tabs",
         "children": [
           {
-            "id": "5478593e7898c382",
+            "id": "84873eff6f81554f",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {}
+              "type": "markdown",
+              "state": {
+                "file": "FastAPI/FastAPI_Basics.md",
+                "mode": "source",
+                "source": false
+              }
             }
           }
         ]
@@ -60,6 +64,14 @@
               "type": "starred",
               "state": {}
             }
+          },
+          {
+            "id": "bdd2dcf330d8d7d0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
           }
         ]
       }
@@ -81,6 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "FastAPI/FastAPI_Basics.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,6 +110,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "FastAPI/FastAPI_Basics.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -118,7 +132,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "FastAPI/FastAPI_Basics.md"
+              }
             }
           }
         ]
@@ -138,17 +154,22 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5478593e7898c382",
+  "active": "84873eff6f81554f",
   "lastOpenFiles": [
+    "Flask/Flask_servers.md",
+    "general/md_file_ syntax.md",
+    "git/FrequentlyForgotten.md",
+    "JS/FrequentlyForgotten.md",
+    "JS/AlsoInteresting.md",
+    "Python/venv_and pip_requiremts_txt.md",
+    "Python/use_variable_in_regex.md",
+    "Python/unicode_utf8.md",
     "Python/python_known_errors.md",
     "Python/google_translate.md",
-    "Python/venv_and pip_requiremts_txt.md",
     "Python/FrequentlyForgotten.md",
-    "JS/AlsoInteresting.md",
-    "git/FrequentlyForgotten.md",
     "Python/arrays_and_sets.md",
-    "FastAPI/FastAPI_Basics.md",
-    "Flask/Flask_servers.md",
-    "MySQL/MySQL_cursor.md"
+    "VSCode/Memos.md",
+    "Jagoda/Features.md",
+    "FastAPI/FastAPI_Basics.md"
   ]
 }

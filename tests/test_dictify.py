@@ -21,3 +21,26 @@ def test(**args):
     print(args)
 
 test(a=10, b=20)
+
+#   dict by reference
+def wumpel(d:dict):
+    d.update({'a': 123})
+    d['x'] = 222
+
+dd = dict()
+
+wumpel(dd)
+print(dd)
+
+c = 'ab\tc'
+c = c.expandtabs(4).replace(' ', '_')
+print(c)
+c = 'abc\td'
+c = c.expandtabs(4).replace(' ', '_')
+print(c)
+
+c = """abc\td
+xy\tznn\twumpel
+"""
+c = c.expandtabs(4).replace(' ', '_')
+print(c)
